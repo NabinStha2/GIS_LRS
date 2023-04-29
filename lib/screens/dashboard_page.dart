@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gis_flutter_frontend/core/routing/route_name.dart';
 import 'package:gis_flutter_frontend/core/routing/route_navigation.dart';
 import 'package:gis_flutter_frontend/providers/land_provider.dart';
 import 'package:gis_flutter_frontend/providers/user_provider.dart';
 import 'package:gis_flutter_frontend/screens/dashboard_land_accepted_screen.dart';
+import 'package:gis_flutter_frontend/screens/edit_profile_page.dart';
 import 'package:gis_flutter_frontend/widgets/custom_circular_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -66,7 +66,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     CustomButton.textButton(
                       "Edit Profile",
                       () {
-                        navigateNamed(context, RouteName.editProfileRouteName);
+                        navigate(
+                          context,
+                          EditProfilePage(
+                            userData: _.userData,
+                          ),
+                        );
                       },
                     ),
                     vSizedBox2,

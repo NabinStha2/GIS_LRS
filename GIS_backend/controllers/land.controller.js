@@ -25,6 +25,21 @@ exports.createLand = async (req, res) => {
       "properties.parcelno": parcelId,
     });
     // console.log(geoJSONData);
+    if (!geoJSONData) {
+      throw new SetErrorResponse("No recorded parcel id found!", 404);
+    }
+
+    const land = await Land.findOne({
+      parcelId: parcelId,
+      isVerified: "approved",
+    });
+    if (land) {
+      throw new SetErrorResponse(
+        "Land already exists with this parcel Id!",
+        500
+      );
+    }
+
     const newLand = new Land({
       city,
       area,

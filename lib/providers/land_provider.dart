@@ -1,5 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:gis_flutter_frontend/model/land/land_request_model.dart';
@@ -120,8 +119,16 @@ class LandProvider extends ChangeNotifier with BaseController {
         landRequestModel: LandRequestModel(page: 1),
       );
       notifyListeners();
+    } on AppException catch (err) {
+      isLoading = false;
+      hideLoading(context);
+      logger(err.toString(), loggerType: LoggerType.error);
+      notifyListeners();
     } catch (e) {
-      logger(e.toString(), loggerType: LoggerType.error);
+      isLoading = false;
+      hideLoading(context);
+      notifyListeners();
+      consolelog(e.toString());
     }
   }
 
@@ -147,6 +154,7 @@ class LandProvider extends ChangeNotifier with BaseController {
         paginatedOwnedLandResult?.clear();
         notifyListeners();
       }
+
       var response = await BaseClient()
           .get(
             ApiConfig.baseUrl,
@@ -154,8 +162,23 @@ class LandProvider extends ChangeNotifier with BaseController {
             hasTokenHeader: true,
           )
           .catchError(handleError);
+
       if (response == null) return false;
-      var decodedJson = landResponseModelFromJson(response);
+
+      //isolate -------------------------------------------------------
+      // ReceivePort receivePort = ReceivePort();
+      // await Isolate.spawn(fetchData, receivePort.sendPort);
+      // SendPort childSendPort = await receivePort.first;
+
+      // ReceivePort responsePort = ReceivePort();
+      // childSendPort.send([response, responsePort.sendPort]);
+      // var decodedJson = await responsePort.first;
+      // logger(decodedJson,loggerType: LoggerType.error);
+
+      //compute --------------------------------------------------------
+      var decodedJson =
+          await compute<dynamic, LandResponseModel>(fetchData, response);
+
       paginatedOwnedLandResultCount = decodedJson.data?.landData?.count ?? 0;
       paginatedOwnedLandResultPageNumber =
           decodedJson.data?.landData?.currentPageNumber ?? 0;
@@ -170,7 +193,7 @@ class LandProvider extends ChangeNotifier with BaseController {
         if (paginatedOwnedLandResult?.isNotEmpty ?? false) {
           for (LandResult e in paginatedOwnedLandResult ?? []) {
             e.geoJson?.geometry?.coordinates?.forEach((ele1) {
-              consolelog(ele1);
+              // consolelog(ele1);
               for (var ele2 in ele1) {
                 // consolelog(ele2);
                 // consolelog(LatLng(ele2[1], ele2[0]));
@@ -185,12 +208,21 @@ class LandProvider extends ChangeNotifier with BaseController {
             //       double.parse(data.latitude!), double.parse(data.longitude!)));
             // });
             // logger(latlngTempList.toString());
-            latlngList.value.add({
-              "polygonData": latlngTempList,
-              "parcelId": e.parcelId,
-              "centerMarker": LatLngBounds.fromPoints(latlngTempList).center,
-              "landId": e.id,
-            });
+            latlngList.value.add(LatLngModel(
+              landId: e.id,
+              centerMarker: latlngTempList.isNotEmpty
+                  ? LatLngBounds.fromPoints(latlngTempList).center
+                  : null,
+              parcelId: e.parcelId,
+              polygonData: latlngTempList,
+              address: e.address,
+              area: e.area,
+              landPrice: e.landPrice,
+              wardNo: e.wardNo,
+              email: e.ownerUserId?.email,
+              name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
+              ownerUserId: e.ownerUserId?.id,
+            ));
             // logger(latlngList.value.toString(), loggerType: LoggerType.success);
             latlngTempList = [];
           }
@@ -214,6 +246,25 @@ class LandProvider extends ChangeNotifier with BaseController {
     }
   }
 
+  // compute
+  static Future<LandResponseModel> fetchData(dynamic response) async {
+    var decodedJsonData = landResponseModelFromJson(response);
+    return decodedJsonData;
+  }
+
+  // isolate
+  // static void fetchData(SendPort mainSendPort) async {
+  //   ReceivePort childReceivePort = ReceivePort();
+  //   mainSendPort.send(childReceivePort.sendPort);
+
+  //   await for (var message in childReceivePort) {
+  //     dynamic response = message[0];
+  //     SendPort replyPort = message[1];
+  //     var decodedJsonData = landResponseModelFromJson(response);
+  //     replyPort.send(decodedJsonData);
+  //   }
+  // }
+
   clearPaginatedAllSearchLandValue() {
     paginatedAllSearchLandResult?.clear();
     paginatedAllSearchLandResultCount = 0;
@@ -224,6 +275,7 @@ class LandProvider extends ChangeNotifier with BaseController {
   getAllSearchLands({
     required BuildContext context,
     LandRequestModel? landRequestModel,
+    bool? isFromMap = false,
   }) async {
     try {
       isLoading = true;
@@ -250,6 +302,41 @@ class LandProvider extends ChangeNotifier with BaseController {
           decodedJson.data?.landData?.totalPages ?? 0;
       paginatedAllSearchLandResult
           ?.addAll(decodedJson.data?.landData?.results ?? []);
+
+      if (isFromMap ?? false) {
+        var latlngTempList = <LatLng>[];
+        latlngList.value.clear();
+        if (paginatedAllSearchLandResult?.isNotEmpty ?? false) {
+          for (LandResult e in paginatedAllSearchLandResult ?? []) {
+            e.geoJson?.geometry?.coordinates?.forEach((ele1) {
+              // consolelog(ele1);
+              for (var ele2 in ele1) {
+                // consolelog(ele2);
+                // consolelog(LatLng(ele2[1], ele2[0]));
+                latlngTempList.add(LatLng(ele2[1], ele2[0]));
+              }
+            });
+            latlngList.value.add(LatLngModel(
+              landId: e.id,
+              centerMarker: latlngTempList.isNotEmpty
+                  ? LatLngBounds.fromPoints(latlngTempList).center
+                  : null,
+              parcelId: e.parcelId,
+              polygonData: latlngTempList,
+              address: e.address,
+              area: e.area,
+              landPrice: e.landPrice,
+              wardNo: e.wardNo,
+              email: e.ownerUserId?.email,
+              name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
+              ownerUserId: e.ownerUserId?.id,
+            ));
+            // logger(latlngList.value.toString(), loggerType: LoggerType.success);
+            latlngTempList = [];
+          }
+        }
+        logger(latlngList.value.toString(), loggerType: LoggerType.warning);
+      }
 
       isLoading = false;
       getAllSearchLandMessage = null;
@@ -880,11 +967,14 @@ class LandProvider extends ChangeNotifier with BaseController {
         }
       });
       consolelog(LatLngBounds.fromPoints(latlngTempList).center);
-      latlngList.value.add({
-        "polygonData": latlngTempList,
-        "parcelId": geoJSONData?.properties?.parcelno,
-        "centerMarker": LatLngBounds.fromPoints(latlngTempList).center,
-      });
+
+      latlngList.value.add(LatLngModel(
+        centerMarker: LatLngBounds.fromPoints(latlngTempList).center,
+        parcelId: geoJSONData?.properties?.parcelno,
+        polygonData: latlngTempList,
+        area: geoJSONData?.properties?.area,
+        wardNo: geoJSONData?.properties?.wardno,
+      ));
       logger(latlngList.value.toString(), loggerType: LoggerType.success);
       latlngTempList = [];
 

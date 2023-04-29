@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-UserResponseModel userResponseModelFromJson(String str) => UserResponseModel.fromJson(json.decode(str));
+UserResponseModel userResponseModelFromJson(String str) =>
+    UserResponseModel.fromJson(json.decode(str));
 
-String userResponseModelToJson(UserResponseModel data) => json.encode(data.toJson());
+String userResponseModelToJson(UserResponseModel data) =>
+    json.encode(data.toJson());
 
 class UserResponseModel {
   UserResponseModel({
@@ -11,8 +13,10 @@ class UserResponseModel {
 
   UserModelData? data;
 
-  factory UserResponseModel.fromJson(Map<String, dynamic> json) => UserResponseModel(
-        data: json["data"] == null ? null : UserModelData.fromJson(json["data"]),
+  factory UserResponseModel.fromJson(Map<String, dynamic> json) =>
+      UserResponseModel(
+        data:
+            json["data"] == null ? null : UserModelData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -28,7 +32,9 @@ class UserModelData {
   UserData? userData;
 
   factory UserModelData.fromJson(Map<String, dynamic> json) => UserModelData(
-        userData: json["userData"] == null ? null : UserData.fromJson(json["userData"]),
+        userData: json["userData"] == null
+            ? null
+            : UserData.fromJson(json["userData"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -45,6 +51,7 @@ class UserData {
     this.address,
     this.phoneNumber,
     this.isVerified,
+    this.citizenshipId,
     this.ownedLand,
     this.name,
     this.createdAt,
@@ -59,6 +66,7 @@ class UserData {
   String? email;
   String? firstName;
   String? lastName;
+  int? citizenshipId;
   String? address;
   String? phoneNumber;
   String? isVerified;
@@ -78,15 +86,28 @@ class UserData {
         lastName: json["lastName"],
         address: json["address"],
         phoneNumber: json["phoneNumber"],
+        citizenshipId: json["citizenshipId"],
         isVerified: json["isVerified"],
-        ownedLand: json["ownedLand"] == null ? [] : List<dynamic>.from(json["ownedLand"]!.map((x) => x)),
+        ownedLand: json["ownedLand"] == null
+            ? []
+            : List<dynamic>.from(json["ownedLand"]!.map((x) => x)),
         name: json["name"],
-        createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"] == null
+            ? null
+            : DateTime.parse(json["createdAt"]),
+        updatedAt: json["updatedAt"] == null
+            ? null
+            : DateTime.parse(json["updatedAt"]),
         v: json["__v"],
-        frontCitizenshipFile: json["frontCitizenshipFile"] == null ? null : FrontCitizenshipFile.fromJson(json["frontCitizenshipFile"]),
-        imageFile: json["imageFile"] == null ? null : ImageFile.fromJson(json["imageFile"]),
-        backCitizenshipFile: json["backCitizenshipFile"] == null ? null : BackCitizenshipFile.fromJson(json["backCitizenshipFile"]),
+        frontCitizenshipFile: json["frontCitizenshipFile"] == null
+            ? null
+            : FrontCitizenshipFile.fromJson(json["frontCitizenshipFile"]),
+        imageFile: json["imageFile"] == null
+            ? null
+            : ImageFile.fromJson(json["imageFile"]),
+        backCitizenshipFile: json["backCitizenshipFile"] == null
+            ? null
+            : BackCitizenshipFile.fromJson(json["backCitizenshipFile"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -97,7 +118,9 @@ class UserData {
         "address": address,
         "phoneNumber": phoneNumber,
         "isVerified": isVerified,
-        "ownedLand": ownedLand == null ? [] : List<dynamic>.from(ownedLand!.map((x) => x)),
+        "ownedLand": ownedLand == null
+            ? []
+            : List<dynamic>.from(ownedLand!.map((x) => x)),
         "name": name,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
@@ -117,7 +140,8 @@ class BackCitizenshipFile {
   String? backCitizenshipImage;
   String? backCitizenshipPublicId;
 
-  factory BackCitizenshipFile.fromJson(Map<String, dynamic> json) => BackCitizenshipFile(
+  factory BackCitizenshipFile.fromJson(Map<String, dynamic> json) =>
+      BackCitizenshipFile(
         backCitizenshipImage: json["backCitizenshipImage"],
         backCitizenshipPublicId: json["backCitizenshipPublicId"],
       );
@@ -137,7 +161,8 @@ class FrontCitizenshipFile {
   String? frontCitizenshipImage;
   String? frontCitizenshipPublicId;
 
-  factory FrontCitizenshipFile.fromJson(Map<String, dynamic> json) => FrontCitizenshipFile(
+  factory FrontCitizenshipFile.fromJson(Map<String, dynamic> json) =>
+      FrontCitizenshipFile(
         frontCitizenshipImage: json["frontCitizenshipImage"],
         frontCitizenshipPublicId: json["frontCitizenshipPublicId"],
       );

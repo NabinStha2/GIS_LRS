@@ -22,7 +22,7 @@ const UserSchema = new Schema(
       trim: true,
     },
     citizenshipId: {
-      type: String,
+      type: Number,
       trim: true,
       index: true,
     },

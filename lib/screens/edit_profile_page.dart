@@ -11,12 +11,14 @@ import 'package:provider/provider.dart';
 
 import '../core/config/regex_config.dart';
 import '../core/app/dimensions.dart';
+import '../model/user/user_response_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/custom_text_form_field.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  final UserData? userData;
+  const EditProfilePage({super.key, this.userData});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -26,6 +28,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
   XFile? pickedImage;
   XFile? pickedFrontImage;
   XFile? pickedBackImage;
+  String? imageFile;
+  String? frontFile;
+  String? backFile;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<UserProvider>(context, listen: false)
+          .editFirstNameController
+          .text = widget.userData?.firstName ?? "";
+      Provider.of<UserProvider>(context, listen: false)
+          .editLastNameController
+          .text = widget.userData?.lastName ?? "";
+      Provider.of<UserProvider>(context, listen: false)
+          .editAddressController
+          .text = widget.userData?.address ?? "";
+      Provider.of<UserProvider>(context, listen: false)
+          .editCitizenshipNoController
+          .text = widget.userData?.citizenshipId.toString() ?? "";
+      Provider.of<UserProvider>(context, listen: false)
+          .editPhoneNumberController
+          .text = widget.userData?.phoneNumber ?? "";
+      setState(() {
+        imageFile = widget.userData?.imageFile?.imageUrl ?? "";
+        frontFile =
+            widget.userData?.frontCitizenshipFile?.frontCitizenshipImage ?? "";
+        backFile =
+            widget.userData?.backCitizenshipFile?.backCitizenshipImage ?? "";
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +138,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 CustomText.ourText("CitizenShip No"),
                 vSizedBox1,
                 CustomTextFormField(
-                  fullNameString: true,
+                  onlyNumber: true,
                   hintText: "CitizenShip No",
                   controller: _.editCitizenshipNoController,
                   validator: (val) =>
@@ -142,7 +176,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               height: 200,
                               fit: BoxFit.cover,
                             )
-                          : Container(),
+                          : imageFile != null
+                              ? Image.network(imageFile ?? "")
+                              : Container(),
                     ),
                   ],
                 ),
@@ -177,7 +213,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               height: 200,
                               fit: BoxFit.cover,
                             )
-                          : Container(),
+                          : frontFile != null
+                              ? Image.network(frontFile ?? "")
+                              : Container(),
                     ),
                   ],
                 ),
@@ -211,7 +249,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               height: 200,
                               fit: BoxFit.cover,
                             )
-                          : Container(),
+                          : backFile != null
+                              ? Image.network(
+                                  backFile ?? "",
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    return Center(child: child);
+                                  },
+                                )
+                              : Container(),
                     ),
                   ],
                 ),

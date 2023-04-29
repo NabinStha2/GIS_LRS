@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../core/app/dimensions.dart';
 import '../model/land/land_request_model.dart';
+import '../providers/user_provider.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/land_card_widget.dart';
@@ -48,15 +49,17 @@ class _LandScreenState extends State<LandScreen> {
       ),
       body: Padding(
         padding: screenLeftRightPadding,
-        child: Consumer<LandProvider>(
-          builder: (context, _, child) => Column(
+        child: Consumer2<LandProvider, UserProvider>(
+          builder: (context, _, __, child) => Column(
             children: [
-              CustomButton.elevatedButton(
-                "Add Land",
-                () {
-                  navigate(context, const AddLandScreen());
-                },
-              ),
+              __.userData.isVerified == "approved"
+                  ? CustomButton.elevatedButton(
+                      "Add Land",
+                      () {
+                        navigate(context, const AddLandScreen());
+                      },
+                    )
+                  : Container(),
               Expanded(
                 child: _.isLoading
                     ? const CustomCircularProgressIndicatorWidget(

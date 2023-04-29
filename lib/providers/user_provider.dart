@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gis_flutter_frontend/core/routing/route_navigation.dart';
+import 'package:gis_flutter_frontend/utils/custom_toasts.dart';
 
+import '../core/app/enums.dart';
 import '../core/config/api_config.dart';
 import '../core/development/console.dart';
 import '../model/user/user_response_model.dart';
+import '../services/api_exceptions.dart';
 import '../services/base_client.dart';
 import '../services/base_client_controller.dart';
 import '../utils/app_shared_preferences.dart';
@@ -75,7 +78,7 @@ class UserProvider extends ChangeNotifier with BaseController {
               "lastName": editLastNameController.text,
               "phoneNumber": editPhoneNumberController.text,
               "address": editAddressController.text,
-              "citizenShipNo": editCitizenshipNoController.text,
+              "citizenshipId": editCitizenshipNoController.text,
             },
             hasTokenHeader: true,
           )
@@ -86,9 +89,16 @@ class UserProvider extends ChangeNotifier with BaseController {
       isLoading = false;
       hideLoading(context);
       back(context);
+      successToast(msg: "User updated successfully");
+      notifyListeners();
+    } on AppException catch (err) {
+      isLoading = false;
+      hideLoading(context);
+      logger(err.toString(), loggerType: LoggerType.error);
       notifyListeners();
     } catch (e) {
       isLoading = false;
+      hideLoading(context);
       notifyListeners();
       consolelog(e.toString());
     }
