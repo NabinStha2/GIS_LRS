@@ -1,5 +1,6 @@
 const GeoJSON = require("../models/geoJSON.model");
 const Land = require("../models/land.model");
+const LandSale = require("../models/land.sale.model");
 const User = require("../models/user.model");
 const { getSearchPaginatedData } = require("../utils/pagination");
 const { SetErrorResponse } = require("../utils/responseSetter");
@@ -264,6 +265,8 @@ exports.deleteLand = async (req, res) => {
       );
       console.log(updatedUser);
     }
+    const landSale = await LandSale.findOneAndDelete({ landId: landId }).lean();
+
     return res.success({ landData: land }, "Land Deleted ");
   } catch (err) {
     console.log(`Err from delete lands : ${err}`);

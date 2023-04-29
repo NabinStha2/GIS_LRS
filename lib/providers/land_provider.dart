@@ -112,8 +112,8 @@ class LandProvider extends ChangeNotifier with BaseController {
       // landData = decodedJson.data?.landData ?? LandData();
       isLoading = false;
       hideLoading(context);
-      back(context);
       successToast(msg: "Land added successfully.");
+      back(context);
       getOwnedLands(
         context: context,
         landRequestModel: LandRequestModel(page: 1),

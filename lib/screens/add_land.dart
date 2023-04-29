@@ -62,6 +62,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       CustomTextFormField(
                         hintText: "City",
                         controller: _.cityController,
+                        fullNameString: true,
                         textInputType: TextInputType.text,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
@@ -87,6 +88,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       CustomTextFormField(
                         hintText: "Address",
                         controller: _.addressController,
+                        fullNameString: true,
                         textInputType: TextInputType.text,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
@@ -114,6 +116,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       CustomTextFormField(
                         hintText: "Province",
                         controller: _.provinceController,
+                        fullNameString: true,
                         textInputType: TextInputType.text,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
@@ -126,6 +129,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       CustomTextFormField(
                         hintText: "District",
                         controller: _.districtController,
+                        fullNameString: true,
                         textInputType: TextInputType.text,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
@@ -153,7 +157,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       CustomTextFormField(
                         hintText: "Land Price",
                         controller: _.landPriceController,
-                        onlyNumber: true,
+                        doubleNumber: true,
                         textInputType: TextInputType.number,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
