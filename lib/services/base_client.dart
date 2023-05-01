@@ -52,8 +52,14 @@ class BaseClient {
 
   //GET
   Future<dynamic> get(String baseUrl, String api,
-      {bool hasTokenHeader = true}) async {
-    var uri = Uri.parse(baseUrl + api);
+      {bool hasTokenHeader = true,
+      bool isGeocodingSearchingApi = false}) async {
+    Uri uri;
+    if (isGeocodingSearchingApi) {
+      uri = Uri.parse(api);
+    } else {
+      uri = Uri.parse(baseUrl + api);
+    }
     try {
       var response = await http
           .get(

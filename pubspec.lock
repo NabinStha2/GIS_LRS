@@ -113,6 +113,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.1+1"
+  executor_lib:
+    dependency: transitive
+    description:
+      name: executor_lib
+      sha256: "49696532000c21a6201f768d34cd69e93afe8add4e621d52b5c1df6d3b907159"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -137,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -208,6 +224,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.2.1"
+  geocode:
+    dependency: "direct main"
+    description:
+      name: geocode
+      sha256: "83405efd8c2c210d29d192af8f609b1ac13ad38ac1056324b3829e46ebbe48ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   geolocator:
     dependency: "direct main"
     description:
@@ -344,6 +368,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.5"
+  lat_lon_grid_plugin:
+    dependency: "direct main"
+    description:
+      name: lat_lon_grid_plugin
+      sha256: "11a01eeb6040759611b0f1b3ece82cf26b16e9e24449416f244a418aaa84256d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.5"
   latlong2:
     dependency: "direct main"
     description:
@@ -568,6 +600,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "01dd9bd0fa02548bf2ceee13545d4a0ec6046459d847b6b061d8a27237108a08"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   provider:
     dependency: "direct main"
     description:
@@ -773,6 +813,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  vector_map_tiles:
+    dependency: "direct main"
+    description:
+      name: vector_map_tiles
+      sha256: ab89f321b6a59b66861bcff1cf423665a61a04fba15ad3ba233ac330045388e1
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.5"
   vector_math:
     dependency: transitive
     description:
@@ -781,6 +829,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  vector_tile:
+    dependency: transitive
+    description:
+      name: vector_tile
+      sha256: "2ac77f6bbd7ddd97efe059207d67bb7eaf807ab98ad58d99fe41a22c230f44e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  vector_tile_renderer:
+    dependency: transitive
+    description:
+      name: vector_tile_renderer
+      sha256: "53219efabfcc83053b860c81fba22b9c974028a9ca3be214e5fb00d0e2b0487b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
   win32:
     dependency: transitive
     description:

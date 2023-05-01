@@ -11,6 +11,7 @@ import '../core/config/api_config.dart';
 import '../core/development/console.dart';
 import '../core/routing/route_navigation.dart';
 import '../model/land/geoJSON_response_model.dart';
+import '../model/land/geocoding_searching_api_model.dart';
 import '../model/land/individual_land_response_model.dart';
 import '../model/land/individual_land_sale_response_model.dart';
 import '../model/land/land_sale_response_model.dart';
@@ -40,6 +41,7 @@ class LandProvider extends ChangeNotifier with BaseController {
   TextEditingController surveyNoController = TextEditingController();
 
   TextEditingController searchLandController = TextEditingController();
+  TextEditingController searchLandAddressController = TextEditingController();
 
   TextEditingController filterCityLandController = TextEditingController();
   TextEditingController filterDistrictLandController = TextEditingController();
@@ -77,6 +79,11 @@ class LandProvider extends ChangeNotifier with BaseController {
 
   GeoJson? geoJSONData = GeoJson();
   String? getGeoJSONDataMessage;
+
+  List<GeocodingSearchingApiModel>? geocodingSearchingApiData =
+      <GeocodingSearchingApiModel>[];
+  String? geocodingSearchingApiMessage;
+  bool isGeocodingSearchingApiLoading = false;
 
   addLand({
     required BuildContext context,
@@ -991,6 +998,41 @@ class LandProvider extends ChangeNotifier with BaseController {
     } catch (e) {
       isLoading = false;
       getGeoJSONDataMessage = e.toString();
+      notifyListeners();
+      consolelog(e.toString());
+    }
+  }
+
+  geocodingSearchingApi({
+    required BuildContext context,
+    required String searchLocation,
+  }) async {
+    try {
+      isGeocodingSearchingApiLoading = true;
+
+      var response = await BaseClient()
+          .get(
+            ApiConfig.baseUrl,
+            "https://nominatim.openstreetmap.org/search?q=$searchLocation&limit=20&format=json",
+            isGeocodingSearchingApi: true,
+          )
+          .catchError(handleError);
+      if (response == null) return false;
+      var decodedJson = geocodingSearchingApiModelFromJson(response);
+
+      geocodingSearchingApiData = decodedJson;
+
+      isGeocodingSearchingApiLoading = false;
+      geocodingSearchingApiMessage = null;
+      notifyListeners();
+    } on AppException catch (err) {
+      isGeocodingSearchingApiLoading = false;
+      geocodingSearchingApiMessage = err.message.toString();
+      logger(err.toString(), loggerType: LoggerType.error);
+      notifyListeners();
+    } catch (e) {
+      isGeocodingSearchingApiLoading = false;
+      geocodingSearchingApiMessage = e.toString();
       notifyListeners();
       consolelog(e.toString());
     }

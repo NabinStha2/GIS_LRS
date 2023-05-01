@@ -97,6 +97,8 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   double _radiusValue = 0.0;
   LatLng? selectedMarker;
+  bool geocodingAddressSearching = false;
+  bool geocodingAddressSearchingSwitch = false;
 
   @override
   void initState() {
@@ -199,6 +201,11 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                             LatLng location) {
                           // debugPrint("${pointerHoverEvent.toString()} :: $location");
                         },
+                        // interactiveFlags: InteractiveFlag.drag |
+                        //     InteractiveFlag.flingAnimation |
+                        //     InteractiveFlag.pinchMove |
+                        //     InteractiveFlag.pinchZoom |
+                        //     InteractiveFlag.doubleTapZoom,
                         onTap: (tapPosition, LatLng location) {
                           consolelog(
                               "${tapPosition.global.distance.toString()} :: $location");
@@ -256,18 +263,9 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                               : null;
                         }),
                     nonRotatedChildren: [
-                      // AttributionWidget.defaultWidget(
-                      //   source: 'OpenStreetMap contributors',
-                      //   onSourceTapped: () {},
-                      // ),
-                      const FlutterMapZoomButtons(
-                        minZoom: 5,
-                        maxZoom: 22,
-                        mini: true,
-                        padding: 10,
-                        alignment: Alignment(-1, -0.85),
-                        zoomInColorIcon: Colors.white,
-                        zoomOutColorIcon: Colors.white,
+                      AttributionWidget.defaultWidget(
+                        source: 'OpenStreetMap contributors',
+                        onSourceTapped: () {},
                       ),
                       ScaleLayerWidget(
                           options: ScaleLayerPluginOption(
@@ -277,6 +275,15 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                             const TextStyle(color: Colors.blue, fontSize: 12),
                         padding: const EdgeInsets.all(10),
                       )),
+                      const FlutterMapZoomButtons(
+                        minZoom: 5,
+                        maxZoom: 22,
+                        mini: true,
+                        padding: 10,
+                        alignment: Alignment(-1, -0.85),
+                        zoomInColorIcon: Colors.white,
+                        zoomOutColorIcon: Colors.white,
+                      ),
                     ],
                     children: [
                       IndexedStack(
@@ -285,13 +292,13 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                           TileLayer(
                             urlTemplate:
                                 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                            maxZoom: 20,
+                            maxZoom: 18,
                             subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                           ),
                           TileLayer(
                             urlTemplate:
                                 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-                            maxZoom: 20,
+                            maxZoom: 18,
                             subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                           ),
                           // TileLayer(
@@ -303,7 +310,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                           TileLayer(
                             urlTemplate:
                                 'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-                            maxZoom: 20,
+                            maxZoom: 18,
                             subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                           ),
 
@@ -434,6 +441,24 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
+                      // LatLonGridLayer(
+                      //   options: LatLonGridLayerOptions(
+                      //     lineWidth: 0.5,
+                      //     lineColor: const Color.fromARGB(100, 0, 0, 0),
+                      //     labelStyle: const TextStyle(
+                      //       color: Colors.white,
+                      //       backgroundColor: Colors.black,
+                      //       fontSize: 12.0,
+                      //     ),
+                      //     showCardinalDirections: true,
+                      //     showCardinalDirectionsAsPrefix: true,
+                      //     showLabels: true,
+                      //     rotateLonLabels: true,
+                      //     placeLabelsOnLines: true,
+                      //     offsetLonLabelsBottom: 20.0,
+                      //     offsetLatLabelsLeft: 20.0,
+                      //   ),
+                      // ),
                     ],
                   ),
                   Positioned(
@@ -445,51 +470,69 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                         children: [
                           Expanded(
                             child: CustomTextFormField(
-                              hintText: "Search land by coordinates...",
+                              hintText: geocodingAddressSearchingSwitch
+                                  ? "Search location by address"
+                                  : "Search location by coordinates...",
                               filled: true,
                               borderRadius: 8,
-                              controller: __.searchLandController,
+                              controller: geocodingAddressSearchingSwitch
+                                  ? __.searchLandAddressController
+                                  : __.searchLandController,
                               suffix: const Icon(Icons.search),
                               isFromSearch: true,
                               textInputType: TextInputType.text,
                               onFieldSubmitted: (val) {
                                 consolelog("map search :: $val");
                                 if (val != "") {
-                                  // LatLngModel latlngSearchData = latlngList.value
-                                  //     .firstWhere(
-                                  //         (element) =>
-                                  //             element.parcelId ==
-                                  //             __.searchLandController.text,
-                                  //         orElse: () => LatLngModel());
+                                  if (!geocodingAddressSearchingSwitch) {
+//   LatLngModel latlngSearchData = latlngList.value
+                                    //       .firstWhere(
+                                    //           (element) =>
+                                    //               element.parcelId ==
+                                    //               __.searchLandController.text,
+                                    //           orElse: () => LatLngModel());
 
-                                  // if (latlngSearchData.parcelId == val) {
-                                  //   mapController.move(
-                                  //       latlngSearchData.centerMarker ?? LatLng(0, 0),
-                                  //       20);
-                                  // } else {
-                                  //   errorToast(msg: "No parcel Id found");
-                                  // }
+                                    //   if (latlngSearchData.parcelId == val) {
+                                    //     mapController.move(
+                                    //         latlngSearchData.centerMarker ?? LatLng(0, 0),
+                                    //         20);
+                                    //   } else {
+                                    //     errorToast(msg: "No parcel Id found");
+                                    //  }
 
-                                  __.getAllSearchLands(
-                                    context: context,
-                                    landRequestModel: LandRequestModel(
-                                      page: 1,
-                                      latlng: val,
-                                      radius: _radiusValue,
-                                    ),
-                                    noLoading: true,
-                                    isFromMap: true,
-                                  );
-                                  setState(() {
-                                    selectedMarker = LatLng(
-                                        double.parse(val.split(",")[1]),
-                                        double.parse(val.split(",")[0]));
-                                  });
-                                  _animatedMapMove(
-                                      LatLng(double.parse(val.split(",")[1]),
-                                          double.parse(val.split(",")[0])),
-                                      17);
+                                    __.getAllSearchLands(
+                                      context: context,
+                                      landRequestModel: LandRequestModel(
+                                        page: 1,
+                                        latlng: val,
+                                        radius: _radiusValue,
+                                      ),
+                                      noLoading: true,
+                                      isFromMap: true,
+                                    );
+                                    setState(() {
+                                      selectedMarker = LatLng(
+                                          double.parse(val.split(",")[1]),
+                                          double.parse(val.split(",")[0]));
+                                    });
+                                    _animatedMapMove(
+                                        LatLng(double.parse(val.split(",")[1]),
+                                            double.parse(val.split(",")[0])),
+                                        17);
+                                  } else {
+                                    setState(() {
+                                      geocodingAddressSearching = true;
+                                    });
+
+                                    __.geocodingSearchingApi(
+                                      context: context,
+                                      searchLocation: val.toString().trim(),
+                                    );
+                                  }
                                 } else {
+                                  setState(() {
+                                    geocodingAddressSearching = false;
+                                  });
                                   __.getAllSearchLands(
                                     context: context,
                                     landRequestModel: LandRequestModel(
@@ -523,15 +566,47 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                         height: 200,
                                         color: Colors.white,
                                         child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            const Text(
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                CustomText.ourText(
+                                                  "Search by Address",
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                Switch(
+                                                  // activeColor: Colors.amber,
+                                                  activeTrackColor: Colors.cyan,
+                                                  inactiveThumbColor:
+                                                      Colors.blueGrey.shade600,
+                                                  inactiveTrackColor:
+                                                      Colors.grey.shade400,
+                                                  splashRadius: 50.0,
+                                                  value:
+                                                      geocodingAddressSearchingSwitch,
+                                                  onChanged: (value) {
+                                                    consolelog(
+                                                        "Switch value :: $value");
+                                                    innerSetState(() =>
+                                                        geocodingAddressSearchingSwitch =
+                                                            value);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            vSizedBox1,
+                                            CustomText.ourText(
                                               "Set radius to search within",
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                             vSizedBox0,
                                             Slider(
@@ -553,33 +628,25 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                             CustomButton.elevatedButton(
                                               "Save",
                                               () {
-                                                __.getAllSearchLands(
-                                                  context: context,
-                                                  landRequestModel:
-                                                      LandRequestModel(
-                                                    page: 1,
-                                                    latlng: __
-                                                        .searchLandController
-                                                        .text,
-                                                    radius: _radiusValue,
-                                                  ),
-                                                  noLoading: true,
-                                                  isFromMap: true,
-                                                );
-                                                back(context);
-                                                setState(() {
-                                                  selectedMarker = LatLng(
-                                                      double.parse(__
+                                                if (!geocodingAddressSearchingSwitch &&
+                                                    __.searchLandController.text
+                                                        .isNotEmpty) {
+                                                  __.getAllSearchLands(
+                                                    context: context,
+                                                    landRequestModel:
+                                                        LandRequestModel(
+                                                      page: 1,
+                                                      latlng: __
                                                           .searchLandController
-                                                          .text
-                                                          .split(",")[1]),
-                                                      double.parse(__
-                                                          .searchLandController
-                                                          .text
-                                                          .split(",")[0]));
-                                                });
-                                                _animatedMapMove(
-                                                    LatLng(
+                                                          .text,
+                                                      radius: _radiusValue,
+                                                    ),
+                                                    noLoading: true,
+                                                    isFromMap: true,
+                                                  );
+                                                  back(context);
+                                                  setState(() {
+                                                    selectedMarker = LatLng(
                                                         double.parse(__
                                                             .searchLandController
                                                             .text
@@ -587,8 +654,22 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                                         double.parse(__
                                                             .searchLandController
                                                             .text
-                                                            .split(",")[0])),
-                                                    17);
+                                                            .split(",")[0]));
+                                                  });
+                                                  _animatedMapMove(
+                                                      LatLng(
+                                                          double.parse(__
+                                                              .searchLandController
+                                                              .text
+                                                              .split(",")[1]),
+                                                          double.parse(__
+                                                              .searchLandController
+                                                              .text
+                                                              .split(",")[0])),
+                                                      17);
+                                                } else {
+                                                  back(context);
+                                                }
                                               },
                                             ),
                                           ],
@@ -805,6 +886,107 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
+                  geocodingAddressSearching
+                      ? Positioned(
+                          top: 49,
+                          child: Container(
+                            padding: screenLeftRightPadding,
+                            color: Colors.white,
+                            constraints: BoxConstraints(
+                              maxWidth: appWidth(context),
+                              minHeight: 470,
+                              maxHeight: 470,
+                            ),
+                            child: __.isGeocodingSearchingApiLoading
+                                ? const Center(
+                                    child:
+                                        CustomCircularProgressIndicatorWidget(),
+                                  )
+                                : __.geocodingSearchingApiData?.isEmpty ?? false
+                                    ? Center(
+                                        child: CustomText.ourText(
+                                          "No search results found.",
+                                          fontSize: 16.0,
+                                        ),
+                                      )
+                                    : ListView.separated(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              __.getAllSearchLands(
+                                                context: context,
+                                                landRequestModel:
+                                                    LandRequestModel(
+                                                  page: 1,
+                                                  latlng:
+                                                      "${__.geocodingSearchingApiData?[index].lon},${__.geocodingSearchingApiData?[index].lat}",
+                                                  radius: _radiusValue,
+                                                ),
+                                                noLoading: true,
+                                                isFromMap: true,
+                                              );
+                                              setState(() {
+                                                geocodingAddressSearching =
+                                                    false;
+                                                selectedMarker = LatLng(
+                                                    double.parse(__
+                                                            .geocodingSearchingApiData?[
+                                                                index]
+                                                            .lat ??
+                                                        ""),
+                                                    double.parse(__
+                                                            .geocodingSearchingApiData?[
+                                                                index]
+                                                            .lon ??
+                                                        ""));
+                                              });
+
+                                              _animatedMapMove(
+                                                  LatLng(
+                                                      double.parse(__
+                                                              .geocodingSearchingApiData?[
+                                                                  index]
+                                                              .lat ??
+                                                          ""),
+                                                      double.parse(__
+                                                              .geocodingSearchingApiData?[
+                                                                  index]
+                                                              .lon ??
+                                                          "")),
+                                                  17);
+                                            },
+                                            child: Container(
+                                              padding: screenPadding,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: AppColors.kBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              child: CustomText.ourText(
+                                                __
+                                                    .geocodingSearchingApiData?[
+                                                        index]
+                                                    .displayName,
+                                                fontSize: 14.0,
+                                                maxLines: 4,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder: (context, index) =>
+                                            vSizedBox1,
+                                        itemCount: __.geocodingSearchingApiData
+                                                ?.length ??
+                                            0,
+                                      ),
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
       ),

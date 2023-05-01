@@ -50,6 +50,9 @@ dependencies:
   image_picker_for_web: ^2.1.11
   image_picker: ^0.8.6+3
   intl: ^0.18.0
+  lat_lon_grid_plugin: ^0.2.5
+  vector_map_tiles: ^3.3.5
+  geocode: ^1.0.2
 
 dev_dependencies:
   flutter_test:
