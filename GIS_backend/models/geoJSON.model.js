@@ -13,5 +13,7 @@ const geoJSONSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+geoJSONSchema.index({ geometry: "2dsphere" });
+
 const GeoJSON = mongoose.model("GeoJSON", geoJSONSchema);
 module.exports = GeoJSON;

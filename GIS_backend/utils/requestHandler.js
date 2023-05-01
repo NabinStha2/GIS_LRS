@@ -43,7 +43,7 @@ exports.failCase = ({ req, res }) => {
 
 exports.SuccessCase = ({ req, res }) => {
   return (data, message, otherData) => {
-    console.log({ data, message, otherData });
+    // console.log({ data, message, otherData });
     return res.send({ data, message, otherData });
   };
 };

@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:gis_flutter_frontend/core/development/console.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:gis_flutter_frontend/core/routing/route_navigation.dart';
@@ -40,21 +40,38 @@ class LandCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var latlngTempList = <LatLng>[];
     if (isFromLandSale == true) {
+      // geoJSONLandSaleData?.geometry?.coordinates?.forEach((element) {
+      //   long = element[0][0];
+      //   lat = element[0][1];
+      // });
       geoJSONLandSaleData?.geometry?.coordinates?.forEach((element) {
-        long = element[0][0];
-        lat = element[0][1];
+        // long = element[0][0];
+        // lat = element[0][1];
+        for (var ele2 in element) {
+          latlngTempList.add(LatLng(ele2[1], ele2[0]));
+        }
       });
     } else {
-      landResult?.geoJson?.geometry?.coordinates?.forEach((val1) {
-        consolelog(val1[0]);
-        long = val1[0][0];
-        lat = val1[0][1];
-        // for (var element in val1) {
-        //   consolelog(element);
-        // }
+      // landResult?.geoJson?.geometry?.coordinates?.forEach((val1) {
+      //   consolelog(val1[0]);
+      //   long = val1[0][0];
+      //   lat = val1[0][1];
+      //   // for (var element in val1) {
+      //   //   consolelog(element);
+      //   // }
+      // });
+      landResult?.geoJson?.geometry?.coordinates?.forEach((element) {
+        // long = element[0][0];
+        // lat = element[0][1];
+        for (var ele2 in element) {
+          latlngTempList.add(LatLng(ele2[1], ele2[0]));
+        }
       });
     }
+    lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+    long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16.0),

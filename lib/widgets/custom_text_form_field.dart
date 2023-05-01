@@ -35,6 +35,7 @@ class CustomTextFormField extends StatelessWidget {
   bool searchString;
   bool fullNameString;
   bool doubleNumber;
+  bool latlng;
   TextInputAction? textInputAction;
   double borderRadius;
   CustomTextFormField({
@@ -68,6 +69,7 @@ class CustomTextFormField extends StatelessWidget {
     this.searchString = false,
     this.fullNameString = false,
     this.doubleNumber = false,
+    this.latlng = false,
     this.textInputAction,
     this.borderRadius = 8,
   }) : super(key: key);

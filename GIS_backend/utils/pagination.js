@@ -154,7 +154,7 @@ const getPaginatedData = async function ({ model, reqQuery, select = "+_id" }) {
       currentPageNumber: page,
       results: modFunction
         ? (await Promise.all(resultsData.map(modFunction))).filter((data) => {
-            console.log(data);
+            // console.log(data);
             return data != null;
           })
         : resultsData,

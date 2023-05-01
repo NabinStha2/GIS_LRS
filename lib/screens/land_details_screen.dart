@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:gis_flutter_frontend/core/development/console.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -58,11 +60,21 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
       ),
       body: Consumer<LandProvider>(
         builder: (context, _, child) {
+          var latlngTempList = <LatLng>[];
           _.individualLandResult?.geoJson?.geometry?.coordinates
               ?.forEach((element) {
-            long = element[0][0];
-            lat = element[0][1];
+            // long = element[0][0];
+            // lat = element[0][1];
+
+            for (var ele2 in element) {
+              latlngTempList.add(LatLng(ele2[1], ele2[0]));
+            }
           });
+          lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+          long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+
+          // consolelog("$lat :: $long");
+
           return _.isLoading
               ? const CustomCircularProgressIndicatorWidget(
                   title: "Loading individual land...",

@@ -20,6 +20,12 @@ String? getQuery(
   if (search != null) {
     fullquery += "&search=$search";
   }
+  if (reqData?.latlng != null) {
+    fullquery += "&latlng=${reqData?.latlng}";
+  }
+  if (reqData?.radius != null) {
+    fullquery += "&radius=${reqData?.radius}";
+  }
   if (reqData?.city != "" && reqData?.city != null) {
     fullquery += "&city=${reqData?.city}";
   }

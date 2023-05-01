@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const GeoJSON = require("../models/geoJSON.model");
 const Land = require("../models/land.model");
 const LandSale = require("../models/land.sale.model");
@@ -121,6 +122,8 @@ exports.getAllLands = async (req, res) => {
       city,
       district,
       province,
+      latlng,
+      radius,
     } = req?.query;
     let query = {};
     if (search) {
@@ -136,31 +139,98 @@ exports.getAllLands = async (req, res) => {
       query.province = { $regex: province, $options: "i" };
     }
     query.isVerified = "approved";
-    console.log(query);
 
-    const lands = await getSearchPaginatedData({
-      model: Land,
-      reqQuery: {
-        sort,
-        page,
-        limit,
-        query,
-        populate: {
-          path: "ownerUserId geoJSON",
-          select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
+    if (latlng) {
+      GeoJSON.find({
+        geometry: {
+          $geoNear: {
+            $geometry: {
+              type: "Point",
+              coordinates: [
+                parseFloat(latlng.split(",")[0]),
+                parseFloat(latlng.split(",")[1]),
+              ],
+              // coordinates: [83.9799461371451, 28.2561422405137],
+            },
+            $minDistance: 1,
+            $maxDistance: parseInt(radius) ?? 1000,
+          },
         },
-        pagination: true,
-        modFunction: (document) => {
-          return document;
-        },
-      },
-      search: search,
-    });
+      }).exec(async function (err, geoData) {
+        if (err) throw new SetErrorResponse(err, 500);
 
-    if (!lands) {
-      throw new SetErrorResponse("Land not found", 404);
+        var d = geoData.map((e) => e._id);
+        console.log(d.length);
+
+        query.geoJSON = { $in: d };
+        // console.log(query);
+
+        const lands = await getSearchPaginatedData({
+          model: Land,
+          reqQuery: {
+            sort,
+            page,
+            limit,
+            query,
+            populate: {
+              path: "ownerUserId geoJSON",
+              select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
+            },
+            pagination: true,
+            modFunction: (document) => {
+              return document;
+            },
+          },
+          search: search,
+        });
+
+        if (!lands) {
+          throw new SetErrorResponse("Land not found", 404);
+        }
+
+        console.log({ data: lands });
+        return res.success({ landData: lands });
+
+        // Land.find({ isVerified: "approved", geoJSON: { $in: d } })
+        //   .populate({
+        //     path: "ownerUserId geoJSON",
+        //     select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
+        //   })
+        //   .exec(function (err, landData) {
+        //     if (err) throw new SetErrorResponse(err, 404);
+
+        //     console.log({ data: landData.length });
+        //     return res.success({ landData: landData });
+        //   });
+      });
+    } else {
+      console.log(query);
+      const lands = await getSearchPaginatedData({
+        model: Land,
+        reqQuery: {
+          sort,
+          page,
+          limit,
+          query,
+          populate: {
+            path: "ownerUserId geoJSON",
+            select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
+          },
+          pagination: true,
+          modFunction: (document) => {
+            return document;
+          },
+        },
+        search: search,
+      });
+
+      if (!lands) {
+        throw new SetErrorResponse("Land not found", 404);
+      }
+
+      console.log({ data: lands });
+      return res.success({ landData: lands });
     }
-    return res.success({ landData: lands });
   } catch (err) {
     console.log(`Err get all lands : ${err}`);
     return res.fail(err);

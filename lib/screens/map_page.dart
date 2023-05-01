@@ -1,9 +1,8 @@
 import 'dart:isolate';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:gis_flutter_frontend/utils/custom_toasts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +15,11 @@ import 'package:gis_flutter_frontend/providers/map_provider.dart';
 import 'package:gis_flutter_frontend/widgets/custom_circular_progress_indicator.dart';
 import 'package:gis_flutter_frontend/widgets/custom_text.dart';
 
+import '../core/app/medias.dart';
 import '../core/routing/route_navigation.dart';
 import '../model/land/land_request_model.dart';
 import '../providers/land_provider.dart';
+import '../utils/scale_layer_plugin_options.dart';
 import '../utils/zoom.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_form_field.dart';
@@ -93,7 +94,10 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
+class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
+  double _radiusValue = 0.0;
+  LatLng? selectedMarker;
+
   @override
   void initState() {
     consolelog("iam from init map");
@@ -110,6 +114,11 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
       //     isFromMap: true,
       //     latlngData: widget.isFromLand ?? false ? widget.latlngData : null);
 
+      Provider.of<LandProvider>(context, listen: false)
+          .searchLandController
+          .clear();
+      selectedMarker = null;
+
       Provider.of<LandProvider>(context, listen: false).getAllSearchLands(
         context: context,
         landRequestModel: LandRequestModel(
@@ -122,35 +131,43 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
     super.initState();
   }
 
-// // Enable pinchZoom and doubleTapZoomBy by default
-//   int flags = InteractiveFlag.pinchZoom | InteractiveFlag.doubleTapZoom;
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+    final latTween = Tween<double>(
+        begin: mapController.center.latitude, end: destLocation.latitude);
+    final lngTween = Tween<double>(
+        begin: mapController.center.longitude, end: destLocation.longitude);
+    final zoomTween = Tween<double>(begin: mapController.zoom, end: destZoom);
 
-//   MapEvent? _latestEvent;
+    // Create a animation controller that has a duration and a TickerProvider.
+    final controller = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    final Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
-//   void onMapEvent(MapEvent mapEvent) {
-//     if (mapEvent is! MapEventMove && mapEvent is! MapEventRotate) {
-//       // do not flood console with move and rotate events
-//       debugPrint(mapEvent.toString());
-//     }
+    controller.addListener(() {
+      mapController.move(
+          LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+          zoomTween.evaluate(animation));
+    });
 
-//     setState(() {
-//       _latestEvent = mapEvent;
-//     });
-//   }
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
 
-//   void updateFlags(int flag) {
-//     if (InteractiveFlag.hasFlag(flags, flag)) {
-//       // remove flag from flags
-//       flags &= ~flag;
-//     } else {
-//       // add flag to flags
-//       flags |= flag;
-//     }
-//   }
+    controller.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
-    consolelog("${widget.latlngData} ::: ${widget.isFromLand}");
+    consolelog("selectedMarker :: $selectedMarker");
     return Scaffold(
       appBar: AppBar(
         title: CustomText.ourText(
@@ -173,6 +190,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                 title: "Loading Map data...",
               )
             : Stack(
+                clipBehavior: Clip.none,
                 children: [
                   FlutterMap(
                     mapController: mapController,
@@ -182,18 +200,40 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                           // debugPrint("${pointerHoverEvent.toString()} :: $location");
                         },
                         onTap: (tapPosition, LatLng location) {
-                          debugPrint(
+                          consolelog(
                               "${tapPosition.global.distance.toString()} :: $location");
+
                           ScaffoldMessenger.of(context)
                             ..clearSnackBars()
                             ..showSnackBar(
                               SnackBar(
-                                content: CustomText.ourText(
-                                  location.toString(),
-                                  color: Colors.white,
+                                content: GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(
+                                            text:
+                                                "${location.longitude},${location.latitude}"))
+                                        .then((_) {
+                                      ScaffoldMessenger.of(context)
+                                        ..clearSnackBars()
+                                        ..showSnackBar(const SnackBar(
+                                          content: Text(
+                                              "Location copied to clipboard"),
+                                          backgroundColor: Colors.green,
+                                        ));
+                                    });
+                                  },
+                                  child: CustomText.ourText(
+                                    location.toString(),
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             );
+
+                          setState(() {
+                            selectedMarker =
+                                LatLng(location.latitude, location.longitude);
+                          });
                         },
                         center: LatLng(currentPosition?.latitude ?? 0.0,
                             currentPosition?.longitude ?? 0.0),
@@ -204,16 +244,22 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         keepAlive: true,
                         minZoom: 0.0,
                         onMapReady: () {
-                          consolelog("data");
                           widget.isFromLand == true && widget.latlngData != null
-                              ? mapController.move(widget.latlngData!, 18)
+                              ? [
+                                  _animatedMapMove(widget.latlngData!, 20),
+                                  setState(() {
+                                    selectedMarker = LatLng(
+                                        widget.latlngData!.latitude,
+                                        widget.latlngData!.longitude);
+                                  })
+                                ]
                               : null;
                         }),
                     nonRotatedChildren: [
-                      AttributionWidget.defaultWidget(
-                        source: 'OpenStreetMap contributors',
-                        onSourceTapped: () {},
-                      ),
+                      // AttributionWidget.defaultWidget(
+                      //   source: 'OpenStreetMap contributors',
+                      //   onSourceTapped: () {},
+                      // ),
                       const FlutterMapZoomButtons(
                         minZoom: 5,
                         maxZoom: 22,
@@ -223,6 +269,14 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         zoomInColorIcon: Colors.white,
                         zoomOutColorIcon: Colors.white,
                       ),
+                      ScaleLayerWidget(
+                          options: ScaleLayerPluginOption(
+                        lineColor: Colors.blue,
+                        lineWidth: 2,
+                        textStyle:
+                            const TextStyle(color: Colors.blue, fontSize: 12),
+                        padding: const EdgeInsets.all(10),
+                      )),
                     ],
                     children: [
                       IndexedStack(
@@ -280,26 +334,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                                 'dev.fleaflet.flutter_map.example',
                           ),
                           // TileLayer(
-                          //   maxNativeZoom: 18,
-                          //   maxZoom: 22,
-                          //   urlTemplate:
-                          //       "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmFiaW5zdGhhMTIiLCJhIjoiY2xlazVqZGNjMGkyNTQzazU3dHpqd2thdiJ9.-DPZDLlSeIZg5uAl9hBOrA",
-                          //   userAgentPackageName:
-                          //       'dev.fleaflet.flutter_map.example',
-                          //   retinaMode: true &&
-                          //       MediaQuery.of(context).devicePixelRatio > 1.0,
-                          //   tileBuilder: (context, _, tile) =>
-                          //       CustomText.ourText(
-                          //     '${tile.coords.x.floor()} : ${tile.coords.y.floor()} : ${tile.coords.z.floor()}',
-                          //   ),
-                          // ),
-                          // TileLayer(
-                          //   urlTemplate:
-                          //       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-                          //   userAgentPackageName:
-                          //       'dev.fleaflet.flutter_map.example',
-                          // ),
-                          // TileLayer(
                           //   wmsOptions: WMSTileLayerOptions(
                           //     baseUrl: 'https://{s}.s2maps-tiles.eu/wms/?',
                           //     layers: ['s2cloudless-2021_3857'],
@@ -320,52 +354,66 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         ],
                       ),
                       MarkerLayer(
-                        markers: List.generate(latlngList.value.length,
-                            (index) {
-                          return Marker(
-                              width: 10,
-                              height: 10,
+                        markers:
+                            // List.generate(latlngList.value.length,
+                            //     (index) {
+                            //   return Marker(
+                            //       // width: 10,
+                            //       // height: 10,
+                            //       anchorPos: AnchorPos.align(AnchorAlign.center),
+                            //       rotate: true,
+                            //       point: latlngList.value[index].centerMarker ??
+                            //           LatLng(0.0, 0.0),
+                            //       builder: (context) {
+                            //         return GestureDetector(
+                            //           behavior: HitTestBehavior.opaque,
+                            //           onTap: () {
+                            //             consolelog("Data");
+                            //             ScaffoldMessenger.of(context)
+                            //                 .showSnackBar(const SnackBar(
+                            //               content: Text(
+                            //                   'Tapped on blue FlutterLogo Marker'),
+                            //             ));
+                            //             widget.isFromLand == false
+                            //                 ? navigate(
+                            //                     context,
+                            //                     LandDetailsScreen(
+                            //                       landId: latlngList
+                            //                           .value[index].landId,
+                            //                     ))
+                            //                 : null;
+                            //           },
+                            //           child: Image.asset(kMarkerIcon),
+                            //         );
+                            //       });
+                            // })
+                            //   ..addAll(
+                            [
+                          Marker(
                               anchorPos: AnchorPos.align(AnchorAlign.center),
-                              rotate: true,
-                              point: latlngList.value[index].centerMarker ??
-                                  LatLng(0.0, 0.0),
-                              builder: (BuildContext context) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    consolelog("data");
-                                    widget.isFromLand == false
-                                        ? navigate(
-                                            context,
-                                            LandDetailsScreen(
-                                              landId: latlngList
-                                                  .value[index].landId,
-                                            ))
-                                        : null;
-                                  },
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                );
-                              });
-                        })
-                          ..add(Marker(
-                              anchorPos: AnchorPos.align(AnchorAlign.center),
-                              width: 10,
-                              height: 10,
+                              width: 15,
+                              height: 15,
                               point: LatLng(currentPosition?.latitude ?? 0.0,
                                   currentPosition?.longitude ?? 0.0),
                               builder: (BuildContext context) {
                                 return Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.greenAccent,
+                                    color: Colors.blue,
                                   ),
                                 );
-                              })),
+                              }),
+                          Marker(
+                              anchorPos: AnchorPos.align(AnchorAlign.center),
+                              // width: 10,
+                              // height: 10,
+                              point: selectedMarker ?? LatLng(0.0, 0.0),
+                              builder: (BuildContext context) {
+                                return Image.asset(kMarkerIcon);
+                              }),
+                        ],
                       ),
+                      // ),
                       PolygonLayer(
                         polygonCulling: true,
                         polygons: List.generate(
@@ -388,131 +436,178 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                       ),
                     ],
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: <Widget>[
-                  //     MaterialButton(
-                  //       color:
-                  //           InteractiveFlag.hasFlag(flags, InteractiveFlag.drag)
-                  //               ? Colors.greenAccent
-                  //               : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.drag);
-                  //         });
-                  //       },
-                  //       child: const Text('Drag'),
-                  //     ),
-                  //     MaterialButton(
-                  //       color: InteractiveFlag.hasFlag(
-                  //               flags, InteractiveFlag.flingAnimation)
-                  //           ? Colors.greenAccent
-                  //           : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.flingAnimation);
-                  //         });
-                  //       },
-                  //       child: const Text('Fling'),
-                  //     ),
-                  //     MaterialButton(
-                  //       color: InteractiveFlag.hasFlag(
-                  //               flags, InteractiveFlag.pinchMove)
-                  //           ? Colors.greenAccent
-                  //           : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.pinchMove);
-                  //         });
-                  //       },
-                  //       child: const Text('Pinch move'),
-                  //     ),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: <Widget>[
-                  //     MaterialButton(
-                  //       color: InteractiveFlag.hasFlag(
-                  //               flags, InteractiveFlag.doubleTapZoom)
-                  //           ? Colors.greenAccent
-                  //           : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.doubleTapZoom);
-                  //         });
-                  //       },
-                  //       child: const Text('Double tap zoom'),
-                  //     ),
-                  //     MaterialButton(
-                  //       color: InteractiveFlag.hasFlag(
-                  //               flags, InteractiveFlag.rotate)
-                  //           ? Colors.greenAccent
-                  //           : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.rotate);
-                  //         });
-                  //       },
-                  //       child: const Text('Rotate'),
-                  //     ),
-                  //     MaterialButton(
-                  //       color: InteractiveFlag.hasFlag(
-                  //               flags, InteractiveFlag.pinchZoom)
-                  //           ? Colors.greenAccent
-                  //           : Colors.redAccent,
-                  //       onPressed: () {
-                  //         setState(() {
-                  //           updateFlags(InteractiveFlag.pinchZoom);
-                  //         });
-                  //       },
-                  //       child: const Text('Pinch zoom'),
-                  //     ),
-                  //   ],
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  //   child: Center(
-                  //     child: Text(
-                  //       'Current event: ${_latestEvent?.runtimeType ?? "none"}\nSource: ${_latestEvent?.source ?? "none"}',
-                  //       textAlign: TextAlign.center,
-                  //     ),
-                  //   ),
-                  // ),
-
                   Positioned(
-                    top: 0,
+                    top: -1,
                     child: SizedBox(
                       height: 50,
                       width: appWidth(context),
-                      child: CustomTextFormField(
-                        hintText: "Search land by parcel Id...",
-                        filled: true,
-                        borderRadius: 8,
-                        controller: __.searchLandController,
-                        suffix: const Icon(Icons.search),
-                        onlyNumber: true,
-                        isFromSearch: true,
-                        textInputType: TextInputType.number,
-                        onFieldSubmitted: (val) {
-                          consolelog("map search :: $val");
-                          if (val != "") {
-                            LatLngModel latlngSearchData = latlngList.value
-                                .firstWhere(
-                                    (element) =>
-                                        element.parcelId ==
-                                        __.searchLandController.text,
-                                    orElse: () => LatLngModel());
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFormField(
+                              hintText: "Search land by coordinates...",
+                              filled: true,
+                              borderRadius: 8,
+                              controller: __.searchLandController,
+                              suffix: const Icon(Icons.search),
+                              isFromSearch: true,
+                              textInputType: TextInputType.text,
+                              onFieldSubmitted: (val) {
+                                consolelog("map search :: $val");
+                                if (val != "") {
+                                  // LatLngModel latlngSearchData = latlngList.value
+                                  //     .firstWhere(
+                                  //         (element) =>
+                                  //             element.parcelId ==
+                                  //             __.searchLandController.text,
+                                  //         orElse: () => LatLngModel());
 
-                            if (latlngSearchData.parcelId == val) {
-                              mapController.move(
-                                  latlngSearchData.centerMarker ?? LatLng(0, 0),
-                                  20);
-                            } else {
-                              errorToast(msg: "No parcel Id found");
-                            }
-                          }
-                        },
+                                  // if (latlngSearchData.parcelId == val) {
+                                  //   mapController.move(
+                                  //       latlngSearchData.centerMarker ?? LatLng(0, 0),
+                                  //       20);
+                                  // } else {
+                                  //   errorToast(msg: "No parcel Id found");
+                                  // }
+
+                                  __.getAllSearchLands(
+                                    context: context,
+                                    landRequestModel: LandRequestModel(
+                                      page: 1,
+                                      latlng: val,
+                                      radius: _radiusValue,
+                                    ),
+                                    noLoading: true,
+                                    isFromMap: true,
+                                  );
+                                  setState(() {
+                                    selectedMarker = LatLng(
+                                        double.parse(val.split(",")[1]),
+                                        double.parse(val.split(",")[0]));
+                                  });
+                                  _animatedMapMove(
+                                      LatLng(double.parse(val.split(",")[1]),
+                                          double.parse(val.split(",")[0])),
+                                      17);
+                                } else {
+                                  __.getAllSearchLands(
+                                    context: context,
+                                    landRequestModel: LandRequestModel(
+                                      page: 1,
+                                    ),
+                                    isFromMap: true,
+                                    noLoading: true,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          hSizedBox1,
+                          GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                  elevation: 0,
+                                  clipBehavior: Clip.antiAlias,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  context: context,
+                                  builder: (_) {
+                                    return StatefulBuilder(
+                                      builder: (context, innerSetState) =>
+                                          Container(
+                                        padding: screenLeftRightPadding,
+                                        height: 200,
+                                        color: Colors.white,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              "Set radius to search within",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            vSizedBox0,
+                                            Slider(
+                                              inactiveColor:
+                                                  Colors.grey.shade100,
+                                              value: _radiusValue,
+                                              min: 0.0,
+                                              max: 10000.0,
+                                              divisions: 100,
+                                              label: _radiusValue
+                                                  .toStringAsFixed(2),
+                                              onChanged: (double newValue) {
+                                                innerSetState(() {
+                                                  _radiusValue = newValue;
+                                                });
+                                              },
+                                            ),
+                                            vSizedBox1,
+                                            CustomButton.elevatedButton(
+                                              "Save",
+                                              () {
+                                                __.getAllSearchLands(
+                                                  context: context,
+                                                  landRequestModel:
+                                                      LandRequestModel(
+                                                    page: 1,
+                                                    latlng: __
+                                                        .searchLandController
+                                                        .text,
+                                                    radius: _radiusValue,
+                                                  ),
+                                                  noLoading: true,
+                                                  isFromMap: true,
+                                                );
+                                                back(context);
+                                                setState(() {
+                                                  selectedMarker = LatLng(
+                                                      double.parse(__
+                                                          .searchLandController
+                                                          .text
+                                                          .split(",")[1]),
+                                                      double.parse(__
+                                                          .searchLandController
+                                                          .text
+                                                          .split(",")[0]));
+                                                });
+                                                _animatedMapMove(
+                                                    LatLng(
+                                                        double.parse(__
+                                                            .searchLandController
+                                                            .text
+                                                            .split(",")[1]),
+                                                        double.parse(__
+                                                            .searchLandController
+                                                            .text
+                                                            .split(",")[0])),
+                                                    17);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
+                            child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.grey.shade200,
+                                ),
+                                child: const Icon(Icons.filter_alt)),
+                          ),
+                          hSizedBox1,
+                        ],
                       ),
                     ),
                   ),
@@ -537,7 +632,7 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         hSizedBox0,
                         IconButton(
                           onPressed: () {
-                            mapController.move(
+                            _animatedMapMove(
                                 LatLng(currentPosition?.latitude ?? 0.0,
                                     currentPosition?.longitude ?? 0.0),
                                 18);
@@ -560,10 +655,19 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              mapController.move(
+                              _animatedMapMove(
                                   latlngList.value[index].centerMarker ??
                                       LatLng(0.0, 0.0),
                                   20);
+                              setState(() {
+                                selectedMarker = LatLng(
+                                    latlngList.value[index].centerMarker
+                                            ?.latitude ??
+                                        0.0,
+                                    latlngList.value[index].centerMarker
+                                            ?.longitude ??
+                                        0.0);
+                              });
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),

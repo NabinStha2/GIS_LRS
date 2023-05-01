@@ -276,9 +276,10 @@ class LandProvider extends ChangeNotifier with BaseController {
     required BuildContext context,
     LandRequestModel? landRequestModel,
     bool? isFromMap = false,
+    bool noLoading = false,
   }) async {
     try {
-      isLoading = true;
+      if (!noLoading) isLoading = true;
       paginatedAllSearchLandResultPageNumber = landRequestModel?.page ?? 1;
       if (landRequestModel?.page == 1) {
         paginatedAllSearchLandResultPageNumber = 1;
@@ -338,16 +339,16 @@ class LandProvider extends ChangeNotifier with BaseController {
         logger(latlngList.value.toString(), loggerType: LoggerType.warning);
       }
 
-      isLoading = false;
+      if (!noLoading) isLoading = false;
       getAllSearchLandMessage = null;
       notifyListeners();
     } on AppException catch (err) {
-      isLoading = false;
+      if (!noLoading) isLoading = false;
       getAllSearchLandMessage = err.message.toString();
       logger(err.toString(), loggerType: LoggerType.error);
       notifyListeners();
     } catch (e) {
-      isLoading = false;
+      if (!noLoading) isLoading = false;
       getAllSearchLandMessage = e.toString();
       notifyListeners();
       consolelog(e.toString());
