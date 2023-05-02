@@ -48,9 +48,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         navigatorKey: GlobalContextService.globalContext,
         onGenerateRoute: RouteGenerator.generateRoute,
-        initialRoute: AppSharedPreferences.getRememberMe
-            ? RouteName.dashboardRouteName
-            : RouteName.loginRouteName,
+        initialRoute: RouteName.splashRouteName,
         debugShowCheckedModeBanner: false,
         title: 'GIS LRS',
         theme: ThemeData(

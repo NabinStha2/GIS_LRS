@@ -11,6 +11,7 @@ import '../core/config/api_config.dart';
 import '../core/development/console.dart';
 import '../core/routing/route_navigation.dart';
 import '../model/land/geoJSON_response_model.dart';
+import '../model/land/geocoding_polylines_api_model.dart';
 import '../model/land/geocoding_searching_api_model.dart';
 import '../model/land/individual_land_response_model.dart';
 import '../model/land/individual_land_sale_response_model.dart';
@@ -84,6 +85,10 @@ class LandProvider extends ChangeNotifier with BaseController {
       <GeocodingSearchingApiModel>[];
   String? geocodingSearchingApiMessage;
   bool isGeocodingSearchingApiLoading = false;
+
+  GeocodingPolylinesApiResponseModel? geocodingPolylinesApiData =
+      GeocodingPolylinesApiResponseModel();
+  String? geocodingPolylinesApiMessage;
 
   addLand({
     required BuildContext context,
@@ -1034,6 +1039,54 @@ class LandProvider extends ChangeNotifier with BaseController {
       isGeocodingSearchingApiLoading = false;
       geocodingSearchingApiMessage = e.toString();
       notifyListeners();
+      consolelog(e.toString());
+    }
+  }
+
+  geocodingPolylinesApi({
+    required BuildContext context,
+    required String startLocation,
+    required String endLocation,
+  }) async {
+    try {
+      CustomDialogs.fullLoadingDialog(
+          data: "Loading direction, Please wait...", context: context);
+
+      var response = await BaseClient()
+          .get(
+            ApiConfig.baseUrl,
+            "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf6248eba19a97486445258d7206ccf9caf0b5&start=${startLocation.split(',')[0].trim()},${startLocation.split(',')[1].trim()}&end=${endLocation.split(',')[0].trim()},${endLocation.split(',')[1].trim()}",
+            // "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf6248eba19a97486445258d7206ccf9caf0b5&start=8.681495,49.41461&end=8.687872,49.420318",
+            isGeocodingSearchingApi: true,
+            hasTokenHeader: false,
+          )
+          .catchError(handleError);
+      if (response == null) return false;
+      var decodedJson = geocodingPolylinesApiResponseModelFromJson(response);
+
+      geocodingPolylinesApiData = decodedJson;
+      geocodingPolylinesApiData?.features
+          ?.forEach((e) => e.geometry?.coordinates?.forEach((ele) {
+                consolelog(ele);
+                polylines.add(LatLng(ele[1], ele[0]));
+              }));
+      consolelog(polylines);
+
+      hideLoading(context);
+      isGeocodingSearchingApiLoading = false;
+      geocodingPolylinesApiMessage = null;
+      notifyListeners();
+    } on AppException catch (err) {
+      isGeocodingSearchingApiLoading = false;
+      geocodingPolylinesApiMessage = err.message.toString();
+      logger(err.toString(), loggerType: LoggerType.error);
+      notifyListeners();
+    } catch (e) {
+      isGeocodingSearchingApiLoading = false;
+      geocodingPolylinesApiMessage = e.toString();
+      notifyListeners();
+      hideLoading(context);
+      logger(e.toString(), loggerType: LoggerType.error);
       consolelog(e.toString());
     }
   }

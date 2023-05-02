@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -71,12 +72,16 @@ class BaseClient {
                     'Content-type': 'application/json',
                     'Accept': 'application/json'
                   }
-                : _headers,
+                : isGeocodingSearchingApi
+                    ? {
+                        'Accept':
+                            'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
+                      }
+                    : _headers,
           )
           .timeout(const Duration(seconds: timeOutDuration));
 
       consolelog(uri);
-      // consolelog(response);
       return _processResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet connection', uri.toString());

@@ -1,4 +1,4 @@
-package com.example.gis_flutter_frontend
+package com.example.gis_lrs
 
 import io.flutter.embedding.android.FlutterActivity
 

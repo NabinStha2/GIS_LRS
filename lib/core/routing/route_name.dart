@@ -38,4 +38,7 @@ class RouteName {
       "DashboardLandRequestedToBuy";
   static const dashboardLandRequestedToBuyRoute =
       "/DashboardLandRequestedToBuy";
+
+  static const splashRouteName = "SplashRouteName";
+  static const splashRoute = "/splashRouute";
 }

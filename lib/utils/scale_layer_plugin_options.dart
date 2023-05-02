@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
-import 'package:gis_flutter_frontend/core/development/console.dart';
 
 import 'package:gis_flutter_frontend/utils/scale_bar_utils.dart' as util;
 import 'package:latlong2/latlong.dart';
@@ -55,7 +54,7 @@ class ScaleLayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final map = FlutterMapState.maybeOf(context);
-    consolelog(map);
+    // consolelog(map);
     final zoom = map?.zoom;
     final distance =
         scale[max(0, min(20, (zoom?.round() ?? 0) + 2))].toDouble();

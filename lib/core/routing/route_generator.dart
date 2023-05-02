@@ -13,6 +13,7 @@ import '../../screens/dashboard_land_requested_screen.dart';
 import '../../screens/edit_profile_page.dart';
 import '../../screens/land_details_screen.dart';
 import '../../screens/land_sale_screen.dart';
+import '../../screens/splash_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -58,6 +59,9 @@ class RouteGenerator {
       case RouteName.dashboardLandRequestedToBuyRouteName:
         return MaterialPageRoute(
             builder: (_) => const DashboardLandRequestedScreen());
+
+      case RouteName.splashRouteName:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
     }
     return null;
   }
