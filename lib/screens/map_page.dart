@@ -1,7 +1,9 @@
 import 'dart:isolate';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
@@ -143,6 +145,52 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
       // }
     });
     super.initState();
+  }
+
+  Widget _buildCompass() {
+    return StreamBuilder<CompassEvent>(
+      stream: FlutterCompass.events,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error reading heading: ${snapshot.error}');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        double? direction = snapshot.data!.heading;
+
+        // if direction is null, then device does not support this sensor
+        // show error message
+        if (direction == null) {
+          return const Center(
+            child: Text("Device does not have sensors !"),
+          );
+        }
+
+        return Material(
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          elevation: 4.0,
+          child: GestureDetector(
+            onTap: () {
+              mapController.rotate((direction * (math.pi / 180) * -1));
+            },
+            child: Transform.rotate(
+              angle: (direction * (math.pi / 180) * -1),
+              child: Image.asset(
+                kCompassIcon,
+                height: 40,
+                width: 40,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
@@ -394,6 +442,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                           ],
                         ),
                         MarkerLayer(
+                          rotate: true,
                           markers:
                               // List.generate(latlngList.value.length,
                               //     (index) {
@@ -808,6 +857,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                               size: 32,
                             ),
                           ),
+                          _buildCompass(),
                         ],
                       ),
                     ),
@@ -825,15 +875,38 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                     latlngList.value[index].centerMarker ??
                                         LatLng(0.0, 0.0),
                                     20);
-                                setState(() {
-                                  selectedMarker = LatLng(
-                                      latlngList.value[index].centerMarker
-                                              ?.latitude ??
-                                          0.0,
-                                      latlngList.value[index].centerMarker
-                                              ?.longitude ??
-                                          0.0);
-                                });
+                                if (direction &&
+                                    selectedMarker != null &&
+                                    endSelectedMarker == null) {
+                                  setState(() {
+                                    endSelectedMarker = LatLng(
+                                        latlngList.value[index].centerMarker
+                                                ?.latitude ??
+                                            0.0,
+                                        latlngList.value[index].centerMarker
+                                                ?.longitude ??
+                                            0.0);
+                                  });
+                                  __.geocodingPolylinesApi(
+                                    context: context,
+                                    startLocation:
+                                        "${selectedMarker?.longitude},${selectedMarker?.latitude}",
+                                    endLocation:
+                                        "${endSelectedMarker?.longitude},${endSelectedMarker?.latitude}",
+                                  );
+                                } else {
+                                  setState(() {
+                                    polylines.clear();
+                                    endSelectedMarker = null;
+                                    selectedMarker = LatLng(
+                                        latlngList.value[index].centerMarker
+                                                ?.latitude ??
+                                            0.0,
+                                        latlngList.value[index].centerMarker
+                                                ?.longitude ??
+                                            0.0);
+                                  });
+                                }
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(8),

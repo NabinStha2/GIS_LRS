@@ -1055,7 +1055,7 @@ class LandProvider extends ChangeNotifier with BaseController {
       var response = await BaseClient()
           .get(
             ApiConfig.baseUrl,
-            "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf6248eba19a97486445258d7206ccf9caf0b5&start=${startLocation.split(',')[0].trim()},${startLocation.split(',')[1].trim()}&end=${endLocation.split(',')[0].trim()},${endLocation.split(',')[1].trim()}",
+            "https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248eba19a97486445258d7206ccf9caf0b5&start=${startLocation.split(',')[0].trim()},${startLocation.split(',')[1].trim()}&end=${endLocation.split(',')[0].trim()},${endLocation.split(',')[1].trim()}",
             // "https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf6248eba19a97486445258d7206ccf9caf0b5&start=8.681495,49.41461&end=8.687872,49.420318",
             isGeocodingSearchingApi: true,
             hasTokenHeader: false,
@@ -1067,10 +1067,10 @@ class LandProvider extends ChangeNotifier with BaseController {
       geocodingPolylinesApiData = decodedJson;
       geocodingPolylinesApiData?.features
           ?.forEach((e) => e.geometry?.coordinates?.forEach((ele) {
-                consolelog(ele);
+                // consolelog(ele);
                 polylines.add(LatLng(ele[1], ele[0]));
               }));
-      consolelog(polylines);
+      // consolelog(polylines);
 
       hideLoading(context);
       isGeocodingSearchingApiLoading = false;
