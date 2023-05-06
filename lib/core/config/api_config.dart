@@ -25,4 +25,5 @@ class ApiConfig {
   static const String ownedAcceptedSaleLandsUrl = "/accepted";
   static const String ownedRejectedSaleLandsUrl = "/rejected";
   static const String geoJSONDataUrl = "/geoJSON";
+  static const String landTransferUrl = "/land-transfer";
 }

@@ -12,6 +12,7 @@ import '../core/app/colors.dart';
 import '../core/routing/route_navigation.dart';
 import '../model/land/individual_land_sale_response_model.dart';
 import '../model/land/land_request_model.dart';
+import '../providers/land_transfer_provider.dart';
 import '../utils/custom_toasts.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_circular_progress_indicator.dart';
@@ -57,7 +58,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
         ),
         centerTitle: true,
       ),
-      body: Consumer<LandProvider>(builder: (context, _, child) {
+      body: Consumer2<LandProvider, LandTransferProvider>(
+          builder: (context, _, __, child) {
         _.individualSaleLandResult?.geoJson?.geometry?.coordinates
             ?.forEach((element) {
           long = element[0][0];
@@ -857,48 +859,17 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                         ),
                                       ],
                                     ),
-                                    // vSizedBox1,
-                                    // Row(
-                                    //   children: [
-                                    //     Expanded(
-                                    //       child:
-                                    //           AppSharedPreferences.getUserId ==
-                                    //                   _.individualSaleLandResult
-                                    //                       ?.ownerUserId?.id
-                                    //               ? CustomButton.elevatedButton(
-                                    //                   "Accept buy land",
-                                    //                   () {},
-                                    //                 )
-                                    //               : Container(),
-                                    //     ),
-                                    //     hSizedBox2,
-                                    //     Expanded(
-                                    //       child:
-                                    //           AppSharedPreferences.getUserId ==
-                                    //                   _.individualSaleLandResult
-                                    //                       ?.ownerUserId?.id
-                                    //               ? CustomButton.elevatedButton(
-                                    //                   "Reject buy land",
-                                    //                   () {
-                                    //                     Provider.of<LandProvider>(
-                                    //                             context,
-                                    //                             listen: false)
-                                    //                         .requestToBuySaleLand(
-                                    //                       context: context,
-                                    //                       landRequestModel:
-                                    //                           LandRequestModel(
-                                    //                         landSaleId: _
-                                    //                             .individualSaleLandResult
-                                    //                             ?.id,
-                                    //                       ),
-                                    //                     );
-                                    //                   },
-                                    //                 )
-                                    //               : Container(),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    // vSizedBox1,
+                                    vSizedBox1,
+                                    AppSharedPreferences.getUserId ==
+                                            _.individualSaleLandResult
+                                                ?.ownerUserId?.id
+                                        ? CustomButton.elevatedButton(
+                                            "Start Transferring Land",
+                                            () {
+                                              __.addLandForTransfer(context: context);
+                                            },
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                               )

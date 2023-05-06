@@ -70,8 +70,10 @@ class LandCardWidget extends StatelessWidget {
         }
       });
     }
-    lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
-    long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+    if (latlngTempList.isNotEmpty) {
+      lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+      long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+    }
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16.0),
