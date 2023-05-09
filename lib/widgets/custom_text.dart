@@ -11,6 +11,7 @@ class CustomText {
     int? maxLines = 2,
     TextDecoration? textDecoration,
     bool? isFontFamily = true,
+    FontStyle? fontStyle,
   }) =>
       Text(
         data ?? '',
@@ -23,6 +24,7 @@ class CustomText {
           fontFamily: GoogleFonts.poppins().fontFamily,
           fontWeight: fontWeight ?? FontWeight.normal,
           color: color ?? Colors.black,
+          fontStyle: fontStyle ?? FontStyle.normal,
         ),
       );
 }

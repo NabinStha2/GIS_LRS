@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gis_flutter_frontend/core/routing/route_navigation.dart';
+import 'package:image_picker/image_picker.dart';
 import '../core/app/dimensions.dart';
+import '../core/development/console.dart';
 import 'custom_button.dart';
 import 'custom_text.dart';
 
@@ -78,7 +80,8 @@ class CustomDialogs {
                             height: 80,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: iconColor?.withOpacity(0.2) ?? Colors.blue.withOpacity(0.2),
+                              color: iconColor?.withOpacity(0.2) ??
+                                  Colors.blue.withOpacity(0.2),
                               shape: BoxShape.circle,
                             ),
                             child: SvgPicture.asset(
@@ -150,6 +153,83 @@ class CustomDialogs {
                   ],
                 ),
               ),
+            ),
+          );
+        });
+  }
+
+  static imageBottomSheet({
+    required BuildContext context,
+    XFile? pickedImage,
+  }) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        )),
+        builder: (_) {
+          return Container(
+            padding: screenPadding,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                vSizedBox2,
+                CustomButton.elevatedButton(
+                  "Choose from gallery",
+                  () async {
+                    back(context);
+                    pickedImage = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    logger(pickedImage?.path);
+                    // if (pickedImage != null) {
+                    //   consolelog(pickedImage?.path);
+                    //   _.addPaymentVoucherFormLandForTransfer(
+                    //     context: context,
+                    //     landTransferRequestModel: LandTransferRequestModel(
+                    //         landTransferId: _.individualLandTransferResult?.id),
+                    //     file: File(pickedImage?.path ?? ""),
+                    //   );
+                    // }
+
+                    // setState(() {});
+                  },
+                ),
+                vSizedBox2,
+                CustomButton.elevatedButton(
+                  "Take Photo",
+                  () async {
+                    back(context);
+                    pickedImage = await ImagePicker()
+                        .pickImage(source: ImageSource.camera);
+                    logger(pickedImage);
+                    // if (pickedImage != null) {
+                    //   consolelog(pickedImage?.path);
+                    //   _.addPaymentVoucherFormLandForTransfer(
+                    //     context: context,
+                    //     landTransferRequestModel: LandTransferRequestModel(
+                    //         landTransferId: _.individualLandTransferResult?.id),
+                    //     file: File(pickedImage?.path ?? ""),
+                    //   );
+                    // }
+                    // setState(() {});
+                  },
+                ),
+                vSizedBox2,
+                pickedImage != null
+                    ? CustomButton.elevatedButton(
+                        "Clear",
+                        () async {
+                          back(context);
+                          pickedImage = null;
+                          // setState(() {});
+                        },
+                        color: Colors.red,
+                      )
+                    : Container(),
+              ],
             ),
           );
         });

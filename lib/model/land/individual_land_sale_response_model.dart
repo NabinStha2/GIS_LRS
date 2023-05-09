@@ -138,13 +138,11 @@ class LandId {
     this.updatedAt,
     this.v,
     this.saleData,
-    this.polygon,
   });
 
   String? id;
   String? city;
   String? area;
-  List<Polygon>? polygon;
   String? parcelId;
   String? wardNo;
   String? district;
@@ -171,10 +169,6 @@ class LandId {
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
-        polygon: json["polygon"] == null
-            ? []
-            : List<Polygon>.from(
-                json["polygon"]!.map((x) => Polygon.fromJson(x))),
         address: json["address"],
         surveyNo: json["surveyNo"],
         province: json["province"],
@@ -208,9 +202,6 @@ class LandId {
         "province": province,
         "landPrice": landPrice,
         "isVerified": isVerified,
-        "polygon": polygon == null
-            ? []
-            : List<dynamic>.from(polygon!.map((x) => x.toJson())),
         "ownerUserId": ownerUserId,
         "ownerHistory": ownerHistory == null
             ? []
@@ -239,7 +230,7 @@ class UserId {
     this.frontCitizenshipFile,
     this.imageFile,
     this.backCitizenshipFile,
-    this.nameTg,
+    this.citizenshipId,
   });
 
   String? id;
@@ -257,7 +248,7 @@ class UserId {
   FrontCitizenshipFile? frontCitizenshipFile;
   ImageFile? imageFile;
   BackCitizenshipFile? backCitizenshipFile;
-  List<String>? nameTg;
+  int? citizenshipId;
 
   factory UserId.fromJson(Map<String, dynamic> json) => UserId(
         id: json["_id"],
@@ -267,6 +258,7 @@ class UserId {
         address: json["address"],
         phoneNumber: json["phoneNumber"],
         isVerified: json["isVerified"],
+        citizenshipId: json["citizenshipId"],
         ownedLand: json["ownedLand"] == null
             ? []
             : List<String>.from(json["ownedLand"]!.map((x) => x)),
@@ -287,9 +279,6 @@ class UserId {
         backCitizenshipFile: json["backCitizenshipFile"] == null
             ? null
             : BackCitizenshipFile.fromJson(json["backCitizenshipFile"]),
-        nameTg: json["name_tg"] == null
-            ? []
-            : List<String>.from(json["name_tg"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -310,8 +299,6 @@ class UserId {
         "frontCitizenshipFile": frontCitizenshipFile?.toJson(),
         "imageFile": imageFile?.toJson(),
         "backCitizenshipFile": backCitizenshipFile?.toJson(),
-        "name_tg":
-            nameTg == null ? [] : List<dynamic>.from(nameTg!.map((x) => x)),
       };
 }
 

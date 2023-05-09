@@ -209,6 +209,31 @@ class DrawerWidget extends StatelessWidget {
                 },
               ),
               ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                tileColor: _.drawerSelectedIndex == 6
+                    ? AppColors.kPrimaryColor2
+                    : null,
+                leading: Icon(
+                  Icons.search,
+                  color:
+                      _.drawerSelectedIndex == 6 ? Colors.white : Colors.black,
+                ),
+                title: CustomText.ourText(
+                  'Land Transfer',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      _.drawerSelectedIndex == 6 ? Colors.white : Colors.black,
+                ),
+                onTap: () {
+                  _.changeDrawerSelectedIndex(6);
+                  navigateOffAllNamed(
+                      context, RouteName.landTransferringRouteName);
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.logout, color: Colors.black),
                 title: CustomText.ourText(
                   'Logout',

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'land/individual_land_sale_response_model.dart';
+
 // LandResponseModel landResponseModelFromJson(String str) =>
 //     LandResponseModel.fromJson(json.decode(str));
 
@@ -117,7 +119,7 @@ import 'dart:convert';
 //   String? province;
 //   String? landPrice;
 //   String? isVerified;
-//   OwnerUserId? ownerUserId;
+//   UserId? ownerUserId;
 //   List<dynamic>? ownerHistory;
 //   DateTime? createdAt;
 //   DateTime? updatedAt;
@@ -145,7 +147,7 @@ import 'dart:convert';
 //         isVerified: json["isVerified"],
 //         ownerUserId: json["ownerUserId"] == null
 //             ? null
-//             : OwnerUserId.fromJson(json["ownerUserId"]),
+//             : UserId.fromJson(json["ownerUserId"]),
 //         ownerHistory: json["ownerHistory"] == null
 //             ? []
 //             : List<dynamic>.from(json["ownerHistory"]!.map((x) => x)),
@@ -188,8 +190,8 @@ import 'dart:convert';
 //       };
 // }
 
-// class OwnerUserId {
-//   OwnerUserId({
+// class UserId {
+//   UserId({
 //     this.imageFile,
 //     this.id,
 //     this.email,
@@ -217,7 +219,7 @@ import 'dart:convert';
 //   DateTime? updatedAt;
 //   int? v;
 
-//   factory OwnerUserId.fromJson(Map<String, dynamic> json) => OwnerUserId(
+//   factory UserId.fromJson(Map<String, dynamic> json) => UserId(
 //         imageFile: json["imageFile"] == null
 //             ? null
 //             : ImageFile.fromJson(json["imageFile"]),
@@ -380,7 +382,6 @@ class LandResult {
     this.id,
     this.city,
     this.area,
-    this.polygon,
     this.parcelId,
     this.wardNo,
     this.district,
@@ -403,7 +404,6 @@ class LandResult {
   String? id;
   String? city;
   String? area;
-  List<Polygon>? polygon;
   String? parcelId;
   String? wardNo;
   String? district;
@@ -412,7 +412,7 @@ class LandResult {
   String? province;
   String? landPrice;
   String? isVerified;
-  OwnerUserId? ownerUserId;
+  UserId? ownerUserId;
   List<String>? ownerHistory;
   String? saleData;
   GeoJson? geoJson;
@@ -426,10 +426,6 @@ class LandResult {
         id: json["_id"],
         city: json["city"],
         area: json["area"],
-        polygon: json["polygon"] == null
-            ? []
-            : List<Polygon>.from(
-                json["polygon"]!.map((x) => Polygon.fromJson(x))),
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
@@ -440,7 +436,7 @@ class LandResult {
         isVerified: json["isVerified"],
         ownerUserId: json["ownerUserId"] == null
             ? null
-            : OwnerUserId.fromJson(json["ownerUserId"]),
+            : UserId.fromJson(json["ownerUserId"]),
         ownerHistory: json["ownerHistory"] == null
             ? []
             : List<String>.from(json["ownerHistory"]!.map((x) => x)),
@@ -462,9 +458,6 @@ class LandResult {
         "_id": id,
         "city": city,
         "area": area,
-        "polygon": polygon == null
-            ? []
-            : List<dynamic>.from(polygon!.map((x) => x.toJson())),
         "parcelId": parcelId,
         "wardNo": wardNo,
         "district": district,
@@ -602,119 +595,119 @@ class Properties {
       };
 }
 
-class OwnerUserId {
-  OwnerUserId({
-    this.imageFile,
-    this.id,
-    this.email,
-    this.firstName,
-    this.lastName,
-    this.address,
-    this.phoneNumber,
-    this.isVerified,
-    this.nameTg,
-    this.name,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
-  });
+// class UserId {
+//   UserId({
+//     this.imageFile,
+//     this.id,
+//     this.email,
+//     this.firstName,
+//     this.lastName,
+//     this.address,
+//     this.phoneNumber,
+//     this.isVerified,
+//     this.nameTg,
+//     this.name,
+//     this.createdAt,
+//     this.updatedAt,
+//     this.v,
+//   });
 
-  ImageFile? imageFile;
-  String? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? address;
-  String? phoneNumber;
-  String? isVerified;
-  List<String>? nameTg;
-  String? name;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  int? v;
+//   ImageFile? imageFile;
+//   String? id;
+//   String? email;
+//   String? firstName;
+//   String? lastName;
+//   String? address;
+//   String? phoneNumber;
+//   String? isVerified;
+//   List<String>? nameTg;
+//   String? name;
+//   DateTime? createdAt;
+//   DateTime? updatedAt;
+//   int? v;
 
-  factory OwnerUserId.fromJson(Map<String, dynamic> json) => OwnerUserId(
-        imageFile: json["imageFile"] == null
-            ? null
-            : ImageFile.fromJson(json["imageFile"]),
-        id: json["_id"],
-        email: json["email"],
-        firstName: json["firstName"],
-        lastName: json["lastName"],
-        address: json["address"],
-        phoneNumber: json["phoneNumber"],
-        isVerified: json["isVerified"],
-        nameTg: json["name_tg"] == null
-            ? []
-            : List<String>.from(json["name_tg"]!.map((x) => x)),
-        name: json["name"],
-        createdAt: json["createdAt"] == null
-            ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-      );
+//   factory UserId.fromJson(Map<String, dynamic> json) => UserId(
+//         imageFile: json["imageFile"] == null
+//             ? null
+//             : ImageFile.fromJson(json["imageFile"]),
+//         id: json["_id"],
+//         email: json["email"],
+//         firstName: json["firstName"],
+//         lastName: json["lastName"],
+//         address: json["address"],
+//         phoneNumber: json["phoneNumber"],
+//         isVerified: json["isVerified"],
+//         nameTg: json["name_tg"] == null
+//             ? []
+//             : List<String>.from(json["name_tg"]!.map((x) => x)),
+//         name: json["name"],
+//         createdAt: json["createdAt"] == null
+//             ? null
+//             : DateTime.parse(json["createdAt"]),
+//         updatedAt: json["updatedAt"] == null
+//             ? null
+//             : DateTime.parse(json["updatedAt"]),
+//         v: json["__v"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "imageFile": imageFile?.toJson(),
-        "_id": id,
-        "email": email,
-        "firstName": firstName,
-        "lastName": lastName,
-        "address": address,
-        "phoneNumber": phoneNumber,
-        "isVerified": isVerified,
-        "name_tg":
-            nameTg == null ? [] : List<dynamic>.from(nameTg!.map((x) => x)),
-        "name": name,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-        "__v": v,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "imageFile": imageFile?.toJson(),
+//         "_id": id,
+//         "email": email,
+//         "firstName": firstName,
+//         "lastName": lastName,
+//         "address": address,
+//         "phoneNumber": phoneNumber,
+//         "isVerified": isVerified,
+//         "name_tg":
+//             nameTg == null ? [] : List<dynamic>.from(nameTg!.map((x) => x)),
+//         "name": name,
+//         "createdAt": createdAt?.toIso8601String(),
+//         "updatedAt": updatedAt?.toIso8601String(),
+//         "__v": v,
+//       };
+// }
 
-class ImageFile {
-  ImageFile({
-    this.imageUrl,
-    this.imagePublicId,
-  });
+// class ImageFile {
+//   ImageFile({
+//     this.imageUrl,
+//     this.imagePublicId,
+//   });
 
-  String? imageUrl;
-  String? imagePublicId;
+//   String? imageUrl;
+//   String? imagePublicId;
 
-  factory ImageFile.fromJson(Map<String, dynamic> json) => ImageFile(
-        imageUrl: json["imageUrl"],
-        imagePublicId: json["imagePublicId"],
-      );
+//   factory ImageFile.fromJson(Map<String, dynamic> json) => ImageFile(
+//         imageUrl: json["imageUrl"],
+//         imagePublicId: json["imagePublicId"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "imageUrl": imageUrl,
-        "imagePublicId": imagePublicId,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "imageUrl": imageUrl,
+//         "imagePublicId": imagePublicId,
+//       };
+// }
 
-class Polygon {
-  Polygon({
-    this.latitude,
-    this.longitude,
-    this.id,
-  });
+// class Polygon {
+//   Polygon({
+//     this.latitude,
+//     this.longitude,
+//     this.id,
+//   });
 
-  String? latitude;
-  String? longitude;
-  String? id;
+//   String? latitude;
+//   String? longitude;
+//   String? id;
 
-  factory Polygon.fromJson(Map<String, dynamic> json) => Polygon(
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        id: json["_id"],
-      );
+//   factory Polygon.fromJson(Map<String, dynamic> json) => Polygon(
+//         latitude: json["latitude"],
+//         longitude: json["longitude"],
+//         id: json["_id"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "latitude": latitude,
-        "longitude": longitude,
-        "_id": id,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "latitude": latitude,
+//         "longitude": longitude,
+//         "_id": id,
+//       };
+// }

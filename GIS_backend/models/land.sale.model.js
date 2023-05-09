@@ -22,7 +22,7 @@ const LandSaleSchema = new mongoose.Schema(
     saleData: {
       type: String,
       default: "selling",
-      enum: ["selling", "processing", "selled", "rejected"],
+      enum: ["selling", "processing", "transferring", "selled", "rejected"],
       index: true,
       required: true,
     },

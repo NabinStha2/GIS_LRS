@@ -1,14 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:gis_flutter_frontend/utils/text_capitalization.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
 import '../core/development/console.dart';
+import '../core/routing/route_name.dart';
+import '../core/routing/route_navigation.dart';
+import '../providers/drawer_provider.dart';
 import '../utils/app_shared_preferences.dart';
+import '../utils/custom_toasts.dart';
+import '../utils/global_context_service.dart';
 import 'api_exceptions.dart';
 
 class BaseClient {
@@ -323,6 +328,20 @@ class BaseClient {
     }
   }
 
+  logout() {
+    AppSharedPreferences.clearCrendentials();
+    Provider.of<DrawerProvider>(
+            GlobalContextService.globalContext.currentContext!,
+            listen: false)
+        .changeDrawerSelectedIndex(0);
+    navigateOffAllNamed(
+      GlobalContextService.globalContext.currentContext!,
+      RouteName.loginRouteName,
+    );
+
+    errorToast(msg: "Token expired!");
+  }
+
   dynamic _processResponse(http.Response response) {
     consolelog("Processing response: ${response.body}");
     switch (response.statusCode) {
@@ -345,6 +364,11 @@ class BaseClient {
             response.request!.url.toString());
       case 422:
         throw ApiNotRespondingException(
+            json.decode(response.body)["error"] ?? "Something went wrong",
+            response.request!.url.toString());
+      case 402:
+        logout();
+        throw UnAuthorizedException(
             json.decode(response.body)["error"] ?? "Something went wrong",
             response.request!.url.toString());
       case 500:

@@ -20,9 +20,37 @@ const TransferOwnershipSchema = new Schema(
     transerData: {
       type: String,
       default: "pending",
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "ongoing", "initiated", "completed", "rejected"],
       index: true,
       required: true,
+    },
+    transactionAmt: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    transactionDate: {
+      type: Date,
+      default: Date.now,
+    },
+    billToken: {
+      type: String,
+    },
+    sellerBankAcc: {
+      type: String,
+    },
+    buyerBankAcc: {
+      type: String,
+    },
+    voucherFormFile: {
+      voucherFormImage: {
+        type: String,
+        trim: true,
+      },
+      voucherFormPublicId: {
+        type: String,
+        trim: true,
+      },
     },
   },
   { timestamps: true }

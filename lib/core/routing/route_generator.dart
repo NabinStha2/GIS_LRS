@@ -4,8 +4,10 @@ import 'package:gis_flutter_frontend/screens/add_land.dart';
 import 'package:gis_flutter_frontend/screens/dashboard_page.dart';
 import 'package:gis_flutter_frontend/screens/land_sale_details_screen.dart';
 import 'package:gis_flutter_frontend/screens/land_screen.dart';
+import 'package:gis_flutter_frontend/screens/land_transfer_screen.dart';
 import 'package:gis_flutter_frontend/screens/login_page.dart';
 import 'package:gis_flutter_frontend/screens/map_page.dart';
+import 'package:gis_flutter_frontend/screens/payment_form.dart';
 import 'package:gis_flutter_frontend/screens/search_land.dart';
 import 'package:gis_flutter_frontend/screens/search_land_sale_screen.dart';
 
@@ -59,6 +61,12 @@ class RouteGenerator {
       case RouteName.dashboardLandRequestedToBuyRouteName:
         return MaterialPageRoute(
             builder: (_) => const DashboardLandRequestedScreen());
+
+      case RouteName.landTransferringRouteName:
+        return MaterialPageRoute(builder: (_) => const LandTransferScreen());
+
+      case RouteName.paymentFormRouteName:
+        return MaterialPageRoute(builder: (_) => const PaymentFormScreen());
 
       case RouteName.splashRouteName:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

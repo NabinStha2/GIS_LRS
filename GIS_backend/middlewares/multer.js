@@ -51,6 +51,9 @@ exports.uploadImages = ({
       {
         name: "userImage",
       },
+      {
+        name: "voucherFormImage",
+      },
     ]);
     return upload;
   };
@@ -82,6 +85,10 @@ exports.uploadImages = ({
           req.files?.backCitizenshipImage?.length > 0
             ? req.files?.backCitizenshipImage
             : null;
+        let voucherFormImage =
+          req.files?.voucherFormImage?.length > 0
+            ? req.files?.voucherFormImage
+            : null;
 
         if (userImage) {
           await UploadingImage({ req, res, uploadimage: userImage });
@@ -98,6 +105,13 @@ exports.uploadImages = ({
             req,
             res,
             uploadimage: backCitizenshipImage,
+          });
+        }
+        if (voucherFormImage) {
+          await UploadingImage({
+            req,
+            res,
+            uploadimage: voucherFormImage,
           });
         }
       }

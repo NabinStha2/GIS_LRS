@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../land_response_model.dart';
+import 'individual_land_sale_response_model.dart';
 
 IndividualLandResponseModel individualLandResponseModelFromJson(String str) =>
     IndividualLandResponseModel.fromJson(json.decode(str));
@@ -48,7 +49,6 @@ class IndividualLandData {
     this.id,
     this.city,
     this.area,
-    this.polygon,
     this.parcelId,
     this.wardNo,
     this.district,
@@ -70,7 +70,6 @@ class IndividualLandData {
   String? id;
   String? city;
   String? area;
-  List<Polygon>? polygon;
   String? parcelId;
   String? wardNo;
   String? district;
@@ -79,7 +78,7 @@ class IndividualLandData {
   String? province;
   String? landPrice;
   String? isVerified;
-  OwnerUserId? ownerUserId;
+  UserId? ownerUserId;
   List<dynamic>? ownerHistory;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -95,10 +94,6 @@ class IndividualLandData {
             json["geoJSON"] == null ? null : GeoJson.fromJson(json["geoJSON"]),
         city: json["city"],
         area: json["area"],
-        polygon: json["polygon"] == null
-            ? []
-            : List<Polygon>.from(
-                json["polygon"]!.map((x) => Polygon.fromJson(x))),
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
@@ -109,7 +104,7 @@ class IndividualLandData {
         isVerified: json["isVerified"],
         ownerUserId: json["ownerUserId"] == null
             ? null
-            : OwnerUserId.fromJson(json["ownerUserId"]),
+            : UserId.fromJson(json["ownerUserId"]),
         ownerHistory: json["ownerHistory"] == null
             ? []
             : List<dynamic>.from(json["ownerHistory"]!.map((x) => x)),
@@ -128,9 +123,6 @@ class IndividualLandData {
         "_id": id,
         "city": city,
         "area": area,
-        "polygon": polygon == null
-            ? []
-            : List<dynamic>.from(polygon!.map((x) => x.toJson())),
         "parcelId": parcelId,
         "wardNo": wardNo,
         "district": district,
@@ -151,174 +143,174 @@ class IndividualLandData {
       };
 }
 
-class OwnerUserId {
-  OwnerUserId({
-    this.id,
-    this.email,
-    this.firstName,
-    this.lastName,
-    this.address,
-    this.phoneNumber,
-    this.isVerified,
-    this.ownedLand,
-    this.name,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
-    this.frontCitizenshipFile,
-    this.imageFile,
-    this.backCitizenshipFile,
-  });
+// class UserId {
+//   UserId({
+//     this.id,
+//     this.email,
+//     this.firstName,
+//     this.lastName,
+//     this.address,
+//     this.phoneNumber,
+//     this.isVerified,
+//     this.ownedLand,
+//     this.name,
+//     this.createdAt,
+//     this.updatedAt,
+//     this.v,
+//     this.frontCitizenshipFile,
+//     this.imageFile,
+//     this.backCitizenshipFile,
+//   });
 
-  String? id;
-  String? email;
-  String? firstName;
-  String? lastName;
-  String? address;
-  String? phoneNumber;
-  String? isVerified;
-  List<String>? ownedLand;
-  String? name;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  int? v;
-  FrontCitizenshipFile? frontCitizenshipFile;
-  ImageFile? imageFile;
-  BackCitizenshipFile? backCitizenshipFile;
+//   String? id;
+//   String? email;
+//   String? firstName;
+//   String? lastName;
+//   String? address;
+//   String? phoneNumber;
+//   String? isVerified;
+//   List<String>? ownedLand;
+//   String? name;
+//   DateTime? createdAt;
+//   DateTime? updatedAt;
+//   int? v;
+//   FrontCitizenshipFile? frontCitizenshipFile;
+//   ImageFile? imageFile;
+//   BackCitizenshipFile? backCitizenshipFile;
 
-  factory OwnerUserId.fromJson(Map<String, dynamic> json) => OwnerUserId(
-        id: json["_id"],
-        email: json["email"],
-        firstName: json["firstName"],
-        lastName: json["lastName"],
-        address: json["address"],
-        phoneNumber: json["phoneNumber"],
-        isVerified: json["isVerified"],
-        ownedLand: json["ownedLand"] == null
-            ? []
-            : List<String>.from(json["ownedLand"]!.map((x) => x)),
-        name: json["name"],
-        createdAt: json["createdAt"] == null
-            ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-        frontCitizenshipFile: json["frontCitizenshipFile"] == null
-            ? null
-            : FrontCitizenshipFile.fromJson(json["frontCitizenshipFile"]),
-        imageFile: json["imageFile"] == null
-            ? null
-            : ImageFile.fromJson(json["imageFile"]),
-        backCitizenshipFile: json["backCitizenshipFile"] == null
-            ? null
-            : BackCitizenshipFile.fromJson(json["backCitizenshipFile"]),
-      );
+//   factory UserId.fromJson(Map<String, dynamic> json) => UserId(
+//         id: json["_id"],
+//         email: json["email"],
+//         firstName: json["firstName"],
+//         lastName: json["lastName"],
+//         address: json["address"],
+//         phoneNumber: json["phoneNumber"],
+//         isVerified: json["isVerified"],
+//         ownedLand: json["ownedLand"] == null
+//             ? []
+//             : List<String>.from(json["ownedLand"]!.map((x) => x)),
+//         name: json["name"],
+//         createdAt: json["createdAt"] == null
+//             ? null
+//             : DateTime.parse(json["createdAt"]),
+//         updatedAt: json["updatedAt"] == null
+//             ? null
+//             : DateTime.parse(json["updatedAt"]),
+//         v: json["__v"],
+//         frontCitizenshipFile: json["frontCitizenshipFile"] == null
+//             ? null
+//             : FrontCitizenshipFile.fromJson(json["frontCitizenshipFile"]),
+//         imageFile: json["imageFile"] == null
+//             ? null
+//             : ImageFile.fromJson(json["imageFile"]),
+//         backCitizenshipFile: json["backCitizenshipFile"] == null
+//             ? null
+//             : BackCitizenshipFile.fromJson(json["backCitizenshipFile"]),
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "_id": id,
-        "email": email,
-        "firstName": firstName,
-        "lastName": lastName,
-        "address": address,
-        "phoneNumber": phoneNumber,
-        "isVerified": isVerified,
-        "ownedLand": ownedLand == null
-            ? []
-            : List<dynamic>.from(ownedLand!.map((x) => x)),
-        "name": name,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-        "__v": v,
-        "frontCitizenshipFile": frontCitizenshipFile?.toJson(),
-        "imageFile": imageFile?.toJson(),
-        "backCitizenshipFile": backCitizenshipFile?.toJson(),
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "_id": id,
+//         "email": email,
+//         "firstName": firstName,
+//         "lastName": lastName,
+//         "address": address,
+//         "phoneNumber": phoneNumber,
+//         "isVerified": isVerified,
+//         "ownedLand": ownedLand == null
+//             ? []
+//             : List<dynamic>.from(ownedLand!.map((x) => x)),
+//         "name": name,
+//         "createdAt": createdAt?.toIso8601String(),
+//         "updatedAt": updatedAt?.toIso8601String(),
+//         "__v": v,
+//         "frontCitizenshipFile": frontCitizenshipFile?.toJson(),
+//         "imageFile": imageFile?.toJson(),
+//         "backCitizenshipFile": backCitizenshipFile?.toJson(),
+//       };
+// }
 
-class BackCitizenshipFile {
-  BackCitizenshipFile({
-    this.backCitizenshipImage,
-    this.backCitizenshipPublicId,
-  });
+// class BackCitizenshipFile {
+//   BackCitizenshipFile({
+//     this.backCitizenshipImage,
+//     this.backCitizenshipPublicId,
+//   });
 
-  String? backCitizenshipImage;
-  String? backCitizenshipPublicId;
+//   String? backCitizenshipImage;
+//   String? backCitizenshipPublicId;
 
-  factory BackCitizenshipFile.fromJson(Map<String, dynamic> json) =>
-      BackCitizenshipFile(
-        backCitizenshipImage: json["backCitizenshipImage"],
-        backCitizenshipPublicId: json["backCitizenshipPublicId"],
-      );
+//   factory BackCitizenshipFile.fromJson(Map<String, dynamic> json) =>
+//       BackCitizenshipFile(
+//         backCitizenshipImage: json["backCitizenshipImage"],
+//         backCitizenshipPublicId: json["backCitizenshipPublicId"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "backCitizenshipImage": backCitizenshipImage,
-        "backCitizenshipPublicId": backCitizenshipPublicId,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "backCitizenshipImage": backCitizenshipImage,
+//         "backCitizenshipPublicId": backCitizenshipPublicId,
+//       };
+// }
 
-class FrontCitizenshipFile {
-  FrontCitizenshipFile({
-    this.frontCitizenshipImage,
-    this.frontCitizenshipPublicId,
-  });
+// class FrontCitizenshipFile {
+//   FrontCitizenshipFile({
+//     this.frontCitizenshipImage,
+//     this.frontCitizenshipPublicId,
+//   });
 
-  String? frontCitizenshipImage;
-  String? frontCitizenshipPublicId;
+//   String? frontCitizenshipImage;
+//   String? frontCitizenshipPublicId;
 
-  factory FrontCitizenshipFile.fromJson(Map<String, dynamic> json) =>
-      FrontCitizenshipFile(
-        frontCitizenshipImage: json["frontCitizenshipImage"],
-        frontCitizenshipPublicId: json["frontCitizenshipPublicId"],
-      );
+//   factory FrontCitizenshipFile.fromJson(Map<String, dynamic> json) =>
+//       FrontCitizenshipFile(
+//         frontCitizenshipImage: json["frontCitizenshipImage"],
+//         frontCitizenshipPublicId: json["frontCitizenshipPublicId"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "frontCitizenshipImage": frontCitizenshipImage,
-        "frontCitizenshipPublicId": frontCitizenshipPublicId,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "frontCitizenshipImage": frontCitizenshipImage,
+//         "frontCitizenshipPublicId": frontCitizenshipPublicId,
+//       };
+// }
 
-class ImageFile {
-  ImageFile({
-    this.imageUrl,
-    this.imagePublicId,
-  });
+// class ImageFile {
+//   ImageFile({
+//     this.imageUrl,
+//     this.imagePublicId,
+//   });
 
-  String? imageUrl;
-  String? imagePublicId;
+//   String? imageUrl;
+//   String? imagePublicId;
 
-  factory ImageFile.fromJson(Map<String, dynamic> json) => ImageFile(
-        imageUrl: json["imageUrl"],
-        imagePublicId: json["imagePublicId"],
-      );
+//   factory ImageFile.fromJson(Map<String, dynamic> json) => ImageFile(
+//         imageUrl: json["imageUrl"],
+//         imagePublicId: json["imagePublicId"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "imageUrl": imageUrl,
-        "imagePublicId": imagePublicId,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "imageUrl": imageUrl,
+//         "imagePublicId": imagePublicId,
+//       };
+// }
 
-class Polygon {
-  Polygon({
-    this.latitude,
-    this.longitude,
-    this.id,
-  });
+// class Polygon {
+//   Polygon({
+//     this.latitude,
+//     this.longitude,
+//     this.id,
+//   });
 
-  String? latitude;
-  String? longitude;
-  String? id;
+//   String? latitude;
+//   String? longitude;
+//   String? id;
 
-  factory Polygon.fromJson(Map<String, dynamic> json) => Polygon(
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        id: json["_id"],
-      );
+//   factory Polygon.fromJson(Map<String, dynamic> json) => Polygon(
+//         latitude: json["latitude"],
+//         longitude: json["longitude"],
+//         id: json["_id"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "latitude": latitude,
-        "longitude": longitude,
-        "_id": id,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "latitude": latitude,
+//         "longitude": longitude,
+//         "_id": id,
+//       };
+// }

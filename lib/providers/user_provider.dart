@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -38,11 +40,16 @@ class UserProvider extends ChangeNotifier with BaseController {
     editPhoneNumberController.clear();
   }
 
-  getUser({required BuildContext ctx}) async {
+  getUser({required BuildContext ctx, String uId = ""}) async {
     try {
       isLoading = true;
-      var userId = AppSharedPreferences.getUserId;
-      consolelog(userId);
+      String? userId;
+      if (uId.isEmpty) {
+        userId = AppSharedPreferences.getUserId;
+        consolelog(userId);
+      } else {
+        userId = uId;
+      }
       var response = await BaseClient()
           .get(
             ApiConfig.baseUrl,

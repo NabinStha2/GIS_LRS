@@ -31,6 +31,12 @@ class RouteName {
   static const searchLandSaleRouteName = "SearchLandSale";
   static const searchLandSaleRoute = "/saerchLandSale";
 
+  static const landTransferringRouteName = "LandTransferring";
+  static const landTransferringRoute = "/landTransferring";
+
+  static const paymentFormRouteName = "PaymentForm";
+  static const paymentFormRoute = "/paymentForm";
+
   static const landSaleDetailsRouteName = "LandSaleDetails";
   static const landSaleDetailsRoute = "/LandSaleDetails";
 

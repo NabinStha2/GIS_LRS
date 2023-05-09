@@ -59,7 +59,8 @@ exports.checkAuthValidation = async (req, res, next) => {
         }
       } catch (err) {
         console.log(`Err auth validation :: ${err.message}`);
-        throw err;
+        throw new SetErrorResponse("Token Expired", 402);
+        // throw err;
       }
     }
     next();

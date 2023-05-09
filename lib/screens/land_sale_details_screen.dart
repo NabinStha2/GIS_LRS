@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:gis_flutter_frontend/model/transfer_land/land_transfer_request_model.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -510,7 +511,9 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                 _.individualSaleLandResult?.saleData ==
                                             "selling" ||
                                         _.individualSaleLandResult?.saleData ==
-                                            "processing"
+                                            "processing" ||
+                                        _.individualSaleLandResult?.saleData ==
+                                            "transferring"
                                     ? "Cancel land for sale"
                                     : "Add Land For Sale",
                                 () {
@@ -542,7 +545,9 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                 },
                                 isDisable:
                                     _.individualSaleLandResult?.saleData ==
-                                        "processing",
+                                            "processing" ||
+                                        _.individualSaleLandResult?.saleData ==
+                                            "transferring",
                               )
                             : Container(),
                         vSizedBox1,
@@ -866,10 +871,86 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                         ? CustomButton.elevatedButton(
                                             "Start Transferring Land",
                                             () {
-                                              __.addLandForTransfer(context: context);
+                                              __.addLandForTransfer(
+                                                context: context,
+                                                landTransferRequestModel:
+                                                    LandTransferRequestModel(
+                                                        landSaleId: _
+                                                            .individualSaleLandResult
+                                                            ?.id),
+                                              );
                                             },
+                                            isDisable:
+                                                _.individualSaleLandResult
+                                                            ?.saleData ==
+                                                        "transferring" &&
+                                                    _.individualSaleLandResult
+                                                            ?.saleData !=
+                                                        "processing",
                                           )
                                         : Container(),
+                                    vSizedBox0,
+                                    (_.individualSaleLandResult?.ownerUserId
+                                                        ?.id ==
+                                                    AppSharedPreferences
+                                                        .getUserId ||
+                                                _.individualSaleLandResult
+                                                        ?.approvedUserId?.id ==
+                                                    AppSharedPreferences
+                                                        .getUserId) &&
+                                            _.individualSaleLandResult
+                                                    ?.saleData ==
+                                                "transferring"
+                                        ? const Text.rich(
+                                            TextSpan(
+                                              text: "NOTE : ",
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.red,
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                    text:
+                                                        "Land transferring has been started & both the user must accept the transfer to fully transfer the land.",
+                                                    style: TextStyle(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ))
+                                              ],
+                                            ),
+                                          )
+                                        : (_.individualSaleLandResult
+                                                            ?.ownerUserId?.id ==
+                                                        AppSharedPreferences
+                                                            .getUserId ||
+                                                    _.individualSaleLandResult
+                                                            ?.approvedUserId?.id ==
+                                                        AppSharedPreferences
+                                                            .getUserId) &&
+                                                _.individualSaleLandResult
+                                                        ?.saleData ==
+                                                    "processing"
+                                            ? const Text.rich(
+                                                TextSpan(
+                                                  text: "NOTE : ",
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors.red,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                        text:
+                                                            "Wait for the land owner to start the land transfer.",
+                                                        style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ))
+                                                  ],
+                                                ),
+                                              )
+                                            : Container(),
                                   ],
                                 ),
                               )
@@ -970,6 +1051,27 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                       ),
                                     ],
                                   ),
+                                  vSizedBox0,
+                                  data?.id == AppSharedPreferences.getUserId
+                                      ? const Text.rich(
+                                          TextSpan(
+                                            text: "NOTE : ",
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.red,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      "You have been rejected to buy the land.",
+                                                  style: TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                  ))
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                             );
