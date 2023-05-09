@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:gis_flutter_frontend/model/transfer_land/individual_land_transfer_model.dart';
 import 'package:gis_flutter_frontend/model/transfer_land/land_transfer_response_model.dart';
 import 'package:gis_flutter_frontend/services/base_client_controller.dart';
+import 'package:provider/provider.dart';
 
 import '../core/app/enums.dart';
 import '../core/config/api_config.dart';
 import '../core/development/console.dart';
+import '../model/land/land_request_model.dart';
 import '../model/transfer_land/land_transfer_request_model.dart';
 import '../services/api_exceptions.dart';
 import '../services/base_client.dart';
@@ -17,6 +19,7 @@ import '../utils/app_shared_preferences.dart';
 import '../utils/custom_toasts.dart';
 import '../utils/get_query.dart';
 import '../widgets/custom_dialogs.dart';
+import 'land_provider.dart';
 
 class LandTransferProvider extends ChangeNotifier with BaseController {
   bool isLoading = false;
@@ -49,7 +52,7 @@ class LandTransferProvider extends ChangeNotifier with BaseController {
     try {
       isLoading = true;
       CustomDialogs.fullLoadingDialog(
-          data: "Adding Land for sale, Please wait...", context: context);
+          data: "Adding Land for transfer, Please wait...", context: context);
       var userId = AppSharedPreferences.getUserId;
       consolelog(userId);
       var response = await BaseClient()
@@ -64,6 +67,11 @@ class LandTransferProvider extends ChangeNotifier with BaseController {
       isLoading = false;
       hideLoading(context);
       successToast(msg: "Land for transfer added successfully.");
+      Provider.of<LandProvider>(context, listen: false).getIndividualSaleLand(
+          context: context,
+          landRequestModel: LandRequestModel(
+            landSaleId: landTransferRequestModel?.landSaleId,
+          ));
       notifyListeners();
     } on AppException catch (err) {
       isLoading = false;
@@ -144,7 +152,7 @@ class LandTransferProvider extends ChangeNotifier with BaseController {
   }) async {
     try {
       isLoading = true;
-
+      notifyListeners();
       var response = await BaseClient()
           .get(
             ApiConfig.baseUrl,
@@ -251,6 +259,41 @@ class LandTransferProvider extends ChangeNotifier with BaseController {
     } catch (e) {
       isLoading = false;
       addPaymentVoucherFormMsg = e.toString();
+      notifyListeners();
+      consolelog(e.toString());
+    }
+  }
+
+  initiateLandForTransfer({
+    required BuildContext context,
+    LandTransferRequestModel? landTransferRequestModel,
+  }) async {
+    try {
+      isLoading = true;
+      CustomDialogs.fullLoadingDialog(
+          data: "Initiating Land for transfer, Please wait...",
+          context: context);
+      var response = await BaseClient()
+          .patch(
+            ApiConfig.baseUrl,
+            "${ApiConfig.landTransferUrl}/${landTransferRequestModel?.landTransferId}/initiate",
+            {},
+            hasTokenHeader: true,
+          )
+          .catchError(handleError);
+      if (response == null) return false;
+      isLoading = false;
+      hideLoading(context);
+      getIndividualLandTransfer(
+          context: context, landTransferRequestModel: landTransferRequestModel);
+      successToast(msg: "Land for transfer initiated successfully.");
+      notifyListeners();
+    } on AppException catch (err) {
+      isLoading = false;
+      logger(err.toString(), loggerType: LoggerType.error);
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
       notifyListeners();
       consolelog(e.toString());
     }

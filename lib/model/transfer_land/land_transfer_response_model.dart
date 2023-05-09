@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final landTransferResponseModel = landTransferResponseModelFromJson(jsonString);
-
 import 'dart:convert';
 
 import '../land/individual_land_sale_response_model.dart';
@@ -72,9 +68,16 @@ class LandTransferDataResult {
   String? ownerUserId;
   UserId? approvedUserId;
   String? transerData;
+  int? transactionAmt;
+  DateTime? transactionDate;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? v;
+  String? billToken;
+  String? buyerBankAcc;
+  String? sellerBankAcc;
+  UserId? ownerHistory;
+  VoucherFormFile? voucherFormFile;
 
   LandTransferDataResult({
     this.id,
@@ -82,9 +85,16 @@ class LandTransferDataResult {
     this.ownerUserId,
     this.approvedUserId,
     this.transerData,
+    this.transactionAmt,
+    this.transactionDate,
     this.createdAt,
     this.updatedAt,
     this.v,
+    this.billToken,
+    this.buyerBankAcc,
+    this.sellerBankAcc,
+    this.ownerHistory,
+    this.voucherFormFile,
   });
 
   factory LandTransferDataResult.fromJson(Map<String, dynamic> json) =>
@@ -98,6 +108,10 @@ class LandTransferDataResult {
             ? null
             : UserId.fromJson(json["approvedUserId"]),
         transerData: json["transerData"],
+        transactionAmt: json["transactionAmt"],
+        transactionDate: json["transactionDate"] == null
+            ? null
+            : DateTime.parse(json["transactionDate"]),
         createdAt: json["createdAt"] == null
             ? null
             : DateTime.parse(json["createdAt"]),
@@ -105,6 +119,15 @@ class LandTransferDataResult {
             ? null
             : DateTime.parse(json["updatedAt"]),
         v: json["__v"],
+        billToken: json["billToken"],
+        buyerBankAcc: json["buyerBankAcc"],
+        sellerBankAcc: json["sellerBankAcc"],
+        ownerHistory: json["ownerHistory"] == null
+            ? null
+            : UserId.fromJson(json["ownerHistory"]),
+        voucherFormFile: json["voucherFormFile"] == null
+            ? null
+            : VoucherFormFile.fromJson(json["voucherFormFile"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -113,9 +136,37 @@ class LandTransferDataResult {
         "ownerUserId": ownerUserId,
         "approvedUserId": approvedUserId?.toJson(),
         "transerData": transerData,
+        "transactionAmt": transactionAmt,
+        "transactionDate": transactionDate?.toIso8601String(),
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
+        "billToken": billToken,
+        "buyerBankAcc": buyerBankAcc,
+        "sellerBankAcc": sellerBankAcc,
+        "ownerHistory": ownerHistory?.toJson(),
+        "voucherFormFile": voucherFormFile?.toJson(),
+      };
+}
+
+class VoucherFormFile {
+  String? voucherFormImage;
+  String? voucherFormPublicId;
+
+  VoucherFormFile({
+    this.voucherFormImage,
+    this.voucherFormPublicId,
+  });
+
+  factory VoucherFormFile.fromJson(Map<String, dynamic> json) =>
+      VoucherFormFile(
+        voucherFormImage: json["voucherFormImage"],
+        voucherFormPublicId: json["voucherFormPublicId"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "voucherFormImage": voucherFormImage,
+        "voucherFormPublicId": voucherFormPublicId,
       };
 }
 
@@ -132,6 +183,7 @@ class LandSaleId {
   DateTime? updatedAt;
   int? v;
   String? approvedUserId;
+  String? prevOwnerUserId;
 
   LandSaleId({
     this.id,
@@ -146,6 +198,7 @@ class LandSaleId {
     this.updatedAt,
     this.v,
     this.approvedUserId,
+    this.prevOwnerUserId,
   });
 
   factory LandSaleId.fromJson(Map<String, dynamic> json) => LandSaleId(
@@ -155,14 +208,15 @@ class LandSaleId {
         ownerUserId: json["ownerUserId"] == null
             ? null
             : UserId.fromJson(json["ownerUserId"]),
-        geoJson:
-            json["geoJSON"] == null ? null : GeoJson.fromJson(json["geoJSON"]),
+        saleData: json["saleData"],
         requestedUserId: json["requestedUserId"] == null
             ? []
             : List<dynamic>.from(json["requestedUserId"]!.map((x) => x)),
         rejectedUserId: json["rejectedUserId"] == null
             ? []
             : List<dynamic>.from(json["rejectedUserId"]!.map((x) => x)),
+        geoJson:
+            json["geoJSON"] == null ? null : GeoJson.fromJson(json["geoJSON"]),
         createdAt: json["createdAt"] == null
             ? null
             : DateTime.parse(json["createdAt"]),
@@ -171,6 +225,7 @@ class LandSaleId {
             : DateTime.parse(json["updatedAt"]),
         v: json["__v"],
         approvedUserId: json["approvedUserId"],
+        prevOwnerUserId: json["prevOwnerUserId"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -185,102 +240,11 @@ class LandSaleId {
         "rejectedUserId": rejectedUserId == null
             ? []
             : List<dynamic>.from(rejectedUserId!.map((x) => x)),
-        "geoJSON": geoJson,
+        "geoJSON": geoJson?.toJson(),
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
         "approvedUserId": approvedUserId,
+        "prevOwnerUserId": prevOwnerUserId,
       };
 }
-
-// class LandId {
-//   String? id;
-//   String? city;
-//   String? area;
-//   String? parcelId;
-//   String? wardNo;
-//   String? district;
-//   String? address;
-//   String? surveyNo;
-//   String? province;
-//   String? landPrice;
-//   String? isVerified;
-//   String? ownerUserId;
-//   List<dynamic>? ownerHistory;
-//   String? saleData;
-//   String? geoJson;
-//   DateTime? createdAt;
-//   DateTime? updatedAt;
-//   int? v;
-
-//   LandId({
-//     this.id,
-//     this.city,
-//     this.area,
-//     this.parcelId,
-//     this.wardNo,
-//     this.district,
-//     this.address,
-//     this.surveyNo,
-//     this.province,
-//     this.landPrice,
-//     this.isVerified,
-//     this.ownerUserId,
-//     this.ownerHistory,
-//     this.saleData,
-//     this.geoJson,
-//     this.createdAt,
-//     this.updatedAt,
-//     this.v,
-//   });
-
-//   factory LandId.fromJson(Map<String, dynamic> json) => LandId(
-//         id: json["_id"],
-//         city: json["city"],
-//         area: json["area"],
-//         parcelId: json["parcelId"],
-//         wardNo: json["wardNo"],
-//         district: json["district"],
-//         address: json["address"],
-//         surveyNo: json["surveyNo"],
-//         province: json["province"],
-//         landPrice: json["landPrice"],
-//         isVerified: json["isVerified"],
-//         ownerUserId: json["ownerUserId"],
-//         ownerHistory: json["ownerHistory"] == null
-//             ? []
-//             : List<dynamic>.from(json["ownerHistory"]!.map((x) => x)),
-//         saleData: json["saleData"],
-//         geoJson: json["geoJSON"],
-//         createdAt: json["createdAt"] == null
-//             ? null
-//             : DateTime.parse(json["createdAt"]),
-//         updatedAt: json["updatedAt"] == null
-//             ? null
-//             : DateTime.parse(json["updatedAt"]),
-//         v: json["__v"],
-//       );
-
-//   Map<String, dynamic> toJson() => {
-//         "_id": id,
-//         "city": city,
-//         "area": area,
-//         "parcelId": parcelId,
-//         "wardNo": wardNo,
-//         "district": district,
-//         "address": address,
-//         "surveyNo": surveyNo,
-//         "province": province,
-//         "landPrice": landPrice,
-//         "isVerified": isVerified,
-//         "ownerUserId": ownerUserId,
-//         "ownerHistory": ownerHistory == null
-//             ? []
-//             : List<dynamic>.from(ownerHistory!.map((x) => x)),
-//         "saleData": saleData,
-//         "geoJSON": geoJson,
-//         "createdAt": createdAt?.toIso8601String(),
-//         "updatedAt": updatedAt?.toIso8601String(),
-//         "__v": v,
-//       };
-// }

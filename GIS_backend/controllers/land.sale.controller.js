@@ -184,6 +184,7 @@ module.exports.getAllLandSaleByAcceptedUserId = async (req, res) => {
     let populateQuery = [];
     populateQuery.push({ isVerified: "approved" });
     query.approvedUserId = res.locals.authData?._id;
+    query.saleData = { $ne: "selled" };
 
     console.log(query, populateQuery);
 
@@ -294,7 +295,7 @@ module.exports.getOwnedLandSale = async (req, res) => {
       populateQuery.push({ province: { $regex: province, $options: "i" } });
     }
     populateQuery.push({ isVerified: "approved" });
-    // query.saleData = "selling";
+    query.saleData = { $ne: "selled" };
     query.ownerUserId = res.locals.authData?._id;
 
     console.log(query, populateQuery);

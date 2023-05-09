@@ -7,15 +7,23 @@ const TransferOwnershipSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "LandSale",
       required: true,
+      index: true,
     },
     ownerUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     approvedUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      index: true,
+    },
+    ownerHistory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
     },
     transerData: {
       type: String,

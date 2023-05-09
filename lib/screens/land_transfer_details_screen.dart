@@ -452,30 +452,54 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  _
-                                              .individualLandTransferResult
-                                              ?.landSaleId
-                                              ?.ownerUserId
-                                              ?.imageFile
-                                              ?.imageUrl !=
-                                          null
-                                      ? ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          child: CustomNetworkImage(
-                                            imageUrl: _
-                                                .individualLandTransferResult
-                                                ?.landSaleId
-                                                ?.ownerUserId
-                                                ?.imageFile
-                                                ?.imageUrl,
-                                          ),
-                                        )
-                                      : const SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: Icon(Icons.person),
-                                        ),
+                                  _.individualLandTransferResult?.transerData ==
+                                          "completed"
+                                      ? _
+                                                  .individualLandTransferResult
+                                                  ?.ownerHistory
+                                                  ?.imageFile
+                                                  ?.imageUrl !=
+                                              null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: CustomNetworkImage(
+                                                imageUrl: _
+                                                    .individualLandTransferResult
+                                                    ?.ownerHistory
+                                                    ?.imageFile
+                                                    ?.imageUrl,
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              height: 100,
+                                              width: 100,
+                                              child: Icon(Icons.person),
+                                            )
+                                      : _
+                                                  .individualLandTransferResult
+                                                  ?.landSaleId
+                                                  ?.ownerUserId
+                                                  ?.imageFile
+                                                  ?.imageUrl !=
+                                              null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: CustomNetworkImage(
+                                                imageUrl: _
+                                                    .individualLandTransferResult
+                                                    ?.landSaleId
+                                                    ?.ownerUserId
+                                                    ?.imageFile
+                                                    ?.imageUrl,
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              height: 100,
+                                              width: 100,
+                                              child: Icon(Icons.person),
+                                            ),
                                   hSizedBox2,
                                   Expanded(
                                     child: Column(
@@ -488,60 +512,98 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                           children: [
                                             Expanded(
                                               child: CustomText.ourText(
-                                                _
-                                                        .individualLandTransferResult
-                                                        ?.landSaleId
-                                                        ?.ownerUserId
-                                                        ?.name ??
-                                                    "",
+                                                _.individualLandTransferResult
+                                                            ?.transerData ==
+                                                        "completed"
+                                                    ? _.individualLandTransferResult
+                                                            ?.ownerHistory?.name ??
+                                                        ""
+                                                    : _
+                                                            .individualLandTransferResult
+                                                            ?.landSaleId
+                                                            ?.ownerUserId
+                                                            ?.name ??
+                                                        "",
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                            _
-                                                        .individualLandTransferResult
-                                                        ?.landSaleId
-                                                        ?.ownerUserId
-                                                        ?.id ==
-                                                    AppSharedPreferences
-                                                        .getUserId
-                                                ? const Icon(
-                                                    Icons.verified_user,
-                                                    color: Colors.green,
-                                                  )
-                                                : Container(),
+                                            _.individualLandTransferResult
+                                                        ?.transerData ==
+                                                    "completed"
+                                                ? _.individualLandTransferResult
+                                                            ?.ownerHistory?.id ==
+                                                        AppSharedPreferences
+                                                            .getUserId
+                                                    ? const Icon(
+                                                        Icons.verified_user,
+                                                        color: Colors.green,
+                                                      )
+                                                    : Container()
+                                                : _
+                                                            .individualLandTransferResult
+                                                            ?.landSaleId
+                                                            ?.ownerUserId
+                                                            ?.id ==
+                                                        AppSharedPreferences
+                                                            .getUserId
+                                                    ? const Icon(
+                                                        Icons.verified_user,
+                                                        color: Colors.green,
+                                                      )
+                                                    : Container(),
                                           ],
                                         ),
                                         vSizedBox2,
                                         CustomText.ourText(
-                                          _
-                                                  .individualLandTransferResult
-                                                  ?.landSaleId
-                                                  ?.ownerUserId
-                                                  ?.email ??
-                                              "",
+                                          _.individualLandTransferResult
+                                                      ?.transerData ==
+                                                  "completed"
+                                              ? _.individualLandTransferResult
+                                                      ?.ownerHistory?.email ??
+                                                  ""
+                                              : _
+                                                      .individualLandTransferResult
+                                                      ?.landSaleId
+                                                      ?.ownerUserId
+                                                      ?.email ??
+                                                  "",
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                         ),
                                         vSizedBox2,
                                         CustomText.ourText(
-                                          _
-                                                  .individualLandTransferResult
-                                                  ?.landSaleId
-                                                  ?.ownerUserId
-                                                  ?.phoneNumber ??
-                                              "",
+                                          _.individualLandTransferResult
+                                                      ?.transerData ==
+                                                  "completed"
+                                              ? _
+                                                      .individualLandTransferResult
+                                                      ?.ownerHistory
+                                                      ?.phoneNumber ??
+                                                  ""
+                                              : _
+                                                      .individualLandTransferResult
+                                                      ?.landSaleId
+                                                      ?.ownerUserId
+                                                      ?.phoneNumber ??
+                                                  "",
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
                                         vSizedBox2,
                                         CustomText.ourText(
-                                          _
-                                                  .individualLandTransferResult
-                                                  ?.landSaleId
-                                                  ?.ownerUserId
-                                                  ?.address ??
-                                              "",
+                                          _.individualLandTransferResult
+                                                      ?.transerData ==
+                                                  "completed"
+                                              ? _.individualLandTransferResult
+                                                      ?.ownerHistory?.address ??
+                                                  ""
+                                              : _
+                                                      .individualLandTransferResult
+                                                      ?.landSaleId
+                                                      ?.ownerUserId
+                                                      ?.address ??
+                                                  "",
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -676,33 +738,27 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                   )
                                 : Container(),
                             vSizedBox2,
-                            // vSizedBox1,
-                            // AppSharedPreferences.getUserId ==
-                            //         _.individualLandTransferResult
-                            //             ?.landSaleId?.ownerUserId?.id
-                            //     ? CustomButton.elevatedButton(
-                            //         "Start Transferring Land",
-                            //         () {
-                            //           _.addLandForTransfer(
-                            //             context: context,
-                            //             landTransferRequestModel:
-                            //                 LandTransferRequestModel(
-                            //                     landSaleId: _
-                            //                         .individualLandTransferResult
-                            //                         ?.landSaleId
-                            //                         ?.id),
-                            //           );
-                            //         },
-                            //         isDisable: _
-                            //                     .individualLandTransferResult
-                            //                     ?.landSaleId
-                            //                     ?.saleData ==
-                            //                 "transferring" &&
-                            //             _.individualLandTransferResult
-                            //                     ?.landSaleId?.saleData !=
-                            //                 "processing",
-                            //       )
-                            //     : Container(),
+                            vSizedBox1,
+                            AppSharedPreferences.getUserId ==
+                                    _.individualLandTransferResult?.ownerUserId
+                                ? CustomButton.elevatedButton(
+                                    "Initiate Land Transfer",
+                                    () {
+                                      _.initiateLandForTransfer(
+                                        context: context,
+                                        landTransferRequestModel:
+                                            LandTransferRequestModel(
+                                                landTransferId: _
+                                                    .individualLandTransferResult
+                                                    ?.id),
+                                      );
+                                    },
+                                    isDisable: _.individualLandTransferResult
+                                            ?.transerData !=
+                                        "ongoing",
+                                  )
+                                : Container(),
+                            vSizedBox1,
                             AppSharedPreferences.getUserId ==
                                     _.individualLandTransferResult
                                         ?.approvedUserId?.id
@@ -713,11 +769,131 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                           context, const PaymentFormScreen());
                                     },
                                     isDisable: _.individualLandTransferResult
-                                                ?.transerData ==
-                                            "ongoing" ||
+                                            ?.transerData !=
+                                        "pending",
+                                  )
+                                : Container(),
+                            vSizedBox1,
+                            AppSharedPreferences.getUserId ==
                                         _.individualLandTransferResult
-                                                ?.transerData ==
-                                            "completed",
+                                            ?.ownerUserId &&
+                                    _.individualLandTransferResult
+                                            ?.transerData ==
+                                        "pending"
+                                ? const Text.rich(
+                                    TextSpan(
+                                      text: "NOTE : ",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.red,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                "Wait for the buyer to add payment Information.",
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            ))
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            _.individualLandTransferResult?.billToken != null
+                                ? Column(
+                                    children: [
+                                      vSizedBox1,
+                                      CustomText.ourText(
+                                        "Payment Information",
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.kPrimaryColor2,
+                                      ),
+                                      vSizedBox1,
+                                      Card(
+                                        elevation: 0,
+                                        child: Container(
+                                          padding: screenPadding,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: AppColors.kBorderColor,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  CustomText.ourText(
+                                                      "Bill Token :"),
+                                                  CustomText.ourText(
+                                                    _.individualLandTransferResult
+                                                        ?.billToken,
+                                                  ),
+                                                ],
+                                              ),
+                                              vSizedBox1,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  CustomText.ourText(
+                                                      "Seller Acc :"),
+                                                  CustomText.ourText(
+                                                    _.individualLandTransferResult
+                                                        ?.sellerBankAcc,
+                                                  ),
+                                                ],
+                                              ),
+                                              vSizedBox1,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  CustomText.ourText(
+                                                      "Buyer Acc :"),
+                                                  CustomText.ourText(
+                                                    _.individualLandTransferResult
+                                                        ?.buyerBankAcc,
+                                                  ),
+                                                ],
+                                              ),
+                                              vSizedBox1,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  CustomText.ourText(
+                                                      "Transaction Amt :"),
+                                                  CustomText.ourText(
+                                                    _.individualLandTransferResult
+                                                        ?.transactionAmt
+                                                        .toString(),
+                                                  ),
+                                                ],
+                                              ),
+                                              vSizedBox1,
+                                              CustomNetworkImage(
+                                                height: 500,
+                                                width: appWidth(context),
+                                                boxFit: BoxFit.contain,
+                                                imageUrl: _
+                                                    .individualLandTransferResult
+                                                    ?.voucherFormFile
+                                                    ?.voucherFormImage,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 : Container(),
                             vSizedBox2,

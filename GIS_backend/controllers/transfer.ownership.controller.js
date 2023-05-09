@@ -19,6 +19,9 @@ module.exports.getLandForTransferOwnershipById = async (req, res) => {
           path: "approvedUserId",
         },
         {
+          path: "ownerHistory",
+        },
+        {
           path: "landSaleId",
           populate: [
             {
@@ -76,8 +79,26 @@ module.exports.getAllLandForTransferOwnership = async (req, res) => {
       populateQuery.push({ province: { $regex: province, $options: "i" } });
     }
 
-    query = { $or: [{ ownerUserId: userId }, { approvedUserId: userId }] };
-    query.transerData = "pending";
+    query = {
+      $and: [
+        {
+          $or: [
+            { ownerUserId: userId },
+            { approvedUserId: userId },
+            { ownerHistory: userId },
+          ],
+        },
+        {
+          $or: [
+            { transerData: "pending" },
+            { transerData: "ongoing" },
+            { transerData: "initiated" },
+            { transerData: "rejected" },
+            { transerData: "completed" },
+          ],
+        },
+      ],
+    };
     console.log(query);
 
     const transferOwnership = await getSearchPaginatedData({
@@ -92,11 +113,15 @@ module.exports.getAllLandForTransferOwnership = async (req, res) => {
             path: "approvedUserId",
           },
           {
+            path: "ownerHistory",
+          },
+          {
             path: "landSaleId",
             populate: [
               {
                 path: "landId",
                 match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+                // match: { ownerHistory: { $in: [userId] } },
               },
               {
                 path: "geoJSON",
@@ -188,6 +213,7 @@ module.exports.addLandForTransferOwnership = async (req, res) => {
   }
 };
 
+//admin ----------------------------------------------------------------
 module.exports.approveLandForTransferOwnership = async (req, res) => {
   try {
     const transferOwnershipId = req.params.id;
@@ -205,16 +231,16 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
     if (!transferOwnership) {
       throw new SetErrorResponse("TransferOwnership not found", 404);
     }
-    if (transferOwnership?.ownerUserId._id != res.locals.authData?._id) {
+    if (transferOwnership?.transerData != "initiated") {
       throw new SetErrorResponse(
-        "User have no permission to approve land for transfer",
+        "Land is not initiated for transfer ownership",
         401
       );
     }
 
     let ownerHistory = [];
     let land = [];
-    ownerHistory.push(res.locals.authData?._id);
+    ownerHistory.push(transferOwnership?.ownerUserId);
     land.push(transferOwnership?.landSaleId?.landId?._id);
 
     const [
@@ -224,7 +250,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
       updatedTransferOwnership,
     ] = await Promise.all([
       User.findByIdAndUpdate(
-        { _id: res.locals.authData?._id },
+        { _id: transferOwnership?.approvedUserId },
         { ownedLand: [...land] },
         { new: true }
       ).lean(),
@@ -233,6 +259,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
         {
           ownerUserId: transferOwnership?.approvedUserId,
           ownerHistory: [...ownerHistory],
+          saleData: null,
         },
         { new: true }
       ).lean(),
@@ -240,7 +267,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
         { _id: transferOwnership?.landSaleId?._id },
         {
           ownerUserId: transferOwnership?.approvedUserId,
-          prevOwnerUserId: res.locals.authData?._id,
+          prevOwnerUserId: transferOwnership?.ownerUserId,
           saleData: "selled",
         },
         { new: true }
@@ -250,7 +277,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
           _id: transferOwnershipId,
         },
         {
-          transerData: "approved",
+          transerData: "completed",
           ownerUserId: transferOwnership?.approvedUserId,
         },
         { new: true }
@@ -356,6 +383,7 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
     return res.fail(err);
   }
 };
+//----------------------------------------------------------------
 
 module.exports.addPaymentFormForLandTransferOwnership = async (req, res) => {
   try {
@@ -463,23 +491,24 @@ module.exports.initiateTransferForLandTransferOwnership = async (req, res) => {
     if (!existingTransfer) {
       throw new SetErrorResponse("Not Found!!!", 403);
     }
+    if (existingTransfer?.transerData == "initiated") {
+      throw new SetErrorResponse("ALready initiated!!!", 401);
+    }
 
-    const updatedTranferOwnership = await existingTransfer
-      .findByIdAndUpdate(
-        { _id: landTransferId },
-        {
-          transerData: "initiated",
-        },
-        { new: true }
-      )
-      .lean();
+    const updatedTranferOwnership = await TransferOwnership.findByIdAndUpdate(
+      { _id: landTransferId },
+      {
+        transerData: "initiated",
+      },
+      { new: true }
+    ).lean();
 
     return res.success(
       { transferOwnershipData: updatedTranferOwnership },
-      "Payment form successfully"
+      "Land initiated successfully"
     );
   } catch (err) {
-    console.log(`Error from addPaymentFormForLandTransferOwnership : ${err}`);
+    console.log(`Error from initiateTransferForLandTransferOwnership : ${err}`);
     return res.fail(err);
   }
 };

@@ -8,8 +8,10 @@ const {
   getLandForTransferOwnershipById,
   patchPaymentVoucherLandTransferOwnership,
   addPaymentFormForLandTransferOwnership,
+  initiateTransferForLandTransferOwnership,
 } = require("../controllers/transfer.ownership.controller");
 const { uploadImages } = require("../middlewares/multer");
+const { checkIsAdmin } = require("../middlewares/check.is.admin");
 
 const router = require("express").Router();
 
@@ -34,6 +36,7 @@ router.patch(
   validate(["id"]),
   validator,
   checkAuthValidation,
+  checkIsAdmin,
   approveLandForTransferOwnership
 );
 
@@ -54,6 +57,14 @@ router.patch(
   validator,
   checkAuthValidation,
   addPaymentFormForLandTransferOwnership
+);
+
+router.patch(
+  "/:id/initiate",
+  validate(["id"]),
+  validator,
+  checkAuthValidation,
+  initiateTransferForLandTransferOwnership
 );
 
 module.exports = router;
