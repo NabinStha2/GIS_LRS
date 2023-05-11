@@ -289,11 +289,9 @@ class LandProvider extends ChangeNotifier with BaseController {
   getAllSearchLands({
     required BuildContext context,
     LandRequestModel? landRequestModel,
-    bool? isFromMap = false,
-    bool noLoading = false,
   }) async {
     try {
-      if (!noLoading) isLoading = true;
+      isLoading = true;
       paginatedAllSearchLandResultPageNumber = landRequestModel?.page ?? 1;
       if (landRequestModel?.page == 1) {
         paginatedAllSearchLandResultPageNumber = 1;
@@ -318,51 +316,16 @@ class LandProvider extends ChangeNotifier with BaseController {
       paginatedAllSearchLandResult
           ?.addAll(decodedJson.data?.landData?.results ?? []);
 
-      if (isFromMap ?? false) {
-        var latlngTempList = <LatLng>[];
-        latlngList.value.clear();
-        if (paginatedAllSearchLandResult?.isNotEmpty ?? false) {
-          for (LandResult e in paginatedAllSearchLandResult ?? []) {
-            e.geoJson?.geometry?.coordinates?.forEach((ele1) {
-              // consolelog(ele1);
-              for (var ele2 in ele1) {
-                // consolelog(ele2);
-                // consolelog(LatLng(ele2[1], ele2[0]));
-                latlngTempList.add(LatLng(ele2[1], ele2[0]));
-              }
-            });
-            latlngList.value.add(LatLngModel(
-              landId: e.id,
-              centerMarker: latlngTempList.isNotEmpty
-                  ? LatLngBounds.fromPoints(latlngTempList).center
-                  : null,
-              parcelId: e.parcelId,
-              polygonData: latlngTempList,
-              address: e.address,
-              area: e.area,
-              landPrice: e.landPrice,
-              wardNo: e.wardNo,
-              email: e.ownerUserId?.email,
-              name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
-              ownerUserId: e.ownerUserId?.id,
-            ));
-            // logger(latlngList.value.toString(), loggerType: LoggerType.success);
-            latlngTempList = [];
-          }
-        }
-        logger(latlngList.value.toString(), loggerType: LoggerType.warning);
-      }
-
-      if (!noLoading) isLoading = false;
+      isLoading = false;
       getAllSearchLandMessage = null;
       notifyListeners();
     } on AppException catch (err) {
-      if (!noLoading) isLoading = false;
+      isLoading = false;
       getAllSearchLandMessage = err.message.toString();
       logger(err.toString(), loggerType: LoggerType.error);
       notifyListeners();
     } catch (e) {
-      if (!noLoading) isLoading = false;
+      isLoading = false;
       getAllSearchLandMessage = e.toString();
       notifyListeners();
       consolelog(e.toString());
@@ -480,9 +443,11 @@ class LandProvider extends ChangeNotifier with BaseController {
   getSaleLand({
     required BuildContext context,
     LandRequestModel? landRequestModel,
+    bool? isFromMap = false,
+    bool noLoading = false,
   }) async {
     try {
-      isLoading = true;
+      if (!noLoading) isLoading = true;
       paginatedSaleLandResultPageNumber = landRequestModel?.page ?? 1;
       if (landRequestModel?.page == 1) {
         paginatedSaleLandResultPageNumber = 1;
@@ -507,17 +472,53 @@ class LandProvider extends ChangeNotifier with BaseController {
       paginatedSaleLandResult
           .addAll(decodedJson.data?.landSaleData?.results ?? []);
 
-      isLoading = false;
+      if (isFromMap ?? false) {
+        var latlngTempList = <LatLng>[];
+        latlngList.value.clear();
+        if (paginatedSaleLandResult.isNotEmpty) {
+          for (LandSaleResult e in paginatedSaleLandResult) {
+            e.geoJson?.geometry?.coordinates?.forEach((ele1) {
+              // consolelog(ele1);
+              for (var ele2 in ele1) {
+                // consolelog(ele2);
+                // consolelog(LatLng(ele2[1], ele2[0]));
+                latlngTempList.add(LatLng(ele2[1], ele2[0]));
+              }
+            });
+            latlngList.value.add(LatLngModel(
+              landId: e.id,
+              centerMarker: latlngTempList.isNotEmpty
+                  ? LatLngBounds.fromPoints(latlngTempList).center
+                  : null,
+              parcelId: e.parcelId,
+              polygonData: latlngTempList,
+              address: e.landId?.address,
+              area: e.landId?.area,
+              landSaleId: e.id,
+              landPrice: e.landId?.landPrice,
+              wardNo: e.landId?.wardNo,
+              email: e.ownerUserId?.email,
+              name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
+              ownerUserId: e.ownerUserId?.id,
+            ));
+            // logger(latlngList.value.toString(), loggerType: LoggerType.success);
+            latlngTempList = [];
+          }
+        }
+        logger(latlngList.value.toString(), loggerType: LoggerType.warning);
+      }
+
+      if (!noLoading) isLoading = false;
       getSaleLandMessage = null;
 
       notifyListeners();
     } on AppException catch (err) {
-      isLoading = false;
+      if (!noLoading) isLoading = false;
       getSaleLandMessage = err.message.toString();
       logger(err.toString(), loggerType: LoggerType.error);
       notifyListeners();
     } catch (e) {
-      isLoading = false;
+      if (!noLoading) isLoading = false;
       getSaleLandMessage = e.toString();
       notifyListeners();
       consolelog(e.toString());

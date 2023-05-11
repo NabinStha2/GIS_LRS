@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:gis_flutter_frontend/screens/land_sale_details_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,6 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/drawer_widget.dart';
 import 'dashboard_page.dart';
-import 'land_details_screen.dart';
 
 final List<LatLng> polylines = <LatLng>[];
 
@@ -42,6 +42,7 @@ class RequiredArgs {
 }
 
 class LatLngModel {
+  String? landSaleId;
   String? landId;
   String? parcelId;
   List<LatLng>? polygonData;
@@ -65,6 +66,7 @@ class LatLngModel {
     this.name,
     this.ownerUserId,
     this.email,
+    this.landSaleId,
   });
 }
 
@@ -135,7 +137,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
           .searchLandAddressController
           .clear();
 
-      Provider.of<LandProvider>(context, listen: false).getAllSearchLands(
+      Provider.of<LandProvider>(context, listen: false).getSaleLand(
         context: context,
         landRequestModel: LandRequestModel(
           page: 1,
@@ -600,7 +602,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                       //     errorToast(msg: "No parcel Id found");
                                       //  }
 
-                                      __.getAllSearchLands(
+                                      __.getSaleLand(
                                         context: context,
                                         landRequestModel: LandRequestModel(
                                           page: 1,
@@ -634,7 +636,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                     setState(() {
                                       geocodingAddressSearching = false;
                                     });
-                                    __.getAllSearchLands(
+                                    __.getSaleLand(
                                       context: context,
                                       landRequestModel: LandRequestModel(
                                         page: 1,
@@ -759,12 +761,14 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                               CustomButton.elevatedButton(
                                                 "Save",
                                                 () {
+                                                  consolelog(
+                                                      "${__.searchLandAddressController.text} :: ${!geocodingAddressSearchingSwitch}");
                                                   if (!geocodingAddressSearchingSwitch &&
                                                       (__.searchLandController
                                                               .text.isNotEmpty ||
                                                           __.searchLandAddressController
                                                               .text.isNotEmpty)) {
-                                                    __.getAllSearchLands(
+                                                    __.getSaleLand(
                                                       context: context,
                                                       landRequestModel:
                                                           LandRequestModel(
@@ -1024,9 +1028,9 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                       () {
                                         navigate(
                                             context,
-                                            LandDetailsScreen(
-                                              landId: latlngList
-                                                  .value[index].landId,
+                                            LandSaleDetailsScreen(
+                                              landSaleId: latlngList
+                                                  .value[index].landSaleId,
                                             ));
                                       },
                                       fontSize: 12.0,
@@ -1076,7 +1080,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                               onTap: () {
-                                                __.getAllSearchLands(
+                                                __.getSaleLand(
                                                   context: context,
                                                   landRequestModel:
                                                       LandRequestModel(

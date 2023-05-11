@@ -4,6 +4,7 @@ const LandSale = require("../models/land.sale.model");
 const User = require("../models/user.model");
 const { getSearchPaginatedData } = require("../utils/pagination");
 const { SetErrorResponse } = require("../utils/responseSetter");
+const GeoJSON = require("../models/geoJSON.model");
 
 module.exports.addLandForSale = async (req, res) => {
   try {
@@ -55,6 +56,8 @@ module.exports.getAllLandSale = async (req, res) => {
       city,
       district,
       province,
+      latlng,
+      radius,
     } = req?.query;
     let query = {};
     let populateQuery = [];
@@ -75,32 +78,89 @@ module.exports.getAllLandSale = async (req, res) => {
 
     console.log(query, populateQuery);
 
-    const landSale = await getSearchPaginatedData({
-      model: LandSale,
-      reqQuery: {
-        query,
-        sort,
-        page,
-        limit,
-        populate: {
-          path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
-          match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+    if (latlng) {
+      GeoJSON.find({
+        geometry: {
+          $geoNear: {
+            $geometry: {
+              type: "Point",
+              coordinates: [
+                parseFloat(latlng.split(",")[0]),
+                parseFloat(latlng.split(",")[1]),
+              ],
+              // coordinates: [83.9799461371451, 28.2561422405137],
+            },
+            $minDistance: 1,
+            $maxDistance: parseInt(radius) ?? 1000,
+          },
         },
-        pagination: true,
-        modFunction: async (document) => {
-          // console.log(`document :: ${document}`);
-          if (document.landId != null) {
-            return document;
-          }
-        },
-      },
-    });
+      }).exec(async function (err, geoData) {
+        if (err) throw new SetErrorResponse(err, 500);
 
-    if (!landSale) {
-      throw new SetErrorResponse("Land not found", 404);
+        var d = geoData.map((e) => e._id);
+        console.log(d.length);
+
+        query.geoJSON = { $in: d };
+        // console.log(query);
+
+        const landSale = await getSearchPaginatedData({
+          model: LandSale,
+          reqQuery: {
+            query,
+            sort,
+            page,
+            limit,
+            populate: {
+              path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+              match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+            },
+            pagination: true,
+            modFunction: async (document) => {
+              // console.log(`document :: ${document}`);
+              if (document.landId != null) {
+                return document;
+              }
+            },
+          },
+        });
+
+        // if (!landSale) {
+        //   throw new SetErrorResponse("Land Sale not found", 404);
+        // }
+
+        console.log({ data: landSale });
+        return res.success({ landSaleData: landSale });
+      });
+    } else {
+      console.log(query);
+      const landSale = await getSearchPaginatedData({
+        model: LandSale,
+        reqQuery: {
+          query,
+          sort,
+          page,
+          limit,
+          populate: {
+            path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+            match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+          },
+          pagination: true,
+          modFunction: async (document) => {
+            // console.log(`document :: ${document}`);
+            if (document.landId != null) {
+              return document;
+            }
+          },
+        },
+      });
+
+      // if (!lands) {
+      //   throw new SetErrorResponse("Land not found", 404);
+      // }
+
+      console.log({ data: landSale });
+      return res.success({ landSaleData: landSale });
     }
-
-    return res.success({ landSaleData: landSale });
   } catch (err) {
     console.log(`Error from getAllLandSale :: ${err.message}`);
     return res.fail(err);

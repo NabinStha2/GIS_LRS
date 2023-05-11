@@ -135,6 +135,30 @@ class DrawerWidget extends StatelessWidget {
                   navigateOffAllNamed(context, RouteName.landRouteName);
                 },
               ),
+              // ListTile(
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(50),
+              //   ),
+              //   tileColor: _.drawerSelectedIndex == 3
+              //       ? AppColors.kPrimaryColor2
+              //       : null,
+              //   leading: Icon(
+              //     Icons.search,
+              //     color:
+              //         _.drawerSelectedIndex == 3 ? Colors.white : Colors.black,
+              //   ),
+              //   title: CustomText.ourText(
+              //     'Search Land',
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w500,
+              //     color:
+              //         _.drawerSelectedIndex == 3 ? Colors.white : Colors.black,
+              //   ),
+              //   onTap: () {
+              //     _.changeDrawerSelectedIndex(3);
+              //     navigateOffAllNamed(context, RouteName.searchLandRouteName);
+              //   },
+              // ),
               ListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
@@ -148,7 +172,7 @@ class DrawerWidget extends StatelessWidget {
                       _.drawerSelectedIndex == 3 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Search Land',
+                  'Owned Land Sale',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -156,7 +180,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 onTap: () {
                   _.changeDrawerSelectedIndex(3);
-                  navigateOffAllNamed(context, RouteName.searchLandRouteName);
+                  navigateOffAllNamed(context, RouteName.landSaleRouteName);
                 },
               ),
               ListTile(
@@ -172,7 +196,7 @@ class DrawerWidget extends StatelessWidget {
                       _.drawerSelectedIndex == 4 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Owned Land Sale',
+                  'Search Land Sale',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -180,7 +204,8 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 onTap: () {
                   _.changeDrawerSelectedIndex(4);
-                  navigateOffAllNamed(context, RouteName.landSaleRouteName);
+                  navigateOffAllNamed(
+                      context, RouteName.searchLandSaleRouteName);
                 },
               ),
               ListTile(
@@ -196,7 +221,7 @@ class DrawerWidget extends StatelessWidget {
                       _.drawerSelectedIndex == 5 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Search Land Sale',
+                  'Land Transfer',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -204,31 +229,6 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 onTap: () {
                   _.changeDrawerSelectedIndex(5);
-                  navigateOffAllNamed(
-                      context, RouteName.searchLandSaleRouteName);
-                },
-              ),
-              ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                tileColor: _.drawerSelectedIndex == 6
-                    ? AppColors.kPrimaryColor2
-                    : null,
-                leading: Icon(
-                  Icons.search,
-                  color:
-                      _.drawerSelectedIndex == 6 ? Colors.white : Colors.black,
-                ),
-                title: CustomText.ourText(
-                  'Land Transfer',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color:
-                      _.drawerSelectedIndex == 6 ? Colors.white : Colors.black,
-                ),
-                onTap: () {
-                  _.changeDrawerSelectedIndex(6);
                   navigateOffAllNamed(
                       context, RouteName.landTransferringRouteName);
                 },
