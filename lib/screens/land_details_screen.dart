@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:gis_flutter_frontend/core/development/console.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +17,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_circular_progress_indicator.dart';
 import '../widgets/custom_network_image_widget.dart';
 import '../widgets/custom_text.dart';
+import '../widgets/custom_text_form_field.dart';
 import 'map_page.dart';
 
 class LandDetailsScreen extends StatefulWidget {
@@ -93,7 +93,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                             "Land Information",
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.kPrimaryColor2,
+                            color: AppColors.kBrandPrimaryColor,
                           ),
                           vSizedBox1,
                           Row(
@@ -128,7 +128,10 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                 latlngData: LatLng(
                                                   lat ?? 0.0,
                                                   long ?? 0.0,
-                                                ), // lat
+                                                ),
+                                                parcelId: _.individualLandResult
+                                                    ?.parcelId,
+                                                // lat
                                                 // latlngData: LatLng(
                                                 //     double.parse(_
                                                 //             .individualLandResult
@@ -156,8 +159,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "Id: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -166,7 +169,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                             text: _.individualLandResult?.id ??
                                                 "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -177,8 +180,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "Parcel Id: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -188,7 +191,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                     ?.parcelId ??
                                                 "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -196,33 +199,33 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                       ),
                                     ),
                                     vSizedBox1,
-                                    Text.rich(
-                                      TextSpan(
-                                        text: "Price: NPR. ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: _.individualLandResult
-                                                    ?.landPrice ??
-                                                "",
-                                            style: TextStyle(
-                                              color: AppColors.kHeadingColor,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    vSizedBox1,
+                                    // Text.rich(
+                                    //   TextSpan(
+                                    //     text: "Price: NPR. ",
+                                    //     style:  TextStyle(
+                                    //       color: AppColors.kNeutral800Color,
+                                    //       fontSize: 14.0,
+                                    //       fontWeight: FontWeight.w600,
+                                    //     ),
+                                    //     children: [
+                                    //       TextSpan(
+                                    //         text: _.individualLandResult
+                                    //                 ?.landPrice ??
+                                    //             "",
+                                    //         style: TextStyle(
+                                    //           color: AppColors.kNeutral600Color,
+                                    //           fontWeight: FontWeight.w400,
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // ),
+                                    // vSizedBox1,
                                     Text.rich(
                                       TextSpan(
                                         text: "status: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -232,7 +235,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                     ?.isVerified ??
                                                 "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -256,8 +259,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "City: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -267,7 +270,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                 _.individualLandResult?.city ??
                                                     "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -278,8 +281,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "District: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -289,7 +292,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                     ?.district ??
                                                 "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -306,8 +309,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "Area: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -317,7 +320,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                 _.individualLandResult?.area ??
                                                     "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -328,8 +331,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                     Text.rich(
                                       TextSpan(
                                         text: "Province: ",
-                                        style: const TextStyle(
-                                          color: AppColors.kTextPrimaryColor,
+                                        style: TextStyle(
+                                          color: AppColors.kNeutral800Color,
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -339,7 +342,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                                     ?.province ??
                                                 "",
                                             style: TextStyle(
-                                              color: AppColors.kHeadingColor,
+                                              color: AppColors.kNeutral600Color,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -355,22 +358,22 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                           vSizedBox2,
                           CustomText.ourText(
                             "Address (Survey No.)",
-                            color: AppColors.kTextPrimaryColor,
+                            color: AppColors.kNeutral800Color,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w600,
                           ),
                           vSizedBox0,
                           CustomText.ourText(
                             "${_.individualLandResult?.address} (${_.individualLandResult?.surveyNo})",
-                            color: AppColors.kHeadingColor,
+                            color: AppColors.kNeutral600Color,
                             fontWeight: FontWeight.w400,
                           ),
                           vSizedBox2,
                           Text.rich(
                             TextSpan(
                               text: "Ward No: ",
-                              style: const TextStyle(
-                                color: AppColors.kTextPrimaryColor,
+                              style: TextStyle(
+                                color: AppColors.kNeutral800Color,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -378,7 +381,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                 TextSpan(
                                   text: _.individualLandResult?.wardNo ?? "",
                                   style: TextStyle(
-                                    color: AppColors.kHeadingColor,
+                                    color: AppColors.kNeutral600Color,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -389,8 +392,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                           Text.rich(
                             TextSpan(
                               text: "Created At: ",
-                              style: const TextStyle(
-                                color: AppColors.kTextPrimaryColor,
+                              style: TextStyle(
+                                color: AppColors.kNeutral800Color,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -399,7 +402,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                   text: DateFormat('d MMM, yyyy h:mm a').format(
                                       _.individualLandResult!.createdAt!),
                                   style: TextStyle(
-                                    color: AppColors.kHeadingColor,
+                                    color: AppColors.kNeutral600Color,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -411,14 +414,14 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                             "User Information",
                             fontSize: 18.0,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.kPrimaryColor2,
+                            color: AppColors.kBrandPrimaryColor,
                           ),
                           vSizedBox1,
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: AppColors.kBorderColor,
+                                color: AppColors.kSecondaryBorderColor,
                               ),
                               borderRadius: BorderRadius.circular(16.0),
                             ),
@@ -504,6 +507,20 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                             ),
                           ),
                           vSizedBox2,
+                          CustomTextFormField(
+                            borderRadius: 12,
+                            onlyNumber: true,
+                            hintText: "Enter the price for land sale...",
+                            labelText: "Price",
+                            textInputType: TextInputType.number,
+                            controller: _.landPriceSaleController,
+                            validator: (val) {
+                              return val.toString().isEmpty
+                                  ? "Empty field"
+                                  : null;
+                            },
+                          ),
+                          vSizedBox2,
                           AppSharedPreferences.getUserId ==
                                       _.individualLandResult?.ownerUserId?.id &&
                                   _.individualLandResult?.isVerified ==
@@ -512,14 +529,20 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                               ? CustomButton.elevatedButton(
                                   "Add Land For Sale",
                                   () {
-                                    Provider.of<LandProvider>(context,
-                                            listen: false)
-                                        .addSaleLand(
-                                            context: context,
-                                            landRequestModel: LandRequestModel(
-                                              landId:
-                                                  _.individualLandResult?.id,
-                                            ));
+                                    if (_.landPriceSaleController.text
+                                        .isNotEmpty) {
+                                      Provider.of<LandProvider>(context,
+                                              listen: false)
+                                          .addSaleLand(
+                                              context: context,
+                                              landRequestModel:
+                                                  LandRequestModel(
+                                                landId:
+                                                    _.individualLandResult?.id,
+                                              ));
+                                    } else {
+                                      errorToast(msg: "Please give the price");
+                                    }
                                   },
                                 )
                               : AppSharedPreferences.getUserId ==
@@ -534,6 +557,7 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                                       fontWeight: FontWeight.w600,
                                     )
                                   : Container(),
+                          vSizedBox2,
                         ],
                       ),
                     );

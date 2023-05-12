@@ -83,8 +83,8 @@ class LandCardWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: AppColors.kContainerShadeColor,
-        border: Border.all(color: AppColors.kBorderColor),
+        color: AppColors.kLightPrimaryColor,
+        border: Border.all(color: AppColors.kSecondaryBorderColor),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -96,7 +96,8 @@ class LandCardWidget extends StatelessWidget {
                 imageUrl:
                     "https://img.freepik.com/free-vector/image-upload-concept-illustration_23-2148276163.jpg?size=338&ext=jpg",
               ),
-              vSizedBox2,
+              vSizedBox3,
+              vSizedBox1,
               CustomButton.elevatedButton(
                 "See on map",
                 () {
@@ -113,6 +114,7 @@ class LandCardWidget extends StatelessWidget {
                                   lat ?? 0.0,
                                   long ?? 0.0,
                                 ),
+                                parcelId: landData?.parcelId,
                                 // latlngData: LatLng(
                                 //     double.parse(
                                 //         landData?.polygon?[0].latitude ?? "0"),
@@ -134,6 +136,7 @@ class LandCardWidget extends StatelessWidget {
                                   lat ?? 0.0,
                                   long ?? 0.0,
                                 ),
+                                parcelId: landResult?.parcelId,
 
                                 // latlngData: LatLng(
                                 //     double.parse(
@@ -157,8 +160,8 @@ class LandCardWidget extends StatelessWidget {
                 Text.rich(
                   TextSpan(
                     text: "Id: ",
-                    style: const TextStyle(
-                      color: AppColors.kTextPrimaryColor,
+                    style: TextStyle(
+                      color: AppColors.kNeutral800Color,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -168,7 +171,7 @@ class LandCardWidget extends StatelessWidget {
                             ? landData?.id
                             : landResult?.id,
                         style: TextStyle(
-                          color: AppColors.kHeadingColor,
+                          color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -179,8 +182,8 @@ class LandCardWidget extends StatelessWidget {
                 Text.rich(
                   TextSpan(
                     text: "Parcel Id: ",
-                    style: const TextStyle(
-                      color: AppColors.kTextPrimaryColor,
+                    style: TextStyle(
+                      color: AppColors.kNeutral800Color,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -190,7 +193,7 @@ class LandCardWidget extends StatelessWidget {
                             ? landData?.parcelId
                             : landResult?.parcelId,
                         style: TextStyle(
-                          color: AppColors.kHeadingColor,
+                          color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -198,28 +201,21 @@ class LandCardWidget extends StatelessWidget {
                   ),
                 ),
                 vSizedBox1,
-                // vSizedBox1,
-                // CustomText.ourText(
-                //     "Area: ${landResult?.area}"),
-                // vSizedBox1,
-                // CustomText.ourText(
-                //     "Location: ${landResult?.address}, ${landResult?.city}"),
-                // vSizedBox1,
                 Text.rich(
                   TextSpan(
-                    text: "Price: NPR. ",
-                    style: const TextStyle(
-                      color: AppColors.kTextPrimaryColor,
+                    text: "Area: ",
+                    style: TextStyle(
+                      color: AppColors.kNeutral800Color,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
                     children: [
                       TextSpan(
                         text: isFromLandSale ?? false
-                            ? landData?.landPrice
-                            : landResult?.landPrice,
+                            ? landData?.area
+                            : landResult?.area,
                         style: TextStyle(
-                          color: AppColors.kHeadingColor,
+                          color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -227,11 +223,36 @@ class LandCardWidget extends StatelessWidget {
                   ),
                 ),
                 vSizedBox1,
+                // CustomText.ourText(
+                //     "Location: ${landResult?.address}, ${landResult?.city}"),
+                // vSizedBox1,
+                // Text.rich(
+                //   TextSpan(
+                //     text: "Price: NPR. ",
+                //     style:  TextStyle(
+                //       color: AppColors.kNeutral800Color,
+                //       fontSize: 14.0,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //     children: [
+                //       TextSpan(
+                //         text: isFromLandSale ?? false
+                //             ? landData?.landPrice
+                //             : landResult?.landPrice,
+                //         style: TextStyle(
+                //           color: AppColors.kNeutral600Color,
+                //           fontWeight: FontWeight.w400,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // vSizedBox1,
                 Text.rich(
                   TextSpan(
                     text: "status: ",
-                    style: const TextStyle(
-                      color: AppColors.kTextPrimaryColor,
+                    style: TextStyle(
+                      color: AppColors.kNeutral800Color,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -241,14 +262,14 @@ class LandCardWidget extends StatelessWidget {
                             ? saleData
                             : landResult?.isVerified,
                         style: TextStyle(
-                          color: AppColors.kHeadingColor,
+                          color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
                 ),
-                vSizedBox1,
+                vSizedBox2,
                 CustomButton.elevatedButton(
                   "View Details",
                   () {
@@ -268,7 +289,8 @@ class LandCardWidget extends StatelessWidget {
                                 context,
                                 LandDetailsScreen(
                                   landId: landId,
-                                ));
+                                ),
+                              );
                   },
                 ),
               ],

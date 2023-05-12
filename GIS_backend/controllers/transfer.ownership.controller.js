@@ -16,7 +16,7 @@ module.exports.getLandForTransferOwnershipById = async (req, res) => {
     const transferData = await TransferOwnership.findById(transferId)
       .populate([
         {
-          path: "approvedUserId",
+          path: "approvedUserId.user",
         },
         {
           path: "ownerHistory",
@@ -84,7 +84,7 @@ module.exports.getAllLandForTransferOwnership = async (req, res) => {
         {
           $or: [
             { ownerUserId: userId },
-            { approvedUserId: userId },
+            { "approvedUserId.user": userId },
             { ownerHistory: userId },
           ],
         },
@@ -110,7 +110,7 @@ module.exports.getAllLandForTransferOwnership = async (req, res) => {
         query,
         populate: [
           {
-            path: "approvedUserId",
+            path: "approvedUserId.user",
           },
           {
             path: "ownerHistory",
@@ -198,7 +198,10 @@ module.exports.addLandForTransferOwnership = async (req, res) => {
     const newTransfer = new TransferOwnership({
       landSaleId,
       ownerUserId: res.locals.authData?._id,
-      approvedUserId: landSale?.approvedUserId,
+      approvedUserId: {
+        user: landSale?.approvedUserId?.user,
+        landPrice: landSale?.approvedUserId?.landPrice,
+      },
     });
 
     await newTransfer.save();

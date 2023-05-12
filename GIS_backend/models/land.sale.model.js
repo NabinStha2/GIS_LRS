@@ -32,21 +32,33 @@ const LandSaleSchema = new mongoose.Schema(
     },
     requestedUserId: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: [],
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        landPrice: { type: String, required: true },
       },
     ],
     rejectedUserId: [
+      // {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: "User",
+      //   default: [],
+      // },
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: [],
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        landPrice: { type: String, required: true },
       },
     ],
+    // approvedUserId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "User",
+    // },
     approvedUserId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      landPrice: { type: String },
+    },
+    landPrice: {
+      type: String,
+      required: true,
+      trim: true,
     },
     geoJSON: { type: mongoose.Schema.Types.ObjectId, ref: "GeoJSON" },
   },

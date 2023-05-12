@@ -94,9 +94,9 @@ class _SearchLandSaleScreenState extends State<SearchLandSaleScreen> {
                           padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            color: AppColors.kPrimaryButtonBackgroundColor,
+                            color: AppColors.kBrandPrimaryColor,
                             border: Border.all(
-                              color: AppColors.kBorderColor,
+                              color: AppColors.kSecondaryBorderColor,
                             ),
                           ),
                           child: Row(
@@ -106,9 +106,13 @@ class _SearchLandSaleScreenState extends State<SearchLandSaleScreen> {
                                 "Filter By",
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
+                                color: Colors.white,
                               ),
                               hSizedBox1,
-                              const Icon(Icons.filter_alt),
+                              const Icon(
+                                Icons.filter_alt,
+                                color: Colors.white,
+                              ),
                             ],
                           ),
                         ),

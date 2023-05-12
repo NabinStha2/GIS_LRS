@@ -92,9 +92,9 @@ class _SearchLandScreenState extends State<SearchLandScreen> {
                           padding: const EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            color: AppColors.kPrimaryButtonBackgroundColor,
+                            color: AppColors.kBrandPrimaryColor,
                             border: Border.all(
-                              color: AppColors.kBorderColor,
+                              color: AppColors.kSecondaryBorderColor,
                             ),
                           ),
                           child: Row(

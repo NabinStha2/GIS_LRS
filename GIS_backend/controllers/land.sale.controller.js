@@ -5,6 +5,7 @@ const User = require("../models/user.model");
 const { getSearchPaginatedData } = require("../utils/pagination");
 const { SetErrorResponse } = require("../utils/responseSetter");
 const GeoJSON = require("../models/geoJSON.model");
+const { request } = require("http");
 
 module.exports.addLandForSale = async (req, res) => {
   try {
@@ -23,6 +24,7 @@ module.exports.addLandForSale = async (req, res) => {
 
     const newLandSale = new LandSale({
       landId,
+      landPrice: req.body.landPrice,
       parcelId: existingLand?.parcelId,
       ownerUserId: res.locals.authData?._id,
       geoJSON: existingLand.geoJSON,
@@ -111,7 +113,7 @@ module.exports.getAllLandSale = async (req, res) => {
             page,
             limit,
             populate: {
-              path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+              path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
               match: populateQuery.length != 0 ? { $and: populateQuery } : {},
             },
             pagination: true,
@@ -141,7 +143,7 @@ module.exports.getAllLandSale = async (req, res) => {
           page,
           limit,
           populate: {
-            path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+            path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId prevOwnerUserId geoJSON",
             match: populateQuery.length != 0 ? { $and: populateQuery } : {},
           },
           pagination: true,
@@ -193,7 +195,7 @@ module.exports.getAllLandSaleByRequestedUserId = async (req, res) => {
     //   populateQuery.push({ province: { $regex: province, $options: "i" } });
     // }
     populateQuery.push({ isVerified: "approved" });
-    query.requestedUserId = res.locals.authData?._id;
+    query = { "requestedUserId.user": res.locals.authData?._id };
 
     console.log(query, populateQuery);
 
@@ -205,7 +207,7 @@ module.exports.getAllLandSaleByRequestedUserId = async (req, res) => {
         page,
         limit,
         populate: {
-          path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+          path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
           match: populateQuery.length != 0 ? { $and: populateQuery } : {},
         },
         pagination: true,
@@ -243,7 +245,7 @@ module.exports.getAllLandSaleByAcceptedUserId = async (req, res) => {
     let query = {};
     let populateQuery = [];
     populateQuery.push({ isVerified: "approved" });
-    query.approvedUserId = res.locals.authData?._id;
+    query = { "approvedUserId.user": res.locals.authData?._id };
     query.saleData = { $ne: "selled" };
 
     console.log(query, populateQuery);
@@ -256,7 +258,7 @@ module.exports.getAllLandSaleByAcceptedUserId = async (req, res) => {
         page,
         limit,
         populate: {
-          path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+          path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
           match: populateQuery.length != 0 ? { $and: populateQuery } : {},
         },
         pagination: true,
@@ -293,7 +295,7 @@ module.exports.getAllLandSaleByRejectedUserId = async (req, res) => {
     let query = {};
     let populateQuery = [];
     populateQuery.push({ isVerified: "approved" });
-    query.rejectedUserId = res.locals.authData?._id;
+    query = { "rejectedUserId.user": res.locals.authData?._id };
 
     console.log(query, populateQuery);
 
@@ -305,7 +307,7 @@ module.exports.getAllLandSaleByRejectedUserId = async (req, res) => {
         page,
         limit,
         populate: {
-          path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+          path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
           match: populateQuery.length != 0 ? { $and: populateQuery } : {},
         },
         pagination: true,
@@ -368,7 +370,7 @@ module.exports.getOwnedLandSale = async (req, res) => {
         page,
         limit,
         populate: {
-          path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+          path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
           match: populateQuery.length != 0 ? { $and: populateQuery } : {},
         },
         pagination: true,
@@ -396,7 +398,7 @@ module.exports.getIndividualLandSaleById = async (req, res) => {
   try {
     const landSale = await LandSale.findById({ _id: req.params.id })
       .populate({
-        path: "requestedUserId landId ownerUserId rejectedUserId approvedUserId prevOwnerUserId geoJSON",
+        path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
         // populate: {
         //   path: "ownerUserId",
         // },
@@ -477,14 +479,16 @@ exports.requestToBuyForLandSale = async (req, res) => {
       );
     }
 
-    let requestedUserIdData = [];
-
-    requestedUserIdData.push(res.locals.authData?._id);
+    // let requestedUserIdData = [];
+    // requestedUserIdData.push(res.locals.authData?._id);
 
     const updatedLandSale = await LandSale.findByIdAndUpdate(
       { _id: landSaleId },
       {
-        requestedUserId: [...landSale.requestedUserId, requestedUserIdData],
+        requestedUserId: [
+          ...landSale.requestedUserId,
+          { user: res.locals.authData?._id, landPrice: req.body.landPrice },
+        ],
       },
       { new: true }
     ).lean();
@@ -506,7 +510,9 @@ exports.approveRequestedUserForLandSale = async (req, res) => {
 
     const landSale = await LandSale.findById({
       _id: landSaleId,
-    }).lean();
+    })
+      .populate("requestedUserId.user")
+      .lean();
     if (!landSale) {
       throw new SetErrorResponse("Land Sale not found");
     }
@@ -519,7 +525,7 @@ exports.approveRequestedUserForLandSale = async (req, res) => {
     }
 
     const filterLandSale = landSale?.requestedUserId.find((e) => {
-      return e.toString() == userId;
+      return e.user._id.toString() == userId;
     });
 
     if (landSale?.approvedUserId) {
@@ -531,15 +537,16 @@ exports.approveRequestedUserForLandSale = async (req, res) => {
     }
 
     let requestedUserId = landSale.requestedUserId.filter((e) => {
-      return e.toString() != userId;
+      return e.user._id.toString() != userId;
     });
 
     const updatedLandSale = await LandSale.findByIdAndUpdate(
       { _id: landSaleId },
       {
-        approvedUserId: userId,
+        approvedUserId: { user: userId, landPrice: filterLandSale?.landPrice },
         saleData: "processing",
-        requestedUserId: [...requestedUserId],
+        requestedUserId: [],
+        rejectedUserId: [...requestedUserId],
       },
       { new: true }
     ).lean();
@@ -561,7 +568,9 @@ exports.rejectRequestedUserForLandSale = async (req, res) => {
 
     const landSale = await LandSale.findById({
       _id: landSaleId,
-    }).lean();
+    })
+      .populate("requestedUserId.user")
+      .lean();
 
     if (res.locals.authData?._id != landSale?.ownerUserId) {
       throw new SetErrorResponse(
@@ -570,7 +579,7 @@ exports.rejectRequestedUserForLandSale = async (req, res) => {
       );
     }
     const filterLandSale = landSale?.requestedUserId?.find((e) => {
-      return e.toString() == userId;
+      return e.user._id.toString() == userId;
     });
 
     if (!filterLandSale) {
@@ -578,17 +587,20 @@ exports.rejectRequestedUserForLandSale = async (req, res) => {
     }
 
     let requestedUserId = landSale.requestedUserId.filter((e) => {
-      return e.toString() != userId;
+      return e.user._id.toString() != userId;
     });
 
-    let rejectedUserId = [];
-    rejectedUserId.push(userId);
+    // let rejectedUserId = [];
+    // rejectedUserId.push(userId);
 
     const updatedLandSale = await LandSale.findByIdAndUpdate(
       { _id: landSaleId },
       {
         requestedUserId: [...requestedUserId],
-        rejectedUserId: [...landSale.rejectedUserId, ...rejectedUserId],
+        rejectedUserId: [
+          ...landSale.rejectedUserId,
+          { user: userId, landPrice: filterLandSale.landPrice },
+        ],
       },
       { new: true }
     ).lean();

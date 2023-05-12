@@ -26,6 +26,7 @@ exports.createLand = async (req, res) => {
     const geoJSONData = await GeoJSON.findOne({
       "properties.parcelno": parcelId,
     });
+    console.log(parcelId);
     // console.log(geoJSONData);
     if (!geoJSONData) {
       throw new SetErrorResponse("No recorded parcel id found!", 404);
@@ -117,7 +118,7 @@ exports.getAllLands = async (req, res) => {
     const {
       page,
       limit,
-      search = "",
+      search,
       sort,
       city,
       district,
@@ -126,6 +127,7 @@ exports.getAllLands = async (req, res) => {
       radius,
     } = req?.query;
     let query = {};
+    console.log(search);
     if (search) {
       query.parcelId = { $regex: search, $options: "i" };
     }
@@ -367,18 +369,21 @@ exports.landRejectedByAdmin = async (req, res) => {
     const landId = req.params?.id;
 
     const existingLand = await Land.findById({ _id: landId }).lean();
+    if (!existingLand) {
+      throw new SetErrorResponse("Land not found");
+    }
     if (existingLand?.isVerified == "approved") {
       throw new SetErrorResponse(
         "Already approved!,so cannot reject the land",
         400
       );
     }
-    const land = await Land.findByIdAndUpdate(
-      { _id: landId },
-      {
-        isVerified: "rejected",
-      },
-      { new: true }
+    const land = await Land.findByIdAndRemove(
+      { _id: landId }
+      // {
+      //   isVerified: "rejected",
+      // },
+      // { new: true }
     ).lean();
 
     return res.success({ landData: land }, "Land rejected successfully");

@@ -97,6 +97,7 @@ class LandSaleResult {
     this.approvedUserId,
     this.prevOwnerUserId,
     this.geoJson,
+    this.landPrice,
   });
 
   String? id;
@@ -104,33 +105,35 @@ class LandSaleResult {
   String? parcelId;
   UserId? ownerUserId;
   String? saleData;
-  List<UserId>? requestedUserId;
-  List<UserId>? rejectedUserId;
+  List<UserDataResultsProperties>? requestedUserId;
+  List<UserDataResultsProperties>? rejectedUserId;
   int? v;
-  UserId? approvedUserId;
+  UserDataResultsProperties? approvedUserId;
   UserId? prevOwnerUserId;
   GeoJson? geoJson;
+  String? landPrice;
 
   factory LandSaleResult.fromJson(Map<String, dynamic> json) => LandSaleResult(
         id: json["_id"],
         landId: json["landId"] == null ? null : LandId.fromJson(json["landId"]),
         parcelId: json["parcelId"],
+        landPrice: json["landPrice"],
         ownerUserId: json["ownerUserId"] == null
             ? null
             : UserId.fromJson(json["ownerUserId"]),
         saleData: json["saleData"],
         requestedUserId: json["requestedUserId"] == null
             ? []
-            : List<UserId>.from(
-                json["requestedUserId"]!.map((x) => UserId.fromJson(x))),
+            : List<UserDataResultsProperties>.from(json["requestedUserId"]!
+                .map((x) => UserDataResultsProperties.fromJson(x))),
         rejectedUserId: json["rejectedUserId"] == null
             ? []
-            : List<UserId>.from(
-                json["rejectedUserId"]!.map((x) => UserId.fromJson(x))),
+            : List<UserDataResultsProperties>.from(json["rejectedUserId"]!
+                .map((x) => UserDataResultsProperties.fromJson(x))),
         v: json["__v"],
         approvedUserId: json["approvedUserId"] == null
             ? null
-            : UserId.fromJson(json["approvedUserId"]),
+            : UserDataResultsProperties.fromJson(json["approvedUserId"]),
         prevOwnerUserId: json["prevOwnerUserId"] == null
             ? null
             : UserId.fromJson(json["prevOwnerUserId"]),

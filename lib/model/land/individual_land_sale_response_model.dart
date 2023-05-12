@@ -58,6 +58,7 @@ class IndividualLandSaleData {
     this.approvedUserId,
     this.prevOwnerUserId,
     this.geoJson,
+    this.landPrice,
   });
 
   String? id;
@@ -65,11 +66,12 @@ class IndividualLandSaleData {
   String? parcelId;
   UserId? ownerUserId;
   String? saleData;
-  UserId? approvedUserId;
-  List<UserId>? requestedUserId;
-  List<UserId>? rejectedUserId;
+  UserDataResultsProperties? approvedUserId;
+  List<UserDataResultsProperties>? requestedUserId;
+  List<UserDataResultsProperties>? rejectedUserId;
   UserId? prevOwnerUserId;
   GeoJson? geoJson;
+  String? landPrice;
   int? v;
 
   factory IndividualLandSaleData.fromJson(Map<String, dynamic> json) =>
@@ -77,22 +79,32 @@ class IndividualLandSaleData {
         id: json["_id"],
         landId: json["landId"] == null ? null : LandId.fromJson(json["landId"]),
         parcelId: json["parcelId"],
+        landPrice: json["landPrice"],
         ownerUserId: json["ownerUserId"] == null
             ? null
             : UserId.fromJson(json["ownerUserId"]),
         approvedUserId: json["approvedUserId"] == null
             ? null
-            : UserId.fromJson(json["approvedUserId"]),
+            : UserDataResultsProperties.fromJson(json["approvedUserId"]),
         saleData: json["saleData"],
         requestedUserId: json["requestedUserId"] == null
             ? []
-            : List<UserId>.from(
-                json["requestedUserId"]!.map((x) => UserId.fromJson(x))),
+            : List<UserDataResultsProperties>.from(json["requestedUserId"]!
+                .map((x) => UserDataResultsProperties.fromJson(x))),
         rejectedUserId: json["rejectedUserId"] == null
             ? []
-            : List<UserId>.from(
-                json["rejectedUserId"]!.map((x) => UserId.fromJson(x))),
-        v: json["__v"],
+            : List<UserDataResultsProperties>.from(json["rejectedUserId"]!
+                .map((x) => UserDataResultsProperties.fromJson(x))),
+
+        // requestedUserId: json["requestedUserId"] == null
+        //     ? []
+        //     : List<UserId>.from(
+        //         json["requestedUserId"]!.map((x) => UserId.fromJson(x))),
+        // rejectedUserId: json["rejectedUserId"] == null
+        //     ? []
+        //     : List<UserId>.from(
+        //         json["rejectedUserId"]!.map((x) => UserId.fromJson(x))),
+        // v: json["__v"],
         prevOwnerUserId: json["prevOwnerUserId"] == null
             ? null
             : UserId.fromJson(json["prevOwnerUserId"]),
@@ -130,7 +142,7 @@ class LandId {
     this.address,
     this.surveyNo,
     this.province,
-    this.landPrice,
+    // this.landPrice,
     this.isVerified,
     this.ownerUserId,
     this.ownerHistory,
@@ -149,7 +161,7 @@ class LandId {
   String? address;
   String? surveyNo;
   String? province;
-  String? landPrice;
+  // String? landPrice;
   String? isVerified;
   String? ownerUserId;
   List<dynamic>? ownerHistory;
@@ -172,7 +184,7 @@ class LandId {
         address: json["address"],
         surveyNo: json["surveyNo"],
         province: json["province"],
-        landPrice: json["landPrice"],
+        // landPrice: json["landPrice"],
         isVerified: json["isVerified"],
         ownerUserId: json["ownerUserId"],
         ownerHistory: json["ownerHistory"] == null
@@ -200,7 +212,7 @@ class LandId {
         "address": address,
         "surveyNo": surveyNo,
         "province": province,
-        "landPrice": landPrice,
+        // "landPrice": landPrice,
         "isVerified": isVerified,
         "ownerUserId": ownerUserId,
         "ownerHistory": ownerHistory == null
@@ -361,5 +373,55 @@ class ImageFile {
   Map<String, dynamic> toJson() => {
         "imageUrl": imageUrl,
         "imagePublicId": imagePublicId,
+      };
+}
+
+class UserDataResultsProperties {
+  UserId? user;
+  String? landPrice;
+  String? id;
+
+  UserDataResultsProperties({
+    this.user,
+    this.landPrice,
+    this.id,
+  });
+
+  factory UserDataResultsProperties.fromJson(Map<String, dynamic> json) =>
+      UserDataResultsProperties(
+        user: json["user"] == null ? null : UserId.fromJson(json["user"]),
+        landPrice: json["landPrice"],
+        id: json["_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "user": user?.toJson(),
+        "landPrice": landPrice,
+        "_id": id,
+      };
+}
+
+class UserIdResultsProperties {
+  String? user;
+  String? landPrice;
+  String? id;
+
+  UserIdResultsProperties({
+    this.user,
+    this.landPrice,
+    this.id,
+  });
+
+  factory UserIdResultsProperties.fromJson(Map<String, dynamic> json) =>
+      UserIdResultsProperties(
+        user: json["user"],
+        landPrice: json["landPrice"],
+        id: json["_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "user": user,
+        "landPrice": landPrice,
+        "_id": id,
       };
 }

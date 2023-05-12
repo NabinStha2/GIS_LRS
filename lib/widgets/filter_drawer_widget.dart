@@ -32,13 +32,13 @@ class FilterDrawerWidget extends StatelessWidget {
                 "Filter Land",
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: AppColors.kTextPrimaryColor,
+                color: AppColors.kNeutral800Color,
               ),
               vSizedBox2,
               CustomText.ourText(
                 "City",
                 fontSize: 16,
-                color: AppColors.kTextPrimaryColor,
+                color: AppColors.kNeutral800Color,
               ),
               vSizedBox1,
               CustomTextFormField(
@@ -51,7 +51,7 @@ class FilterDrawerWidget extends StatelessWidget {
               CustomText.ourText(
                 "District",
                 fontSize: 16,
-                color: AppColors.kTextPrimaryColor,
+                color: AppColors.kNeutral800Color,
               ),
               vSizedBox1,
               CustomTextFormField(
@@ -64,7 +64,7 @@ class FilterDrawerWidget extends StatelessWidget {
               CustomText.ourText(
                 "Province",
                 fontSize: 16,
-                color: AppColors.kTextPrimaryColor,
+                color: AppColors.kNeutral800Color,
               ),
               vSizedBox1,
               CustomTextFormField(
@@ -89,9 +89,9 @@ class FilterDrawerWidget extends StatelessWidget {
                       fontSize: 14.0,
                       fontWeight: FontWeight.w500,
                       isBorder: true,
-                      borderColor: AppColors.kBorderColor,
-                      color: AppColors.kPrimaryButtonBackgroundColor,
-                      titleColor: Colors.black,
+                      borderColor: AppColors.kSecondaryBorderColor,
+                      color: AppColors.kBrandPrimaryColor,
+                      titleColor: Colors.white,
                     ),
                   ),
                   hSizedBox2,

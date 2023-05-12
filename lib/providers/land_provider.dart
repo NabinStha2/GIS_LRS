@@ -9,6 +9,7 @@ import 'package:gis_flutter_frontend/utils/custom_toasts.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../core/app/enums.dart';
+import '../core/app/states.dart';
 import '../core/config/api_config.dart';
 import '../core/development/console.dart';
 import '../core/routing/route_navigation.dart';
@@ -19,7 +20,6 @@ import '../model/land/individual_land_response_model.dart';
 import '../model/land/individual_land_sale_response_model.dart';
 import '../model/land/land_sale_response_model.dart';
 import '../model/land_response_model.dart';
-import '../screens/map_page.dart';
 import '../services/api_exceptions.dart';
 import '../services/base_client.dart';
 import '../utils/app_shared_preferences.dart';
@@ -49,6 +49,8 @@ class LandProvider extends ChangeNotifier with BaseController {
   TextEditingController filterCityLandController = TextEditingController();
   TextEditingController filterDistrictLandController = TextEditingController();
   TextEditingController filterProvinceLandController = TextEditingController();
+
+  TextEditingController landPriceSaleController = TextEditingController();
 
   IndividualLandData? individualLandResult = IndividualLandData();
   String? getIndividualLandMessage;
@@ -289,6 +291,8 @@ class LandProvider extends ChangeNotifier with BaseController {
   getAllSearchLands({
     required BuildContext context,
     LandRequestModel? landRequestModel,
+    bool? isFromMap = false,
+    bool noLoading = false,
   }) async {
     try {
       isLoading = true;
@@ -315,6 +319,42 @@ class LandProvider extends ChangeNotifier with BaseController {
           decodedJson.data?.landData?.totalPages ?? 0;
       paginatedAllSearchLandResult
           ?.addAll(decodedJson.data?.landData?.results ?? []);
+
+      if (isFromMap ?? false) {
+        var latlngTempList = <LatLng>[];
+        latlngList.value.clear();
+        if (paginatedAllSearchLandResult?.isNotEmpty ?? false) {
+          for (LandResult e in paginatedAllSearchLandResult ?? []) {
+            e.geoJson?.geometry?.coordinates?.forEach((ele1) {
+              // consolelog(ele1);
+              for (var ele2 in ele1) {
+                // consolelog(ele2);
+                // consolelog(LatLng(ele2[1], ele2[0]));
+                latlngTempList.add(LatLng(ele2[1], ele2[0]));
+              }
+            });
+            latlngList.value.add(LatLngModel(
+              landId: e.id,
+              centerMarker: latlngTempList.isNotEmpty
+                  ? LatLngBounds.fromPoints(latlngTempList).center
+                  : null,
+              parcelId: e.parcelId,
+              polygonData: latlngTempList,
+              address: e.address,
+              area: e.area,
+              landSaleId: e.id,
+              landPrice: e.landPrice,
+              wardNo: e.wardNo,
+              email: e.ownerUserId?.email,
+              name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
+              ownerUserId: e.ownerUserId?.id,
+            ));
+            // logger(latlngList.value.toString(), loggerType: LoggerType.success);
+            latlngTempList = [];
+          }
+        }
+        logger(latlngList.value.toString(), loggerType: LoggerType.warning);
+      }
 
       isLoading = false;
       getAllSearchLandMessage = null;
@@ -348,7 +388,7 @@ class LandProvider extends ChangeNotifier with BaseController {
           )
           .catchError(handleError);
       if (response == null) return false;
-      var decodedJson = landResponseModelFromJson(response);
+      landResponseModelFromJson(response);
       isLoading = false;
       hideLoading(context);
       notifyListeners();
@@ -414,7 +454,7 @@ class LandProvider extends ChangeNotifier with BaseController {
           .post(
             ApiConfig.baseUrl,
             "${ApiConfig.saleLandsUrl}/${landRequestModel?.landId}",
-            {},
+            {"landPrice": landPriceSaleController.text.trim()},
             hasTokenHeader: true,
           )
           .catchError(handleError);
@@ -422,6 +462,7 @@ class LandProvider extends ChangeNotifier with BaseController {
       isLoading = false;
       hideLoading(context);
       successToast(msg: "Land for sale added successfully.");
+      landPriceSaleController.clear();
       getIndividualLand(
           context: context,
           landRequestModel: LandRequestModel(
@@ -495,7 +536,7 @@ class LandProvider extends ChangeNotifier with BaseController {
               address: e.landId?.address,
               area: e.landId?.area,
               landSaleId: e.id,
-              landPrice: e.landId?.landPrice,
+              landPrice: e.landPrice,
               wardNo: e.landId?.wardNo,
               email: e.ownerUserId?.email,
               name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
@@ -671,7 +712,7 @@ class LandProvider extends ChangeNotifier with BaseController {
           .patch(
             ApiConfig.baseUrl,
             "${ApiConfig.saleLandsUrl}${ApiConfig.requestToBuySaleLandsUrl}/${landRequestModel?.landSaleId}",
-            {},
+            {"landPrice": landPriceSaleController.text.trim()},
             hasTokenHeader: true,
           )
           .catchError(handleError);
@@ -680,6 +721,7 @@ class LandProvider extends ChangeNotifier with BaseController {
       hideLoading(context);
       isLoading = false;
       notifyListeners();
+      landPriceSaleController.clear();
       getIndividualSaleLand(
         context: context,
         landRequestModel: LandRequestModel(

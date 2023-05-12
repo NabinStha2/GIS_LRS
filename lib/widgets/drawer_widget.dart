@@ -30,8 +30,8 @@ class DrawerWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: AppColors.kPrimaryColor2,
+                decoration: BoxDecoration(
+                  color: AppColors.kBrandPrimaryColor,
                 ),
                 child: Consumer<UserProvider>(
                   builder: (context, _, child) => Column(
@@ -65,7 +65,7 @@ class DrawerWidget extends StatelessWidget {
               ),
               ListTile(
                 tileColor: _.drawerSelectedIndex == 0
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
@@ -92,7 +92,7 @@ class DrawerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 tileColor: _.drawerSelectedIndex == 1
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
                   Icons.map,
@@ -116,7 +116,7 @@ class DrawerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 tileColor: _.drawerSelectedIndex == 2
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
                   Icons.landscape,
@@ -140,7 +140,7 @@ class DrawerWidget extends StatelessWidget {
               //     borderRadius: BorderRadius.circular(50),
               //   ),
               //   tileColor: _.drawerSelectedIndex == 3
-              //       ? AppColors.kPrimaryColor2
+              //       ? AppColors.kBrandPrimaryColor
               //       : null,
               //   leading: Icon(
               //     Icons.search,
@@ -164,7 +164,7 @@ class DrawerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 tileColor: _.drawerSelectedIndex == 3
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
                   Icons.search,
@@ -188,7 +188,7 @@ class DrawerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 tileColor: _.drawerSelectedIndex == 4
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
                   Icons.search,
@@ -213,7 +213,7 @@ class DrawerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 tileColor: _.drawerSelectedIndex == 5
-                    ? AppColors.kPrimaryColor2
+                    ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
                   Icons.search,

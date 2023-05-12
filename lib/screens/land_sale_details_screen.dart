@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:gis_flutter_frontend/core/development/console.dart';
 import 'package:gis_flutter_frontend/model/transfer_land/land_transfer_request_model.dart';
+import 'package:gis_flutter_frontend/utils/unfocus_keyboard.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +22,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_circular_progress_indicator.dart';
 import '../widgets/custom_network_image_widget.dart';
 import '../widgets/custom_text.dart';
+import '../widgets/custom_text_form_field.dart';
 import 'map_page.dart';
 
 class LandSaleDetailsScreen extends StatefulWidget {
@@ -39,6 +43,9 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<LandProvider>(context, listen: false)
+          .landPriceSaleController
+          .clear();
       Provider.of<LandProvider>(context, listen: false).getIndividualSaleLand(
           context: context,
           landRequestModel: LandRequestModel(
@@ -61,11 +68,19 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
       ),
       body: Consumer2<LandProvider, LandTransferProvider>(
           builder: (context, _, __, child) {
+        var latlngTempList = <LatLng>[];
         _.individualSaleLandResult?.geoJson?.geometry?.coordinates
             ?.forEach((element) {
-          long = element[0][0];
-          lat = element[0][1];
+          // long = element[0][0];
+          // lat = element[0][1];
+          for (var ele2 in element) {
+            latlngTempList.add(LatLng(ele2[1], ele2[0]));
+          }
         });
+        if (latlngTempList.isNotEmpty) {
+          lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+          long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+        }
         return _.isLoading
             ? const CustomCircularProgressIndicatorWidget(
                 title: "Loading individual land sale...",
@@ -84,7 +99,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           "Land Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.kPrimaryColor2,
+                          color: AppColors.kBrandPrimaryColor,
                         ),
                         vSizedBox1,
                         Row(
@@ -105,6 +120,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                 CustomButton.elevatedButton(
                                   "See on map",
                                   () {
+                                    consolelog(_.individualSaleLandResult?.id);
                                     _
                                                 .individualSaleLandResult
                                                 ?.geoJson
@@ -123,19 +139,10 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                               latlngData: LatLng(
                                                 lat ?? 0.0,
                                                 long ?? 0.0,
-                                              ), // latlngData: LatLng(
-                                              //     double.parse(_
-                                              //             .individualSaleLandResult
-                                              //             ?.landId
-                                              //             ?.polygon?[0]
-                                              //             .latitude ??
-                                              //         "0"),
-                                              //     double.parse(_
-                                              //             .individualSaleLandResult
-                                              //             ?.landId
-                                              //             ?.polygon?[0]
-                                              //             .longitude ??
-                                              //         "0")),
+                                              ),
+                                              parcelId: _
+                                                  .individualSaleLandResult
+                                                  ?.parcelId,
                                             ),
                                           )
                                         : errorToast(
@@ -152,8 +159,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "Id: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -163,7 +170,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.id ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -174,8 +181,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "Parcel Id: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -185,7 +192,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.parcelId ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -196,18 +203,18 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "Price: NPR. ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
                                       children: [
                                         TextSpan(
                                           text: _.individualSaleLandResult
-                                                  ?.landId?.landPrice ??
+                                                  ?.landPrice ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -218,8 +225,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "status: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -229,7 +236,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.saleData ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -253,8 +260,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "City: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -264,7 +271,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.city ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -275,8 +282,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "District: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -286,7 +293,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.district ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -303,8 +310,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "Area: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -314,7 +321,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.area ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -325,8 +332,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                   Text.rich(
                                     TextSpan(
                                       text: "Province: ",
-                                      style: const TextStyle(
-                                        color: AppColors.kTextPrimaryColor,
+                                      style: TextStyle(
+                                        color: AppColors.kNeutral800Color,
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -336,7 +343,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   ?.landId?.province ??
                                               "",
                                           style: TextStyle(
-                                            color: AppColors.kHeadingColor,
+                                            color: AppColors.kNeutral600Color,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -352,22 +359,22 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                         vSizedBox2,
                         CustomText.ourText(
                           "Address (Survey No.)",
-                          color: AppColors.kTextPrimaryColor,
+                          color: AppColors.kNeutral800Color,
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
                         ),
                         vSizedBox0,
                         CustomText.ourText(
                           "${_.individualSaleLandResult?.landId?.address} (${_.individualSaleLandResult?.landId?.surveyNo})",
-                          color: AppColors.kHeadingColor,
+                          color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
                         vSizedBox2,
                         Text.rich(
                           TextSpan(
                             text: "Ward No: ",
-                            style: const TextStyle(
-                              color: AppColors.kTextPrimaryColor,
+                            style: TextStyle(
+                              color: AppColors.kNeutral800Color,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                             ),
@@ -377,7 +384,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                         ?.wardNo ??
                                     "",
                                 style: TextStyle(
-                                  color: AppColors.kHeadingColor,
+                                  color: AppColors.kNeutral600Color,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -388,8 +395,8 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                         Text.rich(
                           TextSpan(
                             text: "Created At: ",
-                            style: const TextStyle(
-                              color: AppColors.kTextPrimaryColor,
+                            style: TextStyle(
+                              color: AppColors.kNeutral800Color,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                             ),
@@ -400,7 +407,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                     .landId!
                                     .createdAt!),
                                 style: TextStyle(
-                                  color: AppColors.kHeadingColor,
+                                  color: AppColors.kNeutral600Color,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -412,14 +419,14 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           "User Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.kPrimaryColor2,
+                          color: AppColors.kBrandPrimaryColor,
                         ),
                         vSizedBox1,
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: AppColors.kBorderColor,
+                              color: AppColors.kSecondaryBorderColor,
                             ),
                             borderRadius: BorderRadius.circular(16.0),
                           ),
@@ -557,26 +564,58 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                             : _.individualSaleLandResult?.requestedUserId
                                         ?.firstWhere(
                                             (element) =>
-                                                element.id ==
+                                                element.user?.id ==
                                                 AppSharedPreferences.getUserId,
-                                            orElse: () => UserId())
-                                        .id !=
+                                            orElse: () =>
+                                                UserDataResultsProperties())
+                                        .user
+                                        ?.id !=
                                     AppSharedPreferences.getUserId
                                 ? _.individualSaleLandResult?.approvedUserId ==
                                         null
-                                    ? CustomButton.elevatedButton(
-                                        "Request to buy land",
-                                        () {
-                                          Provider.of<LandProvider>(context,
-                                                  listen: false)
-                                              .requestToBuySaleLand(
-                                            context: context,
-                                            landRequestModel: LandRequestModel(
-                                              landSaleId: _
-                                                  .individualSaleLandResult?.id,
-                                            ),
-                                          );
-                                        },
+                                    ? Column(
+                                        children: [
+                                          CustomTextFormField(
+                                            borderRadius: 12,
+                                            onlyNumber: true,
+                                            hintText:
+                                                "Enter the bidding price...",
+                                            textInputType: TextInputType.number,
+                                            controller:
+                                                _.landPriceSaleController,
+                                            validator: (val) {
+                                              return val.toString().isEmpty
+                                                  ? "Empty field"
+                                                  : null;
+                                            },
+                                          ),
+                                          vSizedBox2,
+                                          CustomButton.elevatedButton(
+                                            "Request to buy land",
+                                            () {
+                                              if (_.landPriceSaleController.text
+                                                  .isNotEmpty) {
+                                                unfocusKeyboard(context);
+                                                Provider.of<LandProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .requestToBuySaleLand(
+                                                  context: context,
+                                                  landRequestModel:
+                                                      LandRequestModel(
+                                                    landSaleId: _
+                                                        .individualSaleLandResult
+                                                        ?.id,
+                                                  ),
+                                                );
+                                              } else {
+                                                errorToast(
+                                                    msg:
+                                                        "Please give the bidding price");
+                                              }
+                                            },
+                                          ),
+                                        ],
                                       )
                                     : CustomText.ourText(
                                         "Land has been proccessed already",
@@ -595,7 +634,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           "Requested To Buy Land User Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.kPrimaryColor2,
+                          color: AppColors.kBrandPrimaryColor,
                         ),
                         vSizedBox1,
                         ListView.separated(
@@ -608,147 +647,174 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           itemBuilder: (context, index) {
                             var data = _.individualSaleLandResult
                                 ?.requestedUserId?[index];
-                            return Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.kBorderColor,
-                                ),
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      data?.imageFile?.imageUrl != null
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              child: CustomNetworkImage(
-                                                imageUrl:
-                                                    data?.imageFile?.imageUrl,
-                                              ),
-                                            )
-                                          : const SizedBox(
-                                              height: 100,
-                                              width: 100,
-                                              child: Icon(Icons.person),
-                                            ),
-                                      hSizedBox2,
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                            return data?.user?.id ==
+                                        AppSharedPreferences.getUserId ||
+                                    _.individualSaleLandResult?.ownerUserId
+                                            ?.id ==
+                                        AppSharedPreferences.getUserId
+                                ? Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColors.kSecondaryBorderColor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: CustomText.ourText(
-                                                    data?.name ?? "",
-                                                    fontSize: 18,
+                                            data?.user?.imageFile?.imageUrl !=
+                                                    null
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                    child: CustomNetworkImage(
+                                                      imageUrl: data?.user
+                                                          ?.imageFile?.imageUrl,
+                                                    ),
+                                                  )
+                                                : const SizedBox(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Icon(Icons.person),
+                                                  ),
+                                            hSizedBox2,
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                            CustomText.ourText(
+                                                          data?.user?.name ??
+                                                              "",
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      data?.user?.id ==
+                                                              AppSharedPreferences
+                                                                  .getUserId
+                                                          ? const Icon(
+                                                              Icons
+                                                                  .verified_user,
+                                                              color:
+                                                                  Colors.green,
+                                                            )
+                                                          : Container(),
+                                                    ],
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.email ?? "",
+                                                    fontSize: 12,
                                                     fontWeight: FontWeight.w500,
                                                   ),
-                                                ),
-                                                data?.id ==
-                                                        AppSharedPreferences
-                                                            .getUserId
-                                                    ? const Icon(
-                                                        Icons.verified_user,
-                                                        color: Colors.green,
-                                                      )
-                                                    : Container(),
-                                              ],
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.phoneNumber ??
+                                                        "",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.address ?? "",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    "Bidding Price : ${data?.landPrice}",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                ],
+                                              ),
                                             ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.email ?? "",
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.phoneNumber ?? "",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.address ?? "",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  vSizedBox1,
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: AppSharedPreferences.getUserId ==
-                                                    _.individualSaleLandResult
-                                                        ?.ownerUserId?.id &&
-                                                _.individualSaleLandResult
-                                                        ?.approvedUserId ==
-                                                    null
-                                            ? CustomButton.elevatedButton(
-                                                "Accept buy land",
-                                                () {
-                                                  Provider.of<LandProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .acceptToBuySaleLand(
-                                                    context: context,
-                                                    acceptedUserId: data?.id,
-                                                    landRequestModel:
-                                                        LandRequestModel(
-                                                      landSaleId: _
-                                                          .individualSaleLandResult
-                                                          ?.id,
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : Container(),
-                                      ),
-                                      hSizedBox2,
-                                      Expanded(
-                                        child: AppSharedPreferences.getUserId ==
-                                                _.individualSaleLandResult
-                                                    ?.ownerUserId?.id
-                                            ? CustomButton.elevatedButton(
-                                                "Reject buy land",
-                                                () {
-                                                  Provider.of<LandProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .rejectToBuySaleLand(
-                                                    context: context,
-                                                    rejectedUserId: data?.id,
-                                                    landRequestModel:
-                                                        LandRequestModel(
-                                                      landSaleId: _
-                                                          .individualSaleLandResult
-                                                          ?.id,
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : Container(),
-                                      ),
-                                    ],
-                                  ),
-                                  vSizedBox1,
-                                ],
-                              ),
-                            );
+                                        vSizedBox1,
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: AppSharedPreferences
+                                                              .getUserId ==
+                                                          _.individualSaleLandResult
+                                                              ?.ownerUserId?.id &&
+                                                      _.individualSaleLandResult
+                                                              ?.approvedUserId ==
+                                                          null
+                                                  ? CustomButton.elevatedButton(
+                                                      "Accept buy land",
+                                                      () {
+                                                        Provider.of<LandProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .acceptToBuySaleLand(
+                                                          context: context,
+                                                          acceptedUserId:
+                                                              data?.user?.id,
+                                                          landRequestModel:
+                                                              LandRequestModel(
+                                                            landSaleId: _
+                                                                .individualSaleLandResult
+                                                                ?.id,
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  : Container(),
+                                            ),
+                                            hSizedBox2,
+                                            Expanded(
+                                              child: AppSharedPreferences
+                                                              .getUserId ==
+                                                          _.individualSaleLandResult
+                                                              ?.ownerUserId?.id &&
+                                                      _.individualSaleLandResult
+                                                              ?.approvedUserId ==
+                                                          null
+                                                  ? CustomButton.elevatedButton(
+                                                      "Reject buy land",
+                                                      () {
+                                                        Provider.of<LandProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .rejectToBuySaleLand(
+                                                          context: context,
+                                                          rejectedUserId:
+                                                              data?.user?.id,
+                                                          landRequestModel:
+                                                              LandRequestModel(
+                                                            landSaleId: _
+                                                                .individualSaleLandResult
+                                                                ?.id,
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  : Container(),
+                                            ),
+                                          ],
+                                        ),
+                                        vSizedBox1,
+                                      ],
+                                    ),
+                                  )
+                                : Container();
                           },
                         ),
                         vSizedBox2,
@@ -756,15 +822,20 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           "Accepted Buyer User Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.kPrimaryColor2,
+                          color: AppColors.kBrandPrimaryColor,
                         ),
                         vSizedBox1,
-                        _.individualSaleLandResult?.approvedUserId != null
+                        _.individualSaleLandResult?.approvedUserId != null &&
+                                (_.individualSaleLandResult?.ownerUserId?.id ==
+                                        AppSharedPreferences.getUserId ||
+                                    _.individualSaleLandResult?.approvedUserId
+                                            ?.user?.id ==
+                                        AppSharedPreferences.getUserId)
                             ? Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: AppColors.kBorderColor,
+                                    color: AppColors.kSecondaryBorderColor,
                                   ),
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
@@ -777,6 +848,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                         _
                                                     .individualSaleLandResult
                                                     ?.approvedUserId
+                                                    ?.user
                                                     ?.imageFile
                                                     ?.imageUrl !=
                                                 null
@@ -787,6 +859,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                   imageUrl: _
                                                       .individualSaleLandResult
                                                       ?.approvedUserId
+                                                      ?.user
                                                       ?.imageFile
                                                       ?.imageUrl,
                                                 ),
@@ -809,16 +882,22 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                 children: [
                                                   Expanded(
                                                     child: CustomText.ourText(
-                                                      _.individualSaleLandResult
-                                                              ?.approvedUserId?.name ??
+                                                      _
+                                                              .individualSaleLandResult
+                                                              ?.approvedUserId
+                                                              ?.user
+                                                              ?.name ??
                                                           "",
                                                       fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
                                                   ),
-                                                  _.individualSaleLandResult
-                                                              ?.approvedUserId?.id ==
+                                                  _
+                                                              .individualSaleLandResult
+                                                              ?.approvedUserId
+                                                              ?.user
+                                                              ?.id ==
                                                           AppSharedPreferences
                                                               .getUserId
                                                       ? const Icon(
@@ -833,6 +912,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                 _
                                                         .individualSaleLandResult
                                                         ?.approvedUserId
+                                                        ?.user
                                                         ?.email ??
                                                     "",
                                                 fontSize: 12,
@@ -843,6 +923,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                 _
                                                         .individualSaleLandResult
                                                         ?.approvedUserId
+                                                        ?.user
                                                         ?.phoneNumber ??
                                                     "",
                                                 fontSize: 14,
@@ -853,8 +934,15 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                 _
                                                         .individualSaleLandResult
                                                         ?.approvedUserId
+                                                        ?.user
                                                         ?.address ??
                                                     "",
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              vSizedBox2,
+                                              CustomText.ourText(
+                                                "Bidding Price : ${_.individualSaleLandResult?.approvedUserId?.landPrice}",
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -894,8 +982,11 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                         ?.id ==
                                                     AppSharedPreferences
                                                         .getUserId ||
-                                                _.individualSaleLandResult
-                                                        ?.approvedUserId?.id ==
+                                                _
+                                                        .individualSaleLandResult
+                                                        ?.approvedUserId
+                                                        ?.user
+                                                        ?.id ==
                                                     AppSharedPreferences
                                                         .getUserId) &&
                                             _.individualSaleLandResult
@@ -924,8 +1015,11 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                             ?.ownerUserId?.id ==
                                                         AppSharedPreferences
                                                             .getUserId ||
-                                                    _.individualSaleLandResult
-                                                            ?.approvedUserId?.id ==
+                                                    _
+                                                            .individualSaleLandResult
+                                                            ?.approvedUserId
+                                                            ?.user
+                                                            ?.id ==
                                                         AppSharedPreferences
                                                             .getUserId) &&
                                                 _.individualSaleLandResult
@@ -960,7 +1054,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           "Rejected Buyer User Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.kPrimaryColor2,
+                          color: AppColors.kBrandPrimaryColor,
                         ),
                         vSizedBox1,
                         ListView.separated(
@@ -973,108 +1067,130 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                           itemBuilder: (context, index) {
                             var data = _.individualSaleLandResult
                                 ?.rejectedUserId?[index];
-                            return Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.kBorderColor,
-                                ),
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      data?.imageFile?.imageUrl != null
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              child: CustomNetworkImage(
-                                                imageUrl:
-                                                    data?.imageFile?.imageUrl,
-                                              ),
-                                            )
-                                          : const SizedBox(
-                                              height: 100,
-                                              width: 100,
-                                              child: Icon(Icons.person),
-                                            ),
-                                      hSizedBox2,
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                            return data?.user?.id ==
+                                        AppSharedPreferences.getUserId ||
+                                    _.individualSaleLandResult?.ownerUserId
+                                            ?.id ==
+                                        AppSharedPreferences.getUserId
+                                ? Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColors.kSecondaryBorderColor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
                                           children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: CustomText.ourText(
-                                                    data?.name ?? "",
-                                                    fontSize: 18,
+                                            data?.user?.imageFile?.imageUrl !=
+                                                    null
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                    child: CustomNetworkImage(
+                                                      imageUrl: data?.user
+                                                          ?.imageFile?.imageUrl,
+                                                    ),
+                                                  )
+                                                : const SizedBox(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Icon(Icons.person),
+                                                  ),
+                                            hSizedBox2,
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                            CustomText.ourText(
+                                                          data?.user?.name ??
+                                                              "",
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      hSizedBox2,
+                                                      data?.user?.id ==
+                                                              AppSharedPreferences
+                                                                  .getUserId
+                                                          ? const Icon(
+                                                              Icons
+                                                                  .verified_user,
+                                                              color:
+                                                                  Colors.green,
+                                                            )
+                                                          : Container(),
+                                                    ],
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.email ?? "",
+                                                    fontSize: 12,
                                                     fontWeight: FontWeight.w500,
                                                   ),
-                                                ),
-                                                hSizedBox2,
-                                                data?.id ==
-                                                        AppSharedPreferences
-                                                            .getUserId
-                                                    ? const Icon(
-                                                        Icons.verified_user,
-                                                        color: Colors.green,
-                                                      )
-                                                    : Container(),
-                                              ],
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.phoneNumber ??
+                                                        "",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    data?.user?.address ?? "",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    "Bidding Price : ${data?.landPrice}",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                ],
+                                              ),
                                             ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.email ?? "",
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.phoneNumber ?? "",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
-                                            CustomText.ourText(
-                                              data?.address ?? "",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            vSizedBox2,
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  vSizedBox0,
-                                  data?.id == AppSharedPreferences.getUserId
-                                      ? const Text.rich(
-                                          TextSpan(
-                                            text: "NOTE : ",
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.red,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                  text:
-                                                      "You have been rejected to buy the land.",
+                                        vSizedBox0,
+                                        data?.id ==
+                                                AppSharedPreferences.getUserId
+                                            ? const Text.rich(
+                                                TextSpan(
+                                                  text: "NOTE : ",
                                                   style: TextStyle(
-                                                    fontStyle: FontStyle.italic,
-                                                  ))
-                                            ],
-                                          ),
-                                        )
-                                      : Container(),
-                                ],
-                              ),
-                            );
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors.red,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                        text:
+                                                            "You have been rejected to buy the land.",
+                                                        style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ))
+                                                  ],
+                                                ),
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
+                                  )
+                                : Container();
                           },
                         ),
                         vSizedBox2,

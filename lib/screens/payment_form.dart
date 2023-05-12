@@ -181,7 +181,7 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.kBorderColor,
+                          color: AppColors.kSecondaryBorderColor,
                         ),
                       ),
                       child: pickedImage == null

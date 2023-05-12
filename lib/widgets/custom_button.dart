@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gis_flutter_frontend/core/app/colors.dart';
 
 import 'custom_text.dart';
 
@@ -84,7 +85,9 @@ class CustomButton {
           backgroundColor: color,
           shape: RoundedRectangleBorder(
               side: isBorder && !isDisable
-                  ? BorderSide(color: color ?? Colors.grey)
+                  ? BorderSide(
+                      color: color ?? AppColors.kSecondaryBorderColor,
+                    )
                   : BorderSide.none,
               borderRadius: BorderRadius.circular(borderRadius)),
         ),
@@ -105,6 +108,7 @@ class CustomButton {
                   title,
                   fontSize: fontSize,
                   fontWeight: fontWeight ?? FontWeight.w300,
+                  textAlign: TextAlign.start,
                   color: isDisable
                       ? Colors.grey.shade300
                       : titleColor ?? Colors.black,

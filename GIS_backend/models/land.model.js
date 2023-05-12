@@ -35,6 +35,7 @@ const LandSchema = new Schema(
       required: true,
       trim: true,
       index: true,
+      unique: true,
     },
     wardNo: {
       type: String,
@@ -66,7 +67,7 @@ const LandSchema = new Schema(
     },
     landPrice: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     isVerified: {

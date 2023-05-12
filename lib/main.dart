@@ -9,8 +9,8 @@ import 'package:gis_flutter_frontend/providers/land_transfer_provider.dart';
 import 'package:gis_flutter_frontend/providers/user_provider.dart';
 import 'package:gis_flutter_frontend/services/geo_location_service.dart';
 import 'package:gis_flutter_frontend/utils/app_shared_preferences.dart';
+import 'package:gis_flutter_frontend/utils/get_swatch_colors.dart';
 import 'package:gis_flutter_frontend/utils/global_context_service.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'core/app/colors.dart';
@@ -74,14 +74,68 @@ class MyApp extends StatelessWidget {
         initialRoute: RouteName.splashRouteName,
         debugShowCheckedModeBanner: false,
         title: 'GIS LRS',
+        // theme: ThemeData(
+        //   // useMaterial3: true,
+        //   primarySwatch: createMaterialColor(AppColors.kPrimaryColor2),
+        //   // primaryColor: AppColors.kPrimaryColor2,
+        //   // primaryColorLight: AppColors.kPrimaryColor2,
+        //   appBarTheme: const AppBarTheme(
+        //     systemOverlayStyle: SystemUiOverlayStyle(
+        //       statusBarColor: AppColors.kBrandPrimaryColor,
+        //       statusBarBrightness: Brightness.light,
+        //     ),
+        //     backgroundColor: Colors.white,
+        //     shadowColor: Colors.transparent,
+        //     surfaceTintColor: Colors.white,
+        //     elevation: 0,
+        //   ),
+        //   brightness: Theme.of(context).brightness,
+        //   disabledColor: Colors.grey,
+        //   textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        //   pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        //     TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+        //     TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        //   }),
+        //   textButtonTheme: TextButtonThemeData(
+        //     style: TextButton.styleFrom(
+        //       elevation: 0,
+        //       foregroundColor: AppColors.kPrimaryColor2,
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //       disabledBackgroundColor: Colors.grey.shade400,
+        //       disabledIconColor: Colors.grey.shade300,
+        //       disabledForegroundColor: Colors.grey.shade300,
+        //       shadowColor: Colors.transparent,
+        //       backgroundColor: AppColors.kPrimaryColor2,
+        //     ),
+        //   ),
+        //   colorScheme: const ColorScheme.light(
+        //     primary: AppColors.kPrimaryColor2,
+        //     secondary: AppColors.kPrimaryColor2,
+        //     background: Colors.white,
+        //     error: Colors.red,
+        //   ),
+        //   splashColor: AppColors.kPrimaryColor2,
+        //   highlightColor: AppColors.kPrimaryColor2.withOpacity(0.5),
+        //   elevatedButtonTheme: ElevatedButtonThemeData(
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: AppColors.kPrimaryColor2,
+        //       elevation: 0,
+        //       foregroundColor: AppColors.kPrimaryColor2,
+        //       shadowColor: Colors.transparent,
+        //       disabledBackgroundColor: Colors.grey.shade400,
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //     ),
+        // ),
+        // ),
         theme: ThemeData(
           useMaterial3: true,
-          primarySwatch: createMaterialColor(AppColors.kPrimaryColor2),
-          // primaryColor: AppColors.kPrimaryColor2,
-          // primaryColorLight: AppColors.kPrimaryColor2,
-          appBarTheme: const AppBarTheme(
+          appBarTheme: AppBarTheme(
             systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: AppColors.kPrimaryColor2,
+              statusBarColor: AppColors.kBrandPrimaryColor,
               statusBarBrightness: Brightness.light,
             ),
             backgroundColor: Colors.white,
@@ -89,17 +143,66 @@ class MyApp extends StatelessWidget {
             surfaceTintColor: Colors.white,
             elevation: 0,
           ),
+          dialogTheme: const DialogTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            surfaceTintColor: Colors.white,
+          ),
+          tabBarTheme: TabBarTheme(
+            labelStyle: TextStyle(
+              color: AppColors.kNeutral800Color,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Outfit',
+              fontSize: 18,
+            ),
+            unselectedLabelStyle: TextStyle(
+              color: AppColors.kNeutral800Color,
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              fontFamily: 'Outfit',
+            ),
+            overlayColor:
+                MaterialStateProperty.all(AppColors.kLightPrimaryColor),
+            indicatorColor: AppColors.kBrandPrimaryColor,
+            indicatorSize: TabBarIndicatorSize.tab,
+            unselectedLabelColor: AppColors.kNeutral800Color,
+            labelColor: AppColors.kBrandPrimaryColor,
+          ),
+          primaryColorLight: AppColors.kBrandPrimaryColor,
+          primarySwatch: MaterialColor(
+              0xff0D0D0D, getSwatchColor(const Color(0xff0D0D0D))),
+          primaryColor: AppColors.kBrandPrimaryColor,
+          colorScheme: ColorScheme.light(
+            outline: AppColors.kSecondaryBorderColor,
+            primary: AppColors.kBrandPrimaryColor,
+            secondary: AppColors.kBrandPrimaryColor,
+            // primarySwatch: MaterialColor(
+            //     0xff09BE8B, getSwatchColor(const Color(0xff09BE8B))),
+            background: Colors.white,
+            error: Colors.red,
+          ),
+          drawerTheme: const DrawerThemeData(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            endShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+              ),
+            ),
+          ),
+          dialogBackgroundColor: Colors.transparent,
+          fontFamily: "Outfit",
           brightness: Theme.of(context).brightness,
-          disabledColor: Colors.grey,
-          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-          pageTransitionsTheme: const PageTransitionsTheme(builders: {
-            TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          }),
+          disabledColor: Colors.grey.shade400,
+          scaffoldBackgroundColor: AppColors.kScaffoldBackgroundColor,
+          splashColor: AppColors.kLightPrimaryColor,
+          highlightColor: AppColors.kBrandPrimaryColor.withOpacity(0.5),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               elevation: 0,
-              foregroundColor: AppColors.kPrimaryColor2,
+              foregroundColor: AppColors.kBrandPrimaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -107,22 +210,13 @@ class MyApp extends StatelessWidget {
               disabledIconColor: Colors.grey.shade300,
               disabledForegroundColor: Colors.grey.shade300,
               shadowColor: Colors.transparent,
-              backgroundColor: AppColors.kPrimaryColor2,
             ),
           ),
-          colorScheme: const ColorScheme.light(
-            primary: AppColors.kPrimaryColor2,
-            secondary: AppColors.kPrimaryColor2,
-            background: Colors.white,
-            error: Colors.red,
-          ),
-          splashColor: AppColors.kPrimaryColor2,
-          highlightColor: AppColors.kPrimaryColor2.withOpacity(0.5),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.kPrimaryColor2,
+              backgroundColor: AppColors.kBrandPrimaryColor,
               elevation: 0,
-              foregroundColor: AppColors.kPrimaryColor2,
+              foregroundColor: AppColors.kBrandPrimaryColor,
               shadowColor: Colors.transparent,
               disabledBackgroundColor: Colors.grey.shade400,
               shape: RoundedRectangleBorder(

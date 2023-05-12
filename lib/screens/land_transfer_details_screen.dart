@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:gis_flutter_frontend/model/transfer_land/land_transfer_request_model.dart';
 import 'package:gis_flutter_frontend/screens/payment_form.dart';
 import 'package:intl/intl.dart';
@@ -60,12 +61,18 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
         centerTitle: true,
       ),
       body: Consumer<LandTransferProvider>(builder: (context, _, child) {
+        var latlngTempList = <LatLng>[];
         _.individualLandTransferResult?.landSaleId?.geoJson?.geometry
             ?.coordinates
             ?.forEach((element) {
-          long = element[0][0];
-          lat = element[0][1];
+          for (var ele2 in element) {
+            latlngTempList.add(LatLng(ele2[1], ele2[0]));
+          }
         });
+        if (latlngTempList.isNotEmpty) {
+          lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+          long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+        }
         return _.isLoading
             ? const CustomCircularProgressIndicatorWidget(
                 title: "Loading individual land transfer...",
@@ -85,7 +92,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                               "Land Information",
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.kPrimaryColor2,
+                              color: AppColors.kBrandPrimaryColor,
                             ),
                             vSizedBox1,
                             Row(
@@ -126,7 +133,12 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                   latlngData: LatLng(
                                                     lat ?? 0.0,
                                                     long ?? 0.0,
-                                                  ), // latlngData: LatLng(
+                                                  ),
+                                                  parcelId: _
+                                                      .individualLandTransferResult
+                                                      ?.landSaleId
+                                                      ?.parcelId,
+                                                  // latlngData: LatLng(
                                                   //     double.parse(_
                                                   //             .individualLandTransferResult?.landSaleId
                                                   //             ?.landId
@@ -157,8 +169,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "Id: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -168,7 +180,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.landSaleId?.landId?.id ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -179,8 +192,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "Parcel Id: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -193,7 +206,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.parcelId ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -204,21 +218,19 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "Price: NPR. ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
                                           children: [
                                             TextSpan(
-                                              text: _
-                                                      .individualLandTransferResult
-                                                      ?.landSaleId
-                                                      ?.landId
-                                                      ?.landPrice ??
+                                              text: _.individualLandTransferResult
+                                                      ?.landSaleId?.landPrice ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -229,8 +241,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "status: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -241,7 +253,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                           ?.transerData ??
                                                       "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -266,8 +279,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "City: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -280,7 +293,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.city ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -291,8 +305,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "District: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -305,7 +319,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.district ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -323,8 +338,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "Area: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -337,7 +352,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.area ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -348,8 +364,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                       Text.rich(
                                         TextSpan(
                                           text: "Province: ",
-                                          style: const TextStyle(
-                                            color: AppColors.kTextPrimaryColor,
+                                          style: TextStyle(
+                                            color: AppColors.kNeutral800Color,
                                             fontSize: 14.0,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -362,7 +378,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       ?.province ??
                                                   "",
                                               style: TextStyle(
-                                                color: AppColors.kHeadingColor,
+                                                color:
+                                                    AppColors.kNeutral600Color,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -378,22 +395,22 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                             vSizedBox2,
                             CustomText.ourText(
                               "Address (Survey No.)",
-                              color: AppColors.kTextPrimaryColor,
+                              color: AppColors.kNeutral800Color,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                             ),
                             vSizedBox0,
                             CustomText.ourText(
                               "${_.individualLandTransferResult?.landSaleId?.landId?.address} (${_.individualLandTransferResult?.landSaleId?.landId?.surveyNo})",
-                              color: AppColors.kHeadingColor,
+                              color: AppColors.kNeutral600Color,
                               fontWeight: FontWeight.w400,
                             ),
                             vSizedBox2,
                             Text.rich(
                               TextSpan(
                                 text: "Ward No: ",
-                                style: const TextStyle(
-                                  color: AppColors.kTextPrimaryColor,
+                                style: TextStyle(
+                                  color: AppColors.kNeutral800Color,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -403,7 +420,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                             ?.landSaleId?.landId?.wardNo ??
                                         "",
                                     style: TextStyle(
-                                      color: AppColors.kHeadingColor,
+                                      color: AppColors.kNeutral600Color,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -414,8 +431,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                             Text.rich(
                               TextSpan(
                                 text: "Created At: ",
-                                style: const TextStyle(
-                                  color: AppColors.kTextPrimaryColor,
+                                style: TextStyle(
+                                  color: AppColors.kNeutral800Color,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -425,7 +442,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                         .format(_.individualLandTransferResult!
                                             .landSaleId!.landId!.createdAt!),
                                     style: TextStyle(
-                                      color: AppColors.kHeadingColor,
+                                      color: AppColors.kNeutral600Color,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -437,14 +454,14 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                               "Seller User Information",
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.kPrimaryColor2,
+                              color: AppColors.kBrandPrimaryColor,
                             ),
                             vSizedBox1,
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: AppColors.kBorderColor,
+                                  color: AppColors.kSecondaryBorderColor,
                                 ),
                                 borderRadius: BorderRadius.circular(16.0),
                               ),
@@ -619,7 +636,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                               "Buyer User Information",
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.kPrimaryColor2,
+                              color: AppColors.kBrandPrimaryColor,
                             ),
                             vSizedBox1,
                             _.individualLandTransferResult?.landSaleId
@@ -629,7 +646,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: AppColors.kBorderColor,
+                                        color: AppColors.kSecondaryBorderColor,
                                       ),
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
@@ -642,6 +659,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                             _
                                                         .individualLandTransferResult
                                                         ?.approvedUserId
+                                                        ?.user
                                                         ?.imageFile
                                                         ?.imageUrl !=
                                                     null
@@ -653,6 +671,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                       imageUrl: _
                                                           .individualLandTransferResult
                                                           ?.approvedUserId
+                                                          ?.user
                                                           ?.imageFile
                                                           ?.imageUrl,
                                                     ),
@@ -679,6 +698,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                           _
                                                                   .individualLandTransferResult
                                                                   ?.approvedUserId
+                                                                  ?.user
                                                                   ?.name ??
                                                               "",
                                                           fontSize: 18,
@@ -686,8 +706,11 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                               FontWeight.w500,
                                                         ),
                                                       ),
-                                                      _.individualLandTransferResult
-                                                                  ?.approvedUserId?.id ==
+                                                      _
+                                                                  .individualLandTransferResult
+                                                                  ?.approvedUserId
+                                                                  ?.user
+                                                                  ?.id ==
                                                               AppSharedPreferences
                                                                   .getUserId
                                                           ? const Icon(
@@ -701,8 +724,11 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                   ),
                                                   vSizedBox2,
                                                   CustomText.ourText(
-                                                    _.individualLandTransferResult
-                                                            ?.approvedUserId?.email ??
+                                                    _
+                                                            .individualLandTransferResult
+                                                            ?.approvedUserId
+                                                            ?.user
+                                                            ?.email ??
                                                         "",
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w500,
@@ -712,6 +738,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                     _
                                                             .individualLandTransferResult
                                                             ?.approvedUserId
+                                                            ?.user
                                                             ?.phoneNumber ??
                                                         "",
                                                     fontSize: 14,
@@ -722,8 +749,15 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                     _
                                                             .individualLandTransferResult
                                                             ?.approvedUserId
+                                                            ?.user
                                                             ?.address ??
                                                         "",
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  vSizedBox2,
+                                                  CustomText.ourText(
+                                                    "Bidding Price : ${_.individualLandTransferResult?.approvedUserId?.landPrice}",
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -761,7 +795,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                             vSizedBox1,
                             AppSharedPreferences.getUserId ==
                                     _.individualLandTransferResult
-                                        ?.approvedUserId?.id
+                                        ?.approvedUserId?.user?.id
                                 ? CustomButton.elevatedButton(
                                     "Payment Form",
                                     () {
@@ -799,6 +833,28 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                     ),
                                   )
                                 : Container(),
+                            _.individualLandTransferResult?.transerData ==
+                                    "initiated"
+                                ? const Text.rich(
+                                    TextSpan(
+                                      text: "NOTE : ",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.red,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                            text:
+                                                "The transfer has been initiated by seller. Wait for the admin to approve the transfership.",
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            ))
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            vSizedBox2,
                             _.individualLandTransferResult?.billToken != null
                                 ? Column(
                                     children: [
@@ -807,7 +863,7 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                         "Payment Information",
                                         fontSize: 18.0,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColors.kPrimaryColor2,
+                                        color: AppColors.kBrandPrimaryColor,
                                       ),
                                       vSizedBox1,
                                       Card(
@@ -818,7 +874,8 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                             border: Border.all(
-                                              color: AppColors.kBorderColor,
+                                              color: AppColors
+                                                  .kSecondaryBorderColor,
                                             ),
                                           ),
                                           child: Column(

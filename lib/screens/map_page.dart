@@ -1,11 +1,10 @@
-import 'dart:isolate';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:gis_flutter_frontend/screens/land_sale_details_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -15,10 +14,12 @@ import 'package:gis_flutter_frontend/core/app/dimensions.dart';
 import 'package:gis_flutter_frontend/core/development/console.dart';
 import 'package:gis_flutter_frontend/main.dart';
 import 'package:gis_flutter_frontend/providers/map_provider.dart';
+import 'package:gis_flutter_frontend/screens/land_sale_details_screen.dart';
 import 'package:gis_flutter_frontend/widgets/custom_circular_progress_indicator.dart';
 import 'package:gis_flutter_frontend/widgets/custom_text.dart';
 
 import '../core/app/medias.dart';
+import '../core/app/states.dart';
 import '../core/routing/route_navigation.dart';
 import '../model/land/land_request_model.dart';
 import '../providers/land_provider.dart';
@@ -29,71 +30,17 @@ import '../widgets/custom_text_form_field.dart';
 import '../widgets/drawer_widget.dart';
 import 'dashboard_page.dart';
 
-final List<LatLng> polylines = <LatLng>[];
-
-class RequiredArgs {
-  final SendPort sendPort;
-  final LandRequestModel? id;
-
-  RequiredArgs(
-    this.sendPort,
-    this.id,
-  );
-}
-
-class LatLngModel {
-  String? landSaleId;
-  String? landId;
-  String? parcelId;
-  List<LatLng>? polygonData;
-  LatLng? centerMarker;
-  String? address;
-  String? area;
-  String? wardNo;
-  String? landPrice;
-  String? name;
-  String? ownerUserId;
-  String? email;
-  LatLngModel({
-    this.landId,
-    this.parcelId,
-    this.polygonData,
-    this.centerMarker,
-    this.address,
-    this.area,
-    this.wardNo,
-    this.landPrice,
-    this.name,
-    this.ownerUserId,
-    this.email,
-    this.landSaleId,
-  });
-}
-
-ValueNotifier<List<LatLngModel>> latlngList = ValueNotifier<List<LatLngModel>>([
-  // {
-  //   "polygonData": [
-  //     LatLng(28.2561422405137, 83.9799461371451),
-  //     LatLng(28.2549, 83.9762),
-  //     LatLng(28.2553, 83.9766),
-  //     LatLng(28.2554, 83.9764),
-  //   ],
-  //   "parcelId": "10",
-  // }
-]);
-
-TextEditingController searchController = TextEditingController();
-MapController mapController = MapController();
-
 class MapPage extends StatefulWidget {
   final bool? isFromLand;
   final LatLng? latlngData;
   final String? geoJSONId;
+  final String? parcelId;
   const MapPage({
     Key? key,
     this.isFromLand = false,
     this.latlngData,
     this.geoJSONId,
+    this.parcelId,
   }) : super(key: key);
 
   @override
@@ -112,39 +59,50 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
   void initState() {
     consolelog("iam from init map");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // if (widget.isFromLand == true) {
-      //   Provider.of<LandProvider>(context, listen: false).getGeoJSONDataById(
-      //     context: context,
-      //     geoJSONId: widget.geoJSONId ?? "",
-      //   );
-      // } else {
-      // Provider.of<LandProvider>(context, listen: false).getOwnedLands(
-      //     context: context,
-      //     landRequestModel: LandRequestModel(page: 1, limit: 20),
-      //     isFromMap: true,
-      //     latlngData: widget.isFromLand ?? false ? widget.latlngData : null);
+      if (widget.isFromLand == true) {
+        consolelog("widget.parcelId :: ${widget.parcelId}");
+        Provider.of<LandProvider>(context, listen: false).getAllSearchLands(
+          context: context,
+          landRequestModel: LandRequestModel(
+            page: 1,
+            limit: 200,
+            radius: 10000,
+            search: widget.parcelId,
+          ),
+          isFromMap: true,
+        );
+        // Provider.of<LandProvider>(context, listen: false).getGeoJSONDataById(
+        //   context: context,
+        //   geoJSONId: widget.geoJSONId ?? "",
+        // );
+      } else {
+        // Provider.of<LandProvider>(context, listen: false).getOwnedLands(
+        //     context: context,
+        //     landRequestModel: LandRequestModel(page: 1, limit: 20),
+        //     isFromMap: true,
+        //     latlngData: widget.isFromLand ?? false ? widget.latlngData : null);
 
-      Provider.of<LandProvider>(context, listen: false)
-          .searchLandController
-          .clear();
-      selectedMarker = null;
-      endSelectedMarker = null;
+        Provider.of<LandProvider>(context, listen: false)
+            .searchLandController
+            .clear();
+        selectedMarker = null;
+        endSelectedMarker = null;
 
-      Provider.of<LandProvider>(context, listen: false)
-          .searchLandController
-          .clear();
-      Provider.of<LandProvider>(context, listen: false)
-          .searchLandAddressController
-          .clear();
+        Provider.of<LandProvider>(context, listen: false)
+            .searchLandController
+            .clear();
+        Provider.of<LandProvider>(context, listen: false)
+            .searchLandAddressController
+            .clear();
 
-      Provider.of<LandProvider>(context, listen: false).getSaleLand(
-        context: context,
-        landRequestModel: LandRequestModel(
-          page: 1,
-        ),
-        isFromMap: true,
-      );
-      // }
+        Provider.of<LandProvider>(context, listen: false).getSaleLand(
+          context: context,
+          landRequestModel: LandRequestModel(
+            page: 1,
+          ),
+          isFromMap: true,
+        );
+      }
     });
     super.initState();
   }
@@ -921,7 +879,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: AppColors.kPrimaryColor2,
+                                  color: AppColors.kBrandPrimaryColor,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1023,7 +981,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                         ],
                                       ),
                                     ),
-                                    CustomButton.textButton(
+                                    CustomButton.elevatedButton(
                                       "View Details",
                                       () {
                                         navigate(
@@ -1036,7 +994,9 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                       fontSize: 12.0,
                                       isFitted: true,
                                       height: 35,
-                                      titleColor: Colors.white,
+                                      titleColor: Colors.black,
+                                      color: AppColors.kLightPrimaryColor,
+                                      isDisable: widget.isFromLand ?? false,
                                     ),
                                   ],
                                 ),
@@ -1126,8 +1086,8 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                                 padding: screenPadding,
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
-                                                    color:
-                                                        AppColors.kBorderColor,
+                                                    color: AppColors
+                                                        .kSecondaryBorderColor,
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(

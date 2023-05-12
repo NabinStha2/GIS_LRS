@@ -1,3 +1,5 @@
+import 'package:gis_flutter_frontend/core/development/console.dart';
+
 String? getQuery(
   dynamic reqData, {
   String? sort,
@@ -35,6 +37,8 @@ String? getQuery(
   if (reqData?.province != "" && reqData?.province != null) {
     fullquery += "&province=${reqData?.province}";
   }
+
+  consolelog("fullquery :: $fullquery");
 
   return fullquery == '?' ? '' : fullquery;
 }
