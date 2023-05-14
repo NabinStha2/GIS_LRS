@@ -1028,7 +1028,7 @@ class LandProvider extends ChangeNotifier with BaseController {
 
       latlngList.value.add(LatLngModel(
         centerMarker: LatLngBounds.fromPoints(latlngTempList).center,
-        parcelId: geoJSONData?.properties?.parcelno,
+        parcelId: geoJSONData?.properties?.id,
         polygonData: latlngTempList,
         area: geoJSONData?.properties?.area,
         wardNo: geoJSONData?.properties?.wardno,

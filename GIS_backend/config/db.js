@@ -25,7 +25,7 @@ module.exports.connectDB = async (app) => {
         );
       });
 
-      // const geoJSONData = JSON.parse(fs.readFileSync("./WRC_WGC_84.geojson"));
+      // const geoJSONData = JSON.parse(fs.readFileSync("./Parcel_geojson.json"));
       // // console.log(geoJSONData);
       // const geoJSONInstance = await GeoJSON.insertMany(geoJSONData.features);
       // // await geoJSONInstance((err, doc) => {

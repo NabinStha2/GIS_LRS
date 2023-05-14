@@ -24,7 +24,7 @@ exports.createLand = async (req, res) => {
     } = req.body;
 
     const geoJSONData = await GeoJSON.findOne({
-      "properties.parcelno": parcelId,
+      "properties.id": parcelId,
     });
     console.log(parcelId);
     // console.log(geoJSONData);

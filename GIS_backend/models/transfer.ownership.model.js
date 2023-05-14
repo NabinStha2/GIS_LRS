@@ -43,7 +43,6 @@ const TransferOwnershipSchema = new Schema(
     },
     transactionDate: {
       type: Date,
-      default: Date.now,
     },
     billToken: {
       type: String,

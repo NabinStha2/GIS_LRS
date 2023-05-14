@@ -9,6 +9,8 @@ const {
   patchPaymentVoucherLandTransferOwnership,
   addPaymentFormForLandTransferOwnership,
   initiateTransferForLandTransferOwnership,
+  getAllLandTransferOwnershipByAdmin,
+  cancelLandTransferOwnershipByAdmin,
 } = require("../controllers/transfer.ownership.controller");
 const { uploadImages } = require("../middlewares/multer");
 const { checkIsAdmin } = require("../middlewares/check.is.admin");
@@ -29,15 +31,6 @@ router.post(
   validator,
   checkAuthValidation,
   addLandForTransferOwnership
-);
-
-router.patch(
-  "/:id/approve-land-transfer",
-  validate(["id"]),
-  validator,
-  checkAuthValidation,
-  checkIsAdmin,
-  approveLandForTransferOwnership
 );
 
 router.patch(
@@ -65,6 +58,32 @@ router.patch(
   validator,
   checkAuthValidation,
   initiateTransferForLandTransferOwnership
+);
+
+// Admin ----------------------------------------------------------------
+router.get(
+  "/admin/data",
+  checkAuthValidation,
+  checkIsAdmin,
+  getAllLandTransferOwnershipByAdmin
+);
+
+router.patch(
+  "/:id/cancel",
+  validate(["id"]),
+  validator,
+  checkAuthValidation,
+  checkIsAdmin,
+  cancelLandTransferOwnershipByAdmin
+);
+
+router.patch(
+  "/:id/approve-land-transfer",
+  validate(["id"]),
+  validator,
+  checkAuthValidation,
+  checkIsAdmin,
+  approveLandForTransferOwnership
 );
 
 module.exports = router;

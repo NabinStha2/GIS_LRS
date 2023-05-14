@@ -216,7 +216,135 @@ module.exports.addLandForTransferOwnership = async (req, res) => {
   }
 };
 
-//admin ----------------------------------------------------------------
+module.exports.addPaymentFormForLandTransferOwnership = async (req, res) => {
+  try {
+    const landTransferId = req.params.id;
+    const { billToken, sellerBankAcc, buyerBankAcc, transactionAmt } = req.body;
+
+    const existingTransfer = await TransferOwnership.findById({
+      _id: landTransferId,
+    }).lean();
+    if (!existingTransfer) {
+      throw new SetErrorResponse("Not Found!!!", 403);
+    }
+
+    const updatedTranferOwnership = await TransferOwnership.findByIdAndUpdate(
+      { _id: landTransferId },
+      {
+        transerData: "ongoing",
+        buyerBankAcc,
+        sellerBankAcc,
+        transactionAmt,
+        billToken,
+      },
+      { new: true }
+    ).lean();
+
+    return res.success(
+      { transferOwnershipData: updatedTranferOwnership },
+      "Payment form successfully"
+    );
+  } catch (err) {
+    console.log(`Error from addPaymentFormForLandTransferOwnership : ${err}`);
+    return res.fail(err);
+  }
+};
+
+module.exports.patchPaymentVoucherLandTransferOwnership = async (req, res) => {
+  try {
+    const landTransferId = req.params.id;
+    const voucherFormImageLocation =
+      req.files?.voucherFormImage?.length > 0
+        ? req.files.voucherFormImage[0]?.location
+        : undefined;
+
+    var editBackQuery = {};
+
+    if (voucherFormImageLocation) {
+      editBackQuery = {
+        voucherFormFile: {},
+      };
+      editBackQuery.voucherFormFile.voucherFormImage = voucherFormImageLocation;
+      editBackQuery.voucherFormFile.voucherFormPublicId =
+        req.files?.voucherFormImage[0]?.publicId;
+    }
+
+    TransferOwnership.findById({ _id: landTransferId })
+      .lean()
+      .then(async (res) => {
+        console.log(res.voucherFormFile?.voucherFormPublicId);
+        if (
+          voucherFormImageLocation &&
+          res.voucherFormFile?.voucherFormPublicId
+        ) {
+          await deleteFileCloudinary(res.voucherFormFile?.voucherFormPublicId);
+        }
+      })
+      .catch((err) => {
+        throw new SetErrorResponse("Error deleting file cloudinary", 500);
+      });
+
+    const updatedTranferOwnership = await TransferOwnership.findOneAndUpdate(
+      { _id: landTransferId },
+      {
+        ...editBackQuery,
+      },
+      { new: true }
+    ).lean();
+
+    if (
+      voucherFormImageLocation &&
+      updatedTranferOwnership?.voucherFormFile?.voucherFormPublicId
+    ) {
+      deleteFileLocal({ imagePath: req.files.voucherFormImage[0]?.path });
+    }
+
+    if (!updatedTranferOwnership) {
+      throw new SetErrorResponse("TransferOwnership not found"); // default (Not found,404)
+    }
+
+    return res.success(
+      { transferOwnershipData: updatedTranferOwnership },
+      "Success"
+    );
+  } catch (err) {
+    res.fail(err);
+  }
+};
+
+module.exports.initiateTransferForLandTransferOwnership = async (req, res) => {
+  try {
+    const landTransferId = req.params.id;
+
+    const existingTransfer = await TransferOwnership.findById({
+      _id: landTransferId,
+    }).lean();
+    if (!existingTransfer) {
+      throw new SetErrorResponse("Not Found!!!", 403);
+    }
+    if (existingTransfer?.transerData == "initiated") {
+      throw new SetErrorResponse("ALready initiated!!!", 401);
+    }
+
+    const updatedTranferOwnership = await TransferOwnership.findByIdAndUpdate(
+      { _id: landTransferId },
+      {
+        transerData: "initiated",
+      },
+      { new: true }
+    ).lean();
+
+    return res.success(
+      { transferOwnershipData: updatedTranferOwnership },
+      "Land initiated successfully"
+    );
+  } catch (err) {
+    console.log(`Error from initiateTransferForLandTransferOwnership : ${err}`);
+    return res.fail(err);
+  }
+};
+
+// Admin ----------------------------------------------------------------
 module.exports.approveLandForTransferOwnership = async (req, res) => {
   try {
     const transferOwnershipId = req.params.id;
@@ -386,132 +514,135 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
     return res.fail(err);
   }
 };
-//----------------------------------------------------------------
 
-module.exports.addPaymentFormForLandTransferOwnership = async (req, res) => {
+module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
   try {
-    const landTransferId = req.params.id;
-    const { billToken, sellerBankAcc, buyerBankAcc, transactionAmt } = req.body;
+    const {
+      page,
+      limit,
+      search = "",
+      sort,
+      city,
+      district,
+      province,
+    } = req?.query;
 
-    const existingTransfer = await TransferOwnership.findById({
-      _id: landTransferId,
-    }).lean();
-    if (!existingTransfer) {
-      throw new SetErrorResponse("Not Found!!!", 403);
+    let query = {};
+    let populateQuery = [];
+    if (search) {
+      populateQuery.push({ parcelId: { $regex: search, $options: "i" } });
+    }
+    if (city) {
+      populateQuery.push({ city: { $regex: city, $options: "i" } });
+    }
+    if (district) {
+      populateQuery.push({ district: { $regex: district, $options: "i" } });
+    }
+    if (province) {
+      populateQuery.push({ province: { $regex: province, $options: "i" } });
     }
 
-    const updatedTranferOwnership = await TransferOwnership.findByIdAndUpdate(
-      { _id: landTransferId },
-      {
-        transerData: "ongoing",
-        buyerBankAcc,
-        sellerBankAcc,
-        transactionAmt,
-        billToken,
-      },
-      { new: true }
-    ).lean();
+    query = { transerData: "initiated" };
+    console.log(query);
 
-    return res.success(
-      { transferOwnershipData: updatedTranferOwnership },
-      "Payment form successfully"
-    );
+    const transferOwnership = await getSearchPaginatedData({
+      model: TransferOwnership,
+      reqQuery: {
+        sort,
+        page,
+        limit,
+        query,
+        populate: [
+          {
+            path: "approvedUserId.user",
+          },
+          {
+            path: "ownerHistory",
+          },
+          {
+            path: "landSaleId",
+            populate: [
+              {
+                path: "landId",
+                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+                // match: { ownerHistory: { $in: [userId] } },
+              },
+              {
+                path: "geoJSON",
+                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+              },
+              {
+                path: "ownerUserId",
+                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+              },
+            ],
+          },
+        ],
+        pagination: true,
+        modFunction: async (document) => {
+          //   console.log(`document :: ${document}`);
+          if (document.landSaleId.landId != null) {
+            return document;
+          }
+        },
+      },
+    });
+
+    console.log(transferOwnership);
+
+    if (!transferOwnership) {
+      throw new SetErrorResponse("TransferOwnership not found", 404);
+    }
+
+    return res.success(transferOwnership);
   } catch (err) {
-    console.log(`Error from addPaymentFormForLandTransferOwnership : ${err}`);
+    console.log(`Error from getAllLandTransferOwnershipByAdmin : ${err}`);
     return res.fail(err);
   }
 };
 
-module.exports.patchPaymentVoucherLandTransferOwnership = async (req, res) => {
+module.exports.cancelLandTransferOwnershipByAdmin = async (req, res) => {
   try {
-    const landTransferId = req.params.id;
-    const voucherFormImageLocation =
-      req.files?.voucherFormImage?.length > 0
-        ? req.files.voucherFormImage[0]?.location
-        : undefined;
-
-    var editBackQuery = {};
-
-    if (voucherFormImageLocation) {
-      editBackQuery = {
-        voucherFormFile: {},
-      };
-      editBackQuery.voucherFormFile.voucherFormImage = voucherFormImageLocation;
-      editBackQuery.voucherFormFile.voucherFormPublicId =
-        req.files?.voucherFormImage[0]?.publicId;
-    }
-
-    TransferOwnership.findById({ _id: landTransferId })
-      .lean()
-      .then(async (res) => {
-        console.log(res.voucherFormFile?.voucherFormPublicId);
-        if (
-          voucherFormImageLocation &&
-          res.voucherFormFile?.voucherFormPublicId
-        ) {
-          await deleteFileCloudinary(res.voucherFormFile?.voucherFormPublicId);
-        }
+    const transferOwnershipId = req.params.id;
+    const transferOwnership = await TransferOwnership.findById({
+      _id: transferOwnershipId,
+    })
+      .populate({
+        path: "landSaleId",
+        populate: {
+          path: "landId ownerUserId",
+        },
       })
-      .catch((err) => {
-        throw new SetErrorResponse("Error deleting file cloudinary", 500);
-      });
+      .lean();
 
-    const updatedTranferOwnership = await TransferOwnership.findOneAndUpdate(
-      { _id: landTransferId },
-      {
-        ...editBackQuery,
-      },
-      { new: true }
-    ).lean();
+    console.log(transferOwnership.landSaleId.landId._id);
 
-    if (
-      voucherFormImageLocation &&
-      updatedTranferOwnership?.voucherFormFile?.voucherFormPublicId
-    ) {
-      deleteFileLocal({ imagePath: req.files.voucherFormImage[0]?.path });
+    if (!transferOwnership) {
+      throw new SetErrorResponse("TransferOwnership not found", 404);
     }
 
-    if (!updatedTranferOwnership) {
-      throw new SetErrorResponse("TransferOwnership not found"); // default (Not found,404)
-    }
+    await Promise.all([
+      LandSale.findByIdAndRemove({
+        _id: transferOwnership?.landSaleId?._id,
+      }).lean(),
+      TransferOwnership.findByIdAndRemove({
+        _id: transferOwnershipId,
+      }).lean(),
+      Land.findByIdAndUpdate(
+        {
+          _id: transferOwnership?.landSaleId?.landId._id,
+        },
+        {
+          saleData: "null",
+        },
+        { new: true }
+      ).lean(),
+    ]);
 
-    return res.success(
-      { transferOwnershipData: updatedTranferOwnership },
-      "Success"
-    );
+    return res.success({}, "Land cancelled for transfer");
   } catch (err) {
-    res.fail(err);
-  }
-};
-
-module.exports.initiateTransferForLandTransferOwnership = async (req, res) => {
-  try {
-    const landTransferId = req.params.id;
-
-    const existingTransfer = await TransferOwnership.findById({
-      _id: landTransferId,
-    }).lean();
-    if (!existingTransfer) {
-      throw new SetErrorResponse("Not Found!!!", 403);
-    }
-    if (existingTransfer?.transerData == "initiated") {
-      throw new SetErrorResponse("ALready initiated!!!", 401);
-    }
-
-    const updatedTranferOwnership = await TransferOwnership.findByIdAndUpdate(
-      { _id: landTransferId },
-      {
-        transerData: "initiated",
-      },
-      { new: true }
-    ).lean();
-
-    return res.success(
-      { transferOwnershipData: updatedTranferOwnership },
-      "Land initiated successfully"
-    );
-  } catch (err) {
-    console.log(`Error from initiateTransferForLandTransferOwnership : ${err}`);
+    console.log(`Error from cancelLandTransferOwnershipByAdmin : ${err}`);
     return res.fail(err);
   }
 };
+//----------------------------------------------------------------
