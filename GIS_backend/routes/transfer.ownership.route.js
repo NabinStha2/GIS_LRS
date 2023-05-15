@@ -11,6 +11,7 @@ const {
   initiateTransferForLandTransferOwnership,
   getAllLandTransferOwnershipByAdmin,
   cancelLandTransferOwnershipByAdmin,
+  rejectLandForTransferOwnership,
 } = require("../controllers/transfer.ownership.controller");
 const { uploadImages } = require("../middlewares/multer");
 const { checkIsAdmin } = require("../middlewares/check.is.admin");
@@ -84,6 +85,15 @@ router.patch(
   checkAuthValidation,
   checkIsAdmin,
   approveLandForTransferOwnership
+);
+
+router.patch(
+  "/:id/reject-land-transfer",
+  validate(["id"]),
+  validator,
+  checkAuthValidation,
+  checkIsAdmin,
+  rejectLandForTransferOwnership
 );
 
 module.exports = router;

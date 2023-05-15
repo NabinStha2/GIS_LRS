@@ -351,12 +351,17 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
     const transferOwnership = await TransferOwnership.findById({
       _id: transferOwnershipId,
     })
-      .populate({
-        path: "landSaleId",
-        populate: {
-          path: "landId ownerUserId",
+      .populate([
+        {
+          path: "approvedUserId.user",
         },
-      })
+        {
+          path: "landSaleId",
+          populate: {
+            path: "landId ownerUserId",
+          },
+        },
+      ])
       .lean();
 
     if (!transferOwnership) {
@@ -381,14 +386,14 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
       updatedTransferOwnership,
     ] = await Promise.all([
       User.findByIdAndUpdate(
-        { _id: transferOwnership?.approvedUserId },
+        { _id: transferOwnership?.approvedUserId.user?._id },
         { ownedLand: [...land] },
         { new: true }
       ).lean(),
       Land.findByIdAndUpdate(
         { _id: transferOwnership?.landSaleId?.landId?._id },
         {
-          ownerUserId: transferOwnership?.approvedUserId,
+          ownerUserId: transferOwnership?.approvedUserId?.user?._id,
           ownerHistory: [...ownerHistory],
           saleData: null,
         },
@@ -397,7 +402,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
       LandSale.findByIdAndUpdate(
         { _id: transferOwnership?.landSaleId?._id },
         {
-          ownerUserId: transferOwnership?.approvedUserId,
+          ownerUserId: transferOwnership?.approvedUserId?.user?._id,
           prevOwnerUserId: transferOwnership?.ownerUserId,
           saleData: "selled",
         },
@@ -409,7 +414,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
         },
         {
           transerData: "completed",
-          ownerUserId: transferOwnership?.approvedUserId,
+          ownerUserId: transferOwnership?.approvedUserId?.user?._id,
         },
         { new: true }
       ).lean(),
@@ -490,7 +495,7 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
         LandSale.findByIdAndUpdate(
           { _id: transferOwnership?.landSaleId?._id },
           {
-            approvedUserId: "",
+            approvedUserId: {},
             saleData: "rejected",
             rejectedUserId: [],
           },
@@ -500,7 +505,7 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
           {
             _id: transferOwnershipId,
           },
-          { approvedUserId: "", transerData: "rejected" },
+          { approvedUserId: {}, transerData: "rejected" },
           { new: true }
         ).lean(),
       ]);
@@ -560,6 +565,9 @@ module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
             path: "ownerHistory",
           },
           {
+            path: "ownerUserId",
+          },
+          {
             path: "landSaleId",
             populate: [
               {
@@ -571,10 +579,10 @@ module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
                 path: "geoJSON",
                 match: populateQuery.length != 0 ? { $and: populateQuery } : {},
               },
-              {
-                path: "ownerUserId",
-                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
-              },
+              // {
+              //   path: "ownerUserId",
+              //   match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+              // },
             ],
           },
         ],
