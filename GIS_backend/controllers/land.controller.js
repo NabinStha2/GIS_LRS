@@ -476,6 +476,12 @@ exports.getAllLandsByAdmin = async (req, res) => {
         page,
         limit,
         query,
+        populate: [
+          { path: "ownerUserId" },
+          {
+            path: "ownerHistory",
+          },
+        ],
         pagination: true,
         modFunction: (document) => {
           return document;
