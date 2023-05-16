@@ -8,7 +8,8 @@ const { SetErrorResponse } = require("../utils/responseSetter");
 
 exports.getUser = async (req, res) => {
   try {
-    const userId = res.locals.authData?._id;
+    // const userId = res.locals.authData?._id;
+    const userId = req.params.id;
     const existingUser = await User.findById({ _id: userId }).lean();
 
     console.log(existingUser);
