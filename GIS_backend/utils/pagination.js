@@ -108,7 +108,7 @@ const getPaginatedData = async function ({ model, reqQuery, select = "+_id" }) {
     let { limit, page } = reqQuery;
 
     page = page && page > 0 ? parseInt(page) : 1;
-    limit = limit ? parseInt(limit) : 25;
+    limit = limit ? parseInt(limit) : 10; 
     const skipping = (page - 1) * limit;
 
     console.log(limit + sort);

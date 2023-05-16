@@ -467,7 +467,7 @@ exports.getAllLandsByAdmin = async (req, res) => {
     if (province) {
       query.province = { $regex: province, $options: "i" };
     }
-    console.log(query);
+    console.log(query, page);
 
     const lands = await getSearchPaginatedData({
       model: Land,
