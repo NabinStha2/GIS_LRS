@@ -54,6 +54,7 @@ dependencies:
   vector_map_tiles: ^3.3.5
   geocode: ^1.0.2
   flutter_compass: ^0.7.0
+  pinput: ^2.2.31
 
 dev_dependencies:
   flutter_test:

@@ -378,16 +378,31 @@ exports.landRejectedByAdmin = async (req, res) => {
         400
       );
     }
-    const land = await Land.findByIdAndRemove(
-      { _id: landId }
-      // {
-      //   isVerified: "rejected",
-      // },
-      // { new: true }
-    ).lean();
+    const land = await Land.findByIdAndDelete({ _id: landId }).lean();
+
+    const existingUser = await User.findById({
+      _id: land.ownerUserId,
+    }).lean();
+
+    var filteredData;
+    if (existingUser) {
+      filteredData = existingUser.ownedLand.filter((e) => e != landId);
+      // console.log(filteredData);
+      const updatedUser = await User.findByIdAndUpdate(
+        {
+          _id: existingUser._id,
+        },
+        { ownedLand: filteredData },
+        {
+          new: true,
+        }
+      );
+      console.log(updatedUser);
+    }
 
     return res.success({ landData: land }, "Land rejected successfully");
   } catch (err) {
+    console.log(`Err landRejectedByAdmin : ${err}`);
     return res.fail(err);
   }
 };

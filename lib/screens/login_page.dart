@@ -1,4 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:gis_flutter_frontend/core/app/colors.dart';
+import 'package:gis_flutter_frontend/core/routing/route_navigation.dart';
+import 'package:gis_flutter_frontend/screens/register/register_screen.dart';
 import 'package:gis_flutter_frontend/utils/validation.dart';
 import 'package:gis_flutter_frontend/widgets/custom_text.dart';
 import 'package:gis_flutter_frontend/widgets/custom_text_form_field.dart';
@@ -24,12 +28,16 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   vSizedBox2,
-                  CustomText.ourText(
-                    "Login to GIS LRS",
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
+                  Center(
+                    child: CustomText.ourText(
+                      "Login to GIS LRS",
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.kNeutral900Color,
+                    ),
                   ),
                   vSizedBox3,
+                  vSizedBox1,
                   CustomText.ourText(
                     "Email",
                     fontSize: 18,
@@ -86,6 +94,31 @@ class LoginPage extends StatelessWidget {
                       userPassword: _.loginPasswordController.text,
                     );
                   }),
+                  vSizedBox2,
+                  Center(
+                    child: Text.rich(
+                      TextSpan(
+                        text: "Don't have an account? ",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.kNeutral600Color,
+                        ),
+                        children: [
+                          TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () =>
+                                    navigate(context, const RegisterScreen()),
+                              text: "Register Now",
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.kNeutral900Color,
+                              ))
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               )),
         ),

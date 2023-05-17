@@ -20,6 +20,7 @@ const {
   deleteAdmin,
   getAllUsersByAdmin,
   approveUserByAdmin,
+  rejectUserByAdmin,
 } = require("../controllers/admin/admin.controller");
 
 const router = require("express").Router();
@@ -108,6 +109,14 @@ router.delete(
   checkAuthValidation,
   checkIsAdmin,
   deleteAdmin
+);
+router.delete(
+  "/reject-user/:id",
+  validate(["id"]),
+  validator,
+  checkAuthValidation,
+  checkIsAdmin,
+  rejectUserByAdmin
 );
 
 module.exports = router;

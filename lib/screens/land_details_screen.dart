@@ -70,8 +70,10 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
               latlngTempList.add(LatLng(ele2[1], ele2[0]));
             }
           });
-          lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
-          long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+          if (latlngTempList.isNotEmpty) {
+            lat = LatLngBounds.fromPoints(latlngTempList).center.latitude;
+            long = LatLngBounds.fromPoints(latlngTempList).center.longitude;
+          }
 
           // consolelog("$lat :: $long");
 
@@ -400,7 +402,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                               children: [
                                 TextSpan(
                                   text: DateFormat('d MMM, yyyy h:mm a').format(
-                                      _.individualLandResult!.createdAt!),
+                                      _.individualLandResult!.createdAt ??
+                                          DateTime(2023)),
                                   style: TextStyle(
                                     color: AppColors.kNeutral600Color,
                                     fontWeight: FontWeight.w400,

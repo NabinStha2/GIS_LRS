@@ -12,7 +12,12 @@ exports.userRegisterController = async (req, res, next) => {
     const { email, firstName, lastName, phoneNumber, address, password } =
       req.body;
 
-    const existingUser = await User.findOne({});
+    const existingUser = await User.findOne({
+      email: email,
+    });
+    if (existingUser) {
+      throw new SetErrorResponse("Already registerd with this account.", 500);
+    }
     const otp = generateOTP();
 
     const savingValues = {
@@ -38,7 +43,7 @@ exports.userRegisterController = async (req, res, next) => {
 
     return res.success({ email }, `OTP send to user's Email`);
   } catch (err) {
-    console.log(err);
+    console.log("Error from userRegisterController : " + err.message);
     return res.fail(err);
   }
 };

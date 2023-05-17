@@ -30,7 +30,7 @@ class _SplashBodyState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.kBrandPrimaryColor,
+        backgroundColor: AppColors.kPrimaryColor,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.light,

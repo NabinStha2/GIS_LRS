@@ -45,6 +45,9 @@ class RouteName {
   static const dashboardLandRequestedToBuyRoute =
       "/DashboardLandRequestedToBuy";
 
+  static const registerRouteName = "register";
+  static const registerRoute = "/register";
+
   static const splashRouteName = "SplashRouteName";
   static const splashRoute = "/splashRouute";
 }

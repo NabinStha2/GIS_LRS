@@ -8,6 +8,7 @@ import 'package:gis_flutter_frontend/screens/land_transfer_screen.dart';
 import 'package:gis_flutter_frontend/screens/login_page.dart';
 import 'package:gis_flutter_frontend/screens/map_page.dart';
 import 'package:gis_flutter_frontend/screens/payment_form.dart';
+import 'package:gis_flutter_frontend/screens/register/register_screen.dart';
 import 'package:gis_flutter_frontend/screens/search_land.dart';
 import 'package:gis_flutter_frontend/screens/search_land_sale_screen.dart';
 
@@ -67,6 +68,9 @@ class RouteGenerator {
 
       case RouteName.paymentFormRouteName:
         return MaterialPageRoute(builder: (_) => const PaymentFormScreen());
+
+      case RouteName.registerRouteName:
+        return MaterialPageRoute(builder: (_) => const RegisterScreen());
 
       case RouteName.splashRouteName:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

@@ -10,7 +10,9 @@ const { SetErrorResponse } = require("../../utils/responseSetter");
 exports.getAdmin = async (req, res) => {
   try {
     const userId = res.locals.authData?._id;
-    const existingUser = await Admin.findById({ _id: userId }).lean();
+    const existingUser = await Admin.findById({ _id: userId })
+      .populate({ path: "ownedLand" })
+      .lean();
 
     console.log(existingUser);
 
@@ -41,6 +43,7 @@ exports.getAllUsersByAdmin = async (req, res) => {
         page,
         limit,
         query,
+        populate: { path: "ownedLand" },
         pagination: true,
         modFunction: (document) => {
           return document;
@@ -52,6 +55,7 @@ exports.getAllUsersByAdmin = async (req, res) => {
     if (!users) {
       throw new SetErrorResponse("Users not found", 404);
     }
+    console.log(users);
 
     return res.success({ userData: users });
   } catch (err) {
@@ -302,6 +306,22 @@ exports.deleteAdmin = async (req, res) => {
     }
     return res.success({ userData: admin }, "Admin Deleted ");
   } catch (err) {
+    return res.fail(err);
+  }
+};
+
+exports.rejectUserByAdmin = async (req, res) => {
+  try {
+    console.log(req.params.id);
+    // const userId = res.params.id;
+    const user = await User.findByIdAndDelete({ _id: req.params.id });
+    console.log(user);
+    if (!user) {
+      throw new SetErrorResponse("User not found"); // default (Not found,404)
+    }
+    return res.success({ userData: user }, "User Rejected ");
+  } catch (err) {
+    console.log("Err from rejectUserByAdmin: " + err.message);
     return res.fail(err);
   }
 };

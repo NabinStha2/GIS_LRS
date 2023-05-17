@@ -501,6 +501,11 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
           },
           { new: true }
         ).lean(),
+        Land.findByIdAndUpdate(
+          { _id: transferOwnership?.landSaleId?.landId?._id },
+          { saleData: null },
+          { new: true }
+        ),
         TransferOwnership.findByIdAndUpdate(
           {
             _id: transferOwnershipId,
