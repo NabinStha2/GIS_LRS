@@ -331,6 +331,16 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                           index: _.tileLayerIndex,
                           children: [
                             TileLayer(
+                              maxNativeZoom: 18,
+                              maxZoom: 22,
+                              urlTemplate:
+                                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                              userAgentPackageName:
+                                  'dev.fleaflet.flutter_map.example',
+                              retinaMode: true &&
+                                  MediaQuery.of(context).devicePixelRatio > 1.0,
+                            ),
+                            TileLayer(
                               urlTemplate:
                                   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                               maxZoom: 18,
@@ -353,17 +363,6 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                   'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
                               maxZoom: 18,
                               subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
-                            ),
-
-                            TileLayer(
-                              maxNativeZoom: 18,
-                              maxZoom: 22,
-                              urlTemplate:
-                                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                              userAgentPackageName:
-                                  'dev.fleaflet.flutter_map.example',
-                              retinaMode: true &&
-                                  MediaQuery.of(context).devicePixelRatio > 1.0,
                             ),
                             TileLayer(
                               maxNativeZoom: 18,

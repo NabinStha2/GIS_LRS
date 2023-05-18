@@ -1,5 +1,6 @@
 const multer = require("multer");
 const cloudinaryInit = require("../utils/cloudinary.init");
+const path = require("path");
 
 exports.uploadImages = ({
   folderName = "GISLandRegistration",
@@ -16,31 +17,33 @@ exports.uploadImages = ({
       filename: (req, file, cb) => {
         cb(
           null,
-          `GIS-${new Date()
-            .toISOString()
-            .replace(/:/g, "-")
-            .replace(".", "-", " ")}-${
-            file.originalname.toLowerCase().replace(/ /g, "-").split(".")[0]
-          }`
+          // `GIS-${new Date()
+          //   .toISOString()
+          //   .replace(/:/g, "-")
+          //   .replace(".", "-", " ")}-${
+          //   file.originalname.toLowerCase().replace(/ /g, "-").split(".")[0]
+          // }`
+          `GIS-${Date.now()}${path.extname(file.originalname)}`
         );
       },
     });
 
     const fileFilter = (req, file, cb) => {
-      // console.log(allowedFileTypes.includes(file.mimetype));
+      console.log(allowedFileTypes.includes(file.mimetype));
       if (allowedFileTypes.includes(file.mimetype)) {
         cb(null, true);
       } else {
-        cb(null, false);
+        cb("Images only");
+        // cb(null, false);
       }
     };
 
     const upload = multer({
       storage,
       fileFilter: fileFilter,
-      limit: {
-        fileSize,
-      },
+      // limit: {
+      //   fileSize,
+      // },
     }).fields([
       {
         name: "frontCitizenshipImage",

@@ -222,12 +222,12 @@ exports.patchUserBackDocument = async (req, res) => {
       { new: true }
     ).lean();
 
-    if (
-      backCitizenshipImageLocation &&
-      user?.backCitizenshipFile?.backCitizenshipPublicId
-    ) {
-      deleteFileLocal({ imagePath: req.files.backCitizenshipImage[0]?.path });
-    }
+    // if (
+    //   backCitizenshipImageLocation &&
+    //   user?.backCitizenshipFile?.backCitizenshipPublicId
+    // ) {
+    //   deleteFileLocal({ imagePath: req.files.backCitizenshipImage[0]?.path });
+    // }
 
     if (!user || user.isVerified != "approved") {
       throw new SetErrorResponse("User not found"); // default (Not found,404)
