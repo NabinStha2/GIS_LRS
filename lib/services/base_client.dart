@@ -130,8 +130,13 @@ class BaseClient {
 
 //POST
   Future<dynamic> post(String baseUrl, String api, dynamic payloadObj,
-      {bool hasTokenHeader = true}) async {
-    var uri = Uri.parse(baseUrl + api);
+      {bool hasTokenHeader = true, bool isCustomApi = false}) async {
+    Uri uri;
+    if (isCustomApi) {
+      uri = Uri.parse(api);
+    } else {
+      uri = Uri.parse(baseUrl + api);
+    }
     var payload = json.encode(payloadObj);
 
     try {

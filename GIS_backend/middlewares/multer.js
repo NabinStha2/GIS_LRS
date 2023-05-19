@@ -57,6 +57,9 @@ exports.uploadImages = ({
       {
         name: "voucherFormImage",
       },
+      {
+        name: "landCertificateImage",
+      },
     ]);
     return upload;
   };
@@ -92,6 +95,10 @@ exports.uploadImages = ({
           req.files?.voucherFormImage?.length > 0
             ? req.files?.voucherFormImage
             : null;
+        let landCertificateImage =
+          req.files?.landCertificateImage?.length > 0
+            ? req.files?.landCertificateImage
+            : null;
 
         if (userImage) {
           await UploadingImage({ req, res, uploadimage: userImage });
@@ -115,6 +122,13 @@ exports.uploadImages = ({
             req,
             res,
             uploadimage: voucherFormImage,
+          });
+        }
+        if (landCertificateImage) {
+          await UploadingImage({
+            req,
+            res,
+            uploadimage: landCertificateImage,
           });
         }
       }

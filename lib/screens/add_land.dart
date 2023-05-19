@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gis_flutter_frontend/utils/custom_toasts.dart';
 import 'package:gis_flutter_frontend/utils/validation.dart';
 import 'package:gis_flutter_frontend/widgets/custom_button.dart';
 import 'package:gis_flutter_frontend/widgets/custom_text.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../core/app/dimensions.dart';
 import '../core/config/regex_config.dart';
+import '../core/development/console.dart';
 import '../providers/land_provider.dart';
 import '../widgets/custom_text_form_field.dart';
 
@@ -20,6 +24,8 @@ class AddLandScreen extends StatefulWidget {
 }
 
 class _AddLandScreenState extends State<AddLandScreen> {
+  XFile? pickedLandCertificateDocument;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +63,36 @@ class _AddLandScreenState extends State<AddLandScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       vSizedBox2,
+                      CustomText.ourText("Parcel Id"),
+                      vSizedBox1,
+                      CustomTextFormField(
+                        hintText: "Parcel Id",
+                        controller: _.parcelIdController,
+                        onlyNumber: true,
+                        textInputType: TextInputType.number,
+                        validator: (val) => val.toString().isEmptyData()
+                            ? "Cannot be empty"
+                            : !RegexConfig.numberRegex.hasMatch(val)
+                                ? "Parcel Id not valid"
+                                : null,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      vSizedBox2,
+                      CustomText.ourText("Map Sheet No."),
+                      vSizedBox1,
+                      CustomTextFormField(
+                        hintText: "Map Sheet No.",
+                        controller: _.mapsheetNoController,
+                        onlyNumber: true,
+                        textInputType: TextInputType.number,
+                        validator: (val) => val.toString().isEmptyData()
+                            ? "Cannot be empty"
+                            : !RegexConfig.numberRegex.hasMatch(val)
+                                ? "MapSheet no. not valid"
+                                : null,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      vSizedBox2,
                       CustomText.ourText("City"),
                       vSizedBox1,
                       CustomTextFormField(
@@ -76,17 +112,20 @@ class _AddLandScreenState extends State<AddLandScreen> {
                         hintText: "Ward No",
                         controller: _.wardNoController,
                         onlyNumber: true,
-                        textInputType: TextInputType.text,
+                        textInputType: TextInputType.number,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
-                            : null,
+                            : !RegexConfig.wardNoRegrex
+                                    .hasMatch(_.wardNoController.text.trim())
+                                ? "Ward Number not valid"
+                                : null,
                         textInputAction: TextInputAction.next,
                       ),
                       vSizedBox2,
-                      CustomText.ourText("Address"),
+                      CustomText.ourText("Street"),
                       vSizedBox1,
                       CustomTextFormField(
-                        hintText: "Address",
+                        hintText: "Street",
                         controller: _.addressController,
                         fullNameString: true,
                         textInputType: TextInputType.text,
@@ -96,21 +135,21 @@ class _AddLandScreenState extends State<AddLandScreen> {
                         textInputAction: TextInputAction.next,
                       ),
                       vSizedBox2,
-                      CustomText.ourText("Area"),
-                      vSizedBox1,
-                      CustomTextFormField(
-                        hintText: "Area",
-                        controller: _.areaController,
-                        textInputType: TextInputType.number,
-                        validator: (val) => val.toString().isEmptyData()
-                            ? "Cannot be empty"
-                            : !RegexConfig.numberRegex.hasMatch(val)
-                                ? "Area not valid"
-                                : null,
-                        textInputAction: TextInputAction.next,
-                        doubleNumber: true,
-                      ),
-                      vSizedBox2,
+                      // CustomText.ourText("Area"),
+                      // vSizedBox1,
+                      // CustomTextFormField(
+                      //   hintText: "Area",
+                      //   controller: _.areaController,
+                      //   textInputType: TextInputType.number,
+                      //   validator: (val) => val.toString().isEmptyData()
+                      //       ? "Cannot be empty"
+                      //       : !RegexConfig.numberRegex.hasMatch(val)
+                      //           ? "Area not valid"
+                      //           : null,
+                      //   textInputAction: TextInputAction.next,
+                      //   doubleNumber: true,
+                      // ),
+                      // vSizedBox2,
                       CustomText.ourText("Province"),
                       vSizedBox1,
                       CustomTextFormField(
@@ -137,36 +176,21 @@ class _AddLandScreenState extends State<AddLandScreen> {
                         textInputAction: TextInputAction.next,
                       ),
                       vSizedBox2,
-                      CustomText.ourText("Parcel Id"),
-                      vSizedBox1,
-                      CustomTextFormField(
-                        hintText: "Parcel Id",
-                        controller: _.parcelIdController,
-                        onlyNumber: true,
-                        textInputType: TextInputType.number,
-                        validator: (val) => val.toString().isEmptyData()
-                            ? "Cannot be empty"
-                            : !RegexConfig.numberRegex.hasMatch(val)
-                                ? "Parcel Id not valid"
-                                : null,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      vSizedBox2,
-                      CustomText.ourText("Land Price"),
-                      vSizedBox1,
-                      CustomTextFormField(
-                        hintText: "Land Price",
-                        controller: _.landPriceController,
-                        doubleNumber: true,
-                        textInputType: TextInputType.number,
-                        validator: (val) => val.toString().isEmptyData()
-                            ? "Cannot be empty"
-                            : !RegexConfig.numberRegex.hasMatch(val)
-                                ? "Land Price not valid"
-                                : null,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      vSizedBox2,
+                      // CustomText.ourText("Land Price"),
+                      // vSizedBox1,
+                      // CustomTextFormField(
+                      //   hintText: "Land Price",
+                      //   controller: _.landPriceController,
+                      //   doubleNumber: true,
+                      //   textInputType: TextInputType.number,
+                      //   validator: (val) => val.toString().isEmptyData()
+                      //       ? "Cannot be empty"
+                      //       : !RegexConfig.numberRegex.hasMatch(val)
+                      //           ? "Land Price not valid"
+                      //           : null,
+                      //   textInputAction: TextInputAction.next,
+                      // ),
+                      // vSizedBox2,
                       CustomText.ourText("Survey No"),
                       vSizedBox1,
                       CustomTextFormField(
@@ -226,12 +250,60 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       //     ),
                       //   ),
                       // ),
-                      vSizedBox2,
+                      CustomText.ourText("Land Certificate Document"),
+                      vSizedBox1,
+                      Row(
+                        children: [
+                          CustomButton.elevatedButton(
+                            "upload image",
+                            () async {
+                              pickedLandCertificateDocument =
+                                  await ImagePicker()
+                                      .pickImage(source: ImageSource.gallery);
+                              logger(pickedLandCertificateDocument);
+                              setState(() {});
+                              // if (pickedLandCertificateDocument != null) {
+                              //   // _.updateUserImage(
+                              //   //   context: context,
+                              //   //   file: File(
+                              //   //       pickedLandCertificateDocument?.path ??
+                              //   //           ""),
+                              //   // );
+                              // }
+                            },
+                            borderRadius: 16,
+                          ),
+                          hSizedBox2,
+                          Expanded(
+                            child: pickedLandCertificateDocument != null
+                                ? Image.file(
+                                    File(pickedLandCertificateDocument?.path ??
+                                        ""),
+                                    width: 100,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(),
+                          ),
+                        ],
+                      ),
+                      vSizedBox3,
                       CustomButton.elevatedButton(
                         "Add Land",
                         () {
                           if (_.addLandFormKey.currentState?.validate() ??
                               false) {
+                            if (pickedLandCertificateDocument != null) {
+                              _.addLand(
+                                context: context,
+                                file: File(
+                                    pickedLandCertificateDocument?.path ?? ""),
+                                //  polygonData: latlngTempList
+                              );
+                            } else {
+                              errorToast(
+                                  msg: "Land certificate must be provided");
+                            }
                             // var latlngTempList = <Map<String, dynamic>>[];
                             // for (var e in Provider.of<LandProvider>(context,
                             //         listen: false)
@@ -244,10 +316,7 @@ class _AddLandScreenState extends State<AddLandScreen> {
                             //   });
                             // }
                             // consolelog(latlngTempList);
-                            _.addLand(
-                              context: context,
-                              //  polygonData: latlngTempList
-                            );
+
                             // var latlngTempList = <LatLng>[];
                             // for (var e in textEditingControllers) {
                             //   latlngTempList.add(LatLng(

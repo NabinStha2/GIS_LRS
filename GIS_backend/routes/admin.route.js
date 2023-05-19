@@ -18,9 +18,11 @@ const {
   patchAdminBackDocument,
   patchAdmin,
   deleteAdmin,
-  getAllUsersByAdmin,
+
   approveUserByAdmin,
   rejectUserByAdmin,
+  getAllUsersPendingByAdmin,
+  getAllUsersApprovedByAdmin,
 } = require("../controllers/admin/admin.controller");
 
 const router = require("express").Router();
@@ -61,7 +63,19 @@ router.post(
   adminloginController
 );
 
-router.get("/users", checkAuthValidation, checkIsAdmin, getAllUsersByAdmin);
+router.get(
+  "/users/pending",
+  checkAuthValidation,
+  checkIsAdmin,
+  getAllUsersPendingByAdmin
+);
+
+router.get(
+  "/users/approved",
+  checkAuthValidation,
+  checkIsAdmin,
+  getAllUsersApprovedByAdmin
+);
 
 router.get(
   "/user/:id",
@@ -81,17 +95,17 @@ router.patch(
   approveUserByAdmin
 );
 
-router.patch(
-  "/:id/admin-image",
-  validate(["id"]),
-  validator,
-  checkAuthValidation,
-  checkIsAdmin,
-  uploadImages({
-    folderName: "GISLandRegistration/userImage",
-  }),
-  patchAdminImage
-);
+// router.patch(
+//   "/:id/admin-image",
+//   validate(["id"]),
+//   validator,
+//   checkAuthValidation,
+//   checkIsAdmin,
+//   uploadImages({
+//     folderName: "GISLandRegistration/userImage",
+//   }),
+//   patchAdminImage
+// );
 
 router.patch(
   "/:id",

@@ -26,7 +26,7 @@ exports.getAdmin = async (req, res) => {
   }
 };
 
-exports.getAllUsersByAdmin = async (req, res) => {
+exports.getAllUsersPendingByAdmin = async (req, res) => {
   try {
     const { page, limit, search = "", sort } = req.query;
 
@@ -34,6 +34,46 @@ exports.getAllUsersByAdmin = async (req, res) => {
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
+    query.isVerified = "pending";
+    console.log(query);
+
+    const users = await getSearchPaginatedData({
+      model: User,
+      reqQuery: {
+        sort,
+        page,
+        limit,
+        query,
+        populate: { path: "ownedLand" },
+        pagination: true,
+        modFunction: (document) => {
+          return document;
+        },
+      },
+      isAdmin: true,
+    });
+
+    if (!users) {
+      throw new SetErrorResponse("Users not found", 404);
+    }
+    console.log(users);
+
+    return res.success({ userData: users });
+  } catch (err) {
+    console.log(`Error get users by admin: ${err.message}`);
+    return res.fail(err);
+  }
+};
+
+exports.getAllUsersApprovedByAdmin = async (req, res) => {
+  try {
+    const { page, limit, search = "", sort } = req.query;
+
+    let query = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+    query.isVerified = "approved";
     console.log(query);
 
     const users = await getSearchPaginatedData({
@@ -87,56 +127,56 @@ exports.approveUserByAdmin = async (req, res) => {
   }
 };
 
-exports.patchAdminImage = async (req, res) => {
-  try {
-    const userId = res.locals.authData?._id;
-    const userImageLocation =
-      req.files?.userImage?.length > 0
-        ? req.files.userImage[0]?.location
-        : undefined;
+// exports.patchAdminImage = async (req, res) => {
+//   try {
+//     const userId = res.locals.authData?._id;
+//     const userImageLocation =
+//       req.files?.userImage?.length > 0
+//         ? req.files.userImage[0]?.location
+//         : undefined;
 
-    const editUserImageQuery = {};
+//     const editUserImageQuery = {};
 
-    if (userImageLocation) {
-      editUserImageQuery.imageFile = {};
-      editUserImageQuery.imageFile.imageUrl = userImageLocation;
-      editUserImageQuery.imageFile.imagePublicId =
-        req.files?.userImage[0]?.publicId;
-    }
+//     if (userImageLocation) {
+//       editUserImageQuery.imageFile = {};
+//       editUserImageQuery.imageFile.imageUrl = userImageLocation;
+//       editUserImageQuery.imageFile.imagePublicId =
+//         req.files?.userImage[0]?.publicId;
+//     }
 
-    Admin.findById({ _id: userId })
-      .lean()
-      .then(async (res) => {
-        console.log(res.imageFile?.imagePublicId);
-        if (userImageLocation && res.imageFile?.imagePublicId) {
-          await deleteFileCloudinary(res.imageFile?.imagePublicId);
-        }
-      })
-      .catch((err) => {
-        throw new SetErrorResponse("Error deleting file cloudinary", 500);
-      });
+//     Admin.findById({ _id: userId })
+//       .lean()
+//       .then(async (res) => {
+//         console.log(res.imageFile?.imagePublicId);
+//         if (userImageLocation && res.imageFile?.imagePublicId) {
+//           await deleteFileCloudinary(res.imageFile?.imagePublicId);
+//         }
+//       })
+//       .catch((err) => {
+//         throw new SetErrorResponse("Error deleting file cloudinary", 500);
+//       });
 
-    const admin = await Admin.findOneAndUpdate(
-      { _id: userId },
-      {
-        ...editUserImageQuery,
-      },
-      { new: true }
-    ).lean();
+//     const admin = await Admin.findOneAndUpdate(
+//       { _id: userId },
+//       {
+//         ...editUserImageQuery,
+//       },
+//       { new: true }
+//     ).lean();
 
-    if (userImageLocation && admin?.imageFile?.imageUrl) {
-      deleteFileLocal({ imagePath: req.files.userImage[0]?.path });
-    }
+//     if (userImageLocation && admin?.imageFile?.imageUrl) {
+//       deleteFileLocal({ imagePath: req.files.userImage[0]?.path });
+//     }
 
-    if (!admin) {
-      throw new SetErrorResponse("Admin not found"); // default (Not found,404)
-    }
+//     if (!admin) {
+//       throw new SetErrorResponse("Admin not found"); // default (Not found,404)
+//     }
 
-    return res.success({ userData: admin }, "Success");
-  } catch (err) {
-    return res.fail(err);
-  }
-};
+//     return res.success({ userData: admin }, "Success");
+//   } catch (err) {
+//     return res.fail(err);
+//   }
+// };
 
 // exports.patchAdminFrontDocument = async (req, res) => {
 //   try {

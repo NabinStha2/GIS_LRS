@@ -12,6 +12,7 @@ const {
   getAllLandTransferOwnershipByAdmin,
   cancelLandTransferOwnershipByAdmin,
   rejectLandForTransferOwnership,
+  getAllLandInitiatedTransferOwnershipByAdmin,
 } = require("../controllers/transfer.ownership.controller");
 const { uploadImages } = require("../middlewares/multer");
 const { checkIsAdmin } = require("../middlewares/check.is.admin");
@@ -63,7 +64,14 @@ router.patch(
 
 // Admin ----------------------------------------------------------------
 router.get(
-  "/admin/data",
+  "/admin/initiated-land",
+  checkAuthValidation,
+  checkIsAdmin,
+  getAllLandInitiatedTransferOwnershipByAdmin
+);
+
+router.get(
+  "/admin/all-transfer-land",
   checkAuthValidation,
   checkIsAdmin,
   getAllLandTransferOwnershipByAdmin

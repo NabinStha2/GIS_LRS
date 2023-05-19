@@ -525,7 +525,10 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
   }
 };
 
-module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
+module.exports.getAllLandInitiatedTransferOwnershipByAdmin = async (
+  req,
+  res
+) => {
   try {
     const {
       page,
@@ -553,6 +556,97 @@ module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
     }
 
     query = { transerData: "initiated" };
+    console.log(query);
+
+    const transferOwnership = await getSearchPaginatedData({
+      model: TransferOwnership,
+      reqQuery: {
+        sort,
+        page,
+        limit,
+        query,
+        populate: [
+          {
+            path: "approvedUserId.user",
+          },
+          {
+            path: "ownerHistory",
+          },
+          {
+            path: "ownerUserId",
+          },
+          {
+            path: "landSaleId",
+            populate: [
+              {
+                path: "landId",
+                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+                // match: { ownerHistory: { $in: [userId] } },
+              },
+              {
+                path: "geoJSON",
+                match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+              },
+              // {
+              //   path: "ownerUserId",
+              //   match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+              // },
+            ],
+          },
+        ],
+        pagination: true,
+        modFunction: async (document) => {
+          //   console.log(`document :: ${document}`);
+          if (document.landSaleId.landId != null) {
+            return document;
+          }
+        },
+      },
+    });
+
+    console.log(transferOwnership);
+
+    if (!transferOwnership) {
+      throw new SetErrorResponse("TransferOwnership not found", 404);
+    }
+
+    return res.success(transferOwnership);
+  } catch (err) {
+    console.log(
+      `Error from getAllLandInitiatedTransferOwnershipByAdmin : ${err}`
+    );
+    return res.fail(err);
+  }
+};
+
+module.exports.getAllLandTransferOwnershipByAdmin = async (req, res) => {
+  try {
+    const {
+      page,
+      limit,
+      search = "",
+      sort,
+      city,
+      district,
+      province,
+    } = req?.query;
+
+    let query = {};
+    let populateQuery = [];
+    if (search) {
+      populateQuery.push({ parcelId: { $regex: search, $options: "i" } });
+    }
+    if (city) {
+      populateQuery.push({ city: { $regex: city, $options: "i" } });
+    }
+    if (district) {
+      populateQuery.push({ district: { $regex: district, $options: "i" } });
+    }
+    if (province) {
+      populateQuery.push({ province: { $regex: province, $options: "i" } });
+    }
+
+    // query = { $neq: { transerData: "initiated" } };
     console.log(query);
 
     const transferOwnership = await getSearchPaginatedData({

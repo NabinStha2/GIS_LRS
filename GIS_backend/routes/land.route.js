@@ -9,12 +9,14 @@ const {
   getAllOwnedLands,
   getIndividualLandById,
   getGeoJSONDataById,
+  patchLandCertificateDocument,
 } = require("../controllers/land.controller");
 const { checkIsAdmin } = require("../middlewares/check.is.admin");
 const {
   checkIsUserVerified,
 } = require("../middlewares/check.is.user.verified");
 const { checkAuthValidation } = require("../middlewares/checkAuthentication");
+const { uploadImages } = require("../middlewares/multer");
 const { validate } = require("../middlewares/validate");
 const { validator } = require("../utils/validator");
 
@@ -30,20 +32,26 @@ router.get("/geoJSON/:id", checkAuthValidation, getGeoJSONDataById);
 
 router.post(
   "/:id/add-land",
-  validate([
-    "id",
-    "city",
-    "area",
-    "province",
-    "district",
-    "wardNo",
-    "address",
-  ]),
-  validator,
+  // validate(["id", "city", "province", "district", "wardNo", "address"]),
+  // validator,
   checkAuthValidation,
   checkIsUserVerified,
+  uploadImages({
+    folderName: "GISLandRegistration/landDocument",
+  }),
   createLand
 );
+
+// router.patch(
+//   "/:id/land-certificate-image",
+//   validate(["id"]),
+//   validator,
+//   checkAuthValidation,
+//   uploadImages({
+//     folderName: "GISLandRegistration/landDocument",
+//   }),
+//   patchLandCertificateDocument
+// );
 
 //for admin only ----------------------------------------------------------------
 router.get("/admin", checkAuthValidation, checkIsAdmin, getAllLandsByAdmin);

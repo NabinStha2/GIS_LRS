@@ -183,7 +183,7 @@ exports.validate = (params) => {
         // case "longitude":
         //   result.push(
         //     check("longitude", "Longitude not Valid")
-        //       .notEmpty() 
+        //       .notEmpty()
         //       .isFloat()
         //       .toFloat()
         //       .withMessage("Longitude should be integer value")

@@ -10,6 +10,7 @@ const {
   getAllLandSaleByRequestedUserId,
   getAllLandSaleByAcceptedUserId,
   getAllLandSaleByRejectedUserId,
+  getAllLandSaleByAdmin,
 } = require("../controllers/land.sale.controller");
 const { checkAuthValidation } = require("../middlewares/checkAuthentication");
 const {
@@ -29,6 +30,7 @@ router.post(
 );
 
 router.get("/", checkAuthValidation, getAllLandSale);
+router.get("/admin", checkAuthValidation, getAllLandSaleByAdmin);
 
 router.get("/:id", checkAuthValidation, getOwnedLandSale);
 

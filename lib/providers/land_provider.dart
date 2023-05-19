@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -40,6 +42,7 @@ class LandProvider extends ChangeNotifier with BaseController {
   TextEditingController districtController = TextEditingController();
   TextEditingController zoneController = TextEditingController();
   TextEditingController parcelIdController = TextEditingController();
+  TextEditingController mapsheetNoController = TextEditingController();
   TextEditingController landPriceController = TextEditingController();
   TextEditingController surveyNoController = TextEditingController();
 
@@ -96,6 +99,7 @@ class LandProvider extends ChangeNotifier with BaseController {
 
   addLand({
     required BuildContext context,
+    required File file,
     // required List<Map<String, dynamic>> polygonData
   }) async {
     try {
@@ -104,22 +108,39 @@ class LandProvider extends ChangeNotifier with BaseController {
           data: "Adding Land, Please wait...", context: context);
       var userId = AppSharedPreferences.getUserId;
       consolelog(userId);
+      consolelog({
+        "city": cityController.text.trim(),
+        "wardNo": wardNoController.text.trim(),
+        "address": addressController.text.trim(),
+        // "area": areaController.text.trim(),
+        "mapSheetNo": mapsheetNoController.text.trim(),
+        "province": provinceController.text.trim(),
+        "district": districtController.text.trim(),
+        "parcelId": parcelIdController.text.trim(),
+        // "landPrice": landPriceController.text.trim(),
+        "surveyNo": surveyNoController.text.trim(),
+        // "polygon": polygonData,
+      });
       var response = await BaseClient()
-          .post(
+          .postWithImage(
             ApiConfig.baseUrl,
             "${ApiConfig.landUrl}/$userId${ApiConfig.addLandUrl}",
-            {
+            payloadObj: {
               "city": cityController.text.trim(),
               "wardNo": wardNoController.text.trim(),
               "address": addressController.text.trim(),
-              "area": areaController.text.trim(),
+              // "area": areaController.text.trim(),
+              "mapSheetNo": mapsheetNoController.text.trim(),
               "province": provinceController.text.trim(),
               "district": districtController.text.trim(),
               "parcelId": parcelIdController.text.trim(),
-              "landPrice": landPriceController.text.trim(),
+              // "landPrice": landPriceController.text.trim(),
               "surveyNo": surveyNoController.text.trim(),
               // "polygon": polygonData,
             },
+            method: "POST",
+            imageKey: "landCertificateImage",
+            imgFiles: [file],
             hasTokenHeader: true,
           )
           .catchError(handleError);
@@ -137,12 +158,12 @@ class LandProvider extends ChangeNotifier with BaseController {
       notifyListeners();
     } on AppException catch (err) {
       isLoading = false;
-      hideLoading(context);
+      // hideLoading(context);
       logger(err.toString(), loggerType: LoggerType.error);
       notifyListeners();
     } catch (e) {
       isLoading = false;
-      hideLoading(context);
+      // hideLoading(context);
       notifyListeners();
       consolelog(e.toString());
     }

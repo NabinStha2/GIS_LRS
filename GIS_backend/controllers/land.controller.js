@@ -16,10 +16,11 @@ exports.createLand = async (req, res) => {
       parcelId,
       address,
       surveyNo,
-      landPrice,
+      // landPrice,
       wardNo,
       province,
       district,
+      mapSheetNo,
       // polygon,
     } = req.body;
 
@@ -29,6 +30,7 @@ exports.createLand = async (req, res) => {
     console.log(parcelId);
     // console.log(geoJSONData);
     if (!geoJSONData) {
+      await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
       throw new SetErrorResponse("No recorded parcel id found!", 404);
     }
 
@@ -37,11 +39,30 @@ exports.createLand = async (req, res) => {
       isVerified: "approved",
     });
     if (land) {
+      await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
       throw new SetErrorResponse(
         "Land already exists with this parcel Id!",
         500
       );
     }
+
+    const landCertificateImageLocation =
+      req.files?.landCertificateImage?.length > 0
+        ? req.files.landCertificateImage[0]?.location
+        : undefined;
+
+    console.log(req.files?.landCertificateImage);
+
+    // var editBackQuery = {};
+    // if (landCertificateImageLocation) {
+    //   editBackQuery = {
+    //     landCertificateFile: {},
+    //   };
+    //   editBackQuery.landCertificateFile.landCertificateImage =
+    //     landCertificateImageLocation;
+    //   editBackQuery.landCertificateFile.landCertificatePublicId =
+    //     req.files?.landCertificateImage[0]?.publicId;
+    // }
 
     const newLand = new Land({
       city,
@@ -51,14 +72,21 @@ exports.createLand = async (req, res) => {
       wardNo,
       province,
       district,
+      mapSheetNo,
       // polygon,
-      landPrice,
+      // landPrice,
       ownerUserId: userId,
       surveyNo,
       geoJSON: geoJSONData,
+      landCertificateFile: {
+        landCertificateImage: landCertificateImageLocation,
+        landCertificatePublicId: req.files?.landCertificateImage[0]?.publicId,
+      },
     });
 
     await newLand.save();
+
+    console.log(newland);
 
     const existingUser = await User.findById({ _id: userId }).lean();
 
@@ -80,6 +108,69 @@ exports.createLand = async (req, res) => {
     return res.fail(err);
   }
 };
+
+// exports.patchLandCertificateDocument = async (req, res) => {
+//   try {
+//     console.log(req.files);
+//     const userId = res.locals.authData?._id;
+//     const backCitizenshipImageLocation =
+//       req.files?.backCitizenshipImage?.length > 0
+//         ? req.files.backCitizenshipImage[0]?.location
+//         : undefined;
+
+//     var editBackQuery = {};
+
+//     if (backCitizenshipImageLocation) {
+//       editBackQuery = {
+//         backCitizenshipFile: {},
+//       };
+//       editBackQuery.backCitizenshipFile.backCitizenshipImage =
+//         backCitizenshipImageLocation;
+//       editBackQuery.backCitizenshipFile.backCitizenshipPublicId =
+//         req.files?.backCitizenshipImage[0]?.publicId;
+//     }
+
+//     User.findById({ _id: userId })
+//       .lean()
+//       .then(async (res) => {
+//         console.log(res.backCitizenshipFile?.backCitizenshipPublicId);
+//         if (
+//           backCitizenshipImageLocation &&
+//           res.backCitizenshipFile?.backCitizenshipPublicId
+//         ) {
+//           await deleteFileCloudinary(
+//             res.backCitizenshipFile?.backCitizenshipPublicId
+//           );
+//         }
+//       })
+//       .catch((err) => {
+//         throw new SetErrorResponse("Error deleting file cloudinary", 500);
+//       });
+
+//     const user = await User.findOneAndUpdate(
+//       { _id: userId },
+//       {
+//         ...editBackQuery,
+//       },
+//       { new: true }
+//     ).lean();
+
+//     // if (
+//     //   backCitizenshipImageLocation &&
+//     //   user?.backCitizenshipFile?.backCitizenshipPublicId
+//     // ) {
+//     //   deleteFileLocal({ imagePath: req.files.backCitizenshipImage[0]?.path });
+//     // }
+
+//     if (!user || user.isVerified != "approved") {
+//       throw new SetErrorResponse("User not found"); // default (Not found,404)
+//     }
+
+//     return res.success({ userData: user }, "Success");
+//   } catch (err) {
+//     res.fail(err);
+//   }
+// };
 
 module.exports.getIndividualLandById = async (req, res) => {
   try {
@@ -482,6 +573,7 @@ exports.getAllLandsByAdmin = async (req, res) => {
     if (province) {
       query.province = { $regex: province, $options: "i" };
     }
+    query.isVerified = "pending";
     console.log(query, page);
 
     const lands = await getSearchPaginatedData({

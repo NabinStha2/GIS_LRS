@@ -169,6 +169,127 @@ module.exports.getAllLandSale = async (req, res) => {
   }
 };
 
+module.exports.getAllLandSaleByAdmin = async (req, res) => {
+  try {
+    const {
+      page,
+      limit,
+      search = "",
+      sort,
+      city,
+      district,
+      province,
+      latlng,
+      radius,
+    } = req?.query;
+    let query = {};
+    let populateQuery = [];
+    if (search) {
+      populateQuery.push({ parcelId: { $regex: search, $options: "i" } });
+    }
+    if (city) {
+      populateQuery.push({ city: { $regex: city, $options: "i" } });
+    }
+    if (district) {
+      populateQuery.push({ district: { $regex: district, $options: "i" } });
+    }
+    if (province) {
+      populateQuery.push({ province: { $regex: province, $options: "i" } });
+    }
+    populateQuery.push({ isVerified: "approved" });
+    // query.saleData = "selling";
+
+    console.log(query, populateQuery);
+
+    if (latlng) {
+      GeoJSON.find({
+        geometry: {
+          $geoNear: {
+            $geometry: {
+              type: "Point",
+              coordinates: [
+                parseFloat(latlng.split(",")[0]),
+                parseFloat(latlng.split(",")[1]),
+              ],
+              // coordinates: [83.9799461371451, 28.2561422405137],
+            },
+            $minDistance: 1,
+            $maxDistance: parseInt(radius) ?? 1000,
+          },
+        },
+      }).exec(async function (err, geoData) {
+        if (err) throw new SetErrorResponse(err, 500);
+
+        var d = geoData.map((e) => e._id);
+        console.log(d.length);
+
+        query.geoJSON = { $in: d };
+        // console.log(query);
+
+        const landSale = await getSearchPaginatedData({
+          model: LandSale,
+          reqQuery: {
+            query,
+            sort,
+            page,
+            limit,
+            populate: {
+              path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId.user prevOwnerUserId geoJSON",
+              match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+            },
+            pagination: true,
+            modFunction: async (document) => {
+              // console.log(`document :: ${document}`);
+              if (document.landId != null) {
+                return document;
+              }
+            },
+          },
+        });
+
+        // if (!landSale) {
+        //   throw new SetErrorResponse("Land Sale not found", 404);
+        // }
+
+        console.log({ data: landSale });
+        return res.success({ landSaleData: landSale });
+      });
+    } else {
+      console.log(query);
+      const landSale = await getSearchPaginatedData({
+        model: LandSale,
+        reqQuery: {
+          query,
+          sort,
+          page,
+          limit,
+          populate: {
+            path: "requestedUserId.user landId ownerUserId rejectedUserId.user approvedUserId prevOwnerUserId geoJSON",
+            match: populateQuery.length != 0 ? { $and: populateQuery } : {},
+          },
+          pagination: true,
+          modFunction: async (document) => {
+            // console.log(`document :: ${document}`);
+            if (document.landId != null) {
+              return document;
+            }
+          },
+        },
+      });
+
+      // if (!lands) {
+      //   throw new SetErrorResponse("Land not found", 404);
+      // }
+
+      console.log({ data: landSale });
+      return res.success({ landSaleData: landSale });
+    }
+  } catch (err) {
+    console.log(`Error from getAllLandSale :: ${err.message}`);
+    return res.fail(err);
+  }
+};
+
 module.exports.getAllLandSaleByRequestedUserId = async (req, res) => {
   try {
     const {

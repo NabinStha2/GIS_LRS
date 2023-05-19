@@ -42,6 +42,11 @@ const LandSchema = new Schema(
       required: true,
       trim: true,
     },
+    mapSheetNo: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     district: {
       type: String,
       required: true,
@@ -65,11 +70,11 @@ const LandSchema = new Schema(
       index: true,
       trim: true,
     },
-    landPrice: {
-      type: String,
-      // required: true,
-      trim: true,
-    },
+    // landPrice: {
+    //   type: String,
+    //   // required: true,
+    //   trim: true,
+    // },
     isVerified: {
       type: String,
       required: true,
@@ -89,6 +94,16 @@ const LandSchema = new Schema(
         default: [],
       },
     ],
+    landCertificateFile: {
+      landCertificateImage: {
+        type: String,
+        trim: true,
+      },
+      landCertificatePublicId: {
+        type: String,
+        trim: true,
+      },
+    },
     saleData: {
       type: String,
       default: "null",

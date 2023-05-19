@@ -10,4 +10,5 @@ class RegexConfig {
   static RegExp fullNameTextRegrex = RegExp('[a-zA-Z ]');
 
   static RegExp oneSpaceBetweenWords = RegExp(r'^(\w+ ?)*$');
+  static RegExp wardNoRegrex = RegExp('^([1-9]|1[012])');
 }
