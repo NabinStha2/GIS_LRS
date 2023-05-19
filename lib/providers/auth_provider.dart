@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gis_flutter_frontend/core/routing/route_name.dart';
 import 'package:gis_flutter_frontend/providers/drawer_provider.dart';
+import 'package:gis_flutter_frontend/services/local_notification_service.dart';
 import 'package:provider/provider.dart';
 
 import '../core/app/enums.dart';
@@ -61,9 +62,12 @@ class AuthProvider extends ChangeNotifier with BaseController {
       required String? userEmail,
       required String? userPassword}) async {
     try {
+      var registrationIdToken =
+          await LocalNotificationService.getDeviceTokenToSendNotification();
       Map data = {
         "email": userEmail?.trim(),
         "password": userPassword,
+        "registrationIdToken": registrationIdToken,
       };
       CustomDialogs.fullLoadingDialog(data: "Logging", context: ctx);
       var response = await BaseClient()

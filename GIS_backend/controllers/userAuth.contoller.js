@@ -87,7 +87,7 @@ exports.userVerifyOTPAndRegisterController = async (req, res, next) => {
 
 exports.userloginController = async (req, res, next) => {
   try {
-    const { email, password, rememberMe } = req.body;
+    const { email, password, rememberMe, registrationIdToken } = req.body;
     const expiresIn = rememberMe ? "7d" : "2d";
 
     const existingUserData = await User.findOne(
@@ -102,6 +102,22 @@ exports.userloginController = async (req, res, next) => {
       throw new SetErrorResponse("Unauthorized, Password Incorrect", 401);
     }
     const userData = userDataPipelining(existingUserData);
+    var data = userData.registrationIdToken.find(
+      (registrationId) => registrationId == registrationIdToken
+    );
+    console.log(data);
+    if (!data) {
+      userData.registrationIdToken.push(registrationIdToken);
+    }
+
+    console.log(userData);
+    await User.findOneAndUpdate(
+      { email },
+      {
+        registrationIdToken: userData.registrationIdToken,
+      },
+      { new: true }
+    );
     const token = jwt.sign(userData, customSecretKey(existingUserData?._id), {
       expiresIn: expiresIn,
     });

@@ -17,9 +17,11 @@ exports.checkAuthValidation = async (req, res, next) => {
     ) {
       try {
         token = req.headers.authorization.split(" ")[1];
-        // console.log(token);
-        const isCustomAuth = token.length < 500;
-
+        // console.log(token.length);
+        // const isCustomAuth = token.length < 500;
+        // if (isCustomAuth) {
+        //   throw new SetErrorResponse("Token length must be less than 500", 500);
+        // }
         const datas = jwt.decode(token);
 
         if (!datas) throw new SetErrorResponse("Invalid token");
@@ -27,14 +29,16 @@ exports.checkAuthValidation = async (req, res, next) => {
         let admin = await Admin.findOne({ _id: datas._id });
         let user = await User.findOne({ _id: datas._id });
 
-        console.log(`admin :: ${admin} ---- user :: ${user}`);
+        // console.log(`admin :: ${admin} ---- user :: ${user}`);
 
         if (!admin && !user) {
           throw new SetErrorResponse(`User Not Found:`, 401);
         }
 
-        if (token && isCustomAuth) {
+        // console.log(token && isCustomAuth);
+        if (token) {
           const data = jwt.verify(token, customSecretKey(datas._id));
+          console.log(data);
           res.locals.authData = data;
           res.locals.authData.isAdmin = admin ? true : false;
           res.locals.authData.success = true;
@@ -53,6 +57,8 @@ exports.checkAuthValidation = async (req, res, next) => {
           }
         }
         if (!res.locals.authData || !res.locals?.authData?.success) {
+          console.log(!res.locals.authData || !res.locals?.authData?.success);
+
           return res
             .status(res?.locals?.authData?.status || 500)
             .send({ message: res?.locals?.authData?.message });

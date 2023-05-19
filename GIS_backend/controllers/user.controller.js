@@ -9,10 +9,11 @@ const { SetErrorResponse } = require("../utils/responseSetter");
 exports.getUser = async (req, res) => {
   try {
     // const userId = res.locals.authData?._id;
+    console.log(req.params.userId);
     const userId = req.params.id;
     const existingUser = await User.findById({ _id: userId }).lean();
 
-    console.log(existingUser);
+    console.log("existingUser" + existingUser);
 
     if (!existingUser) {
       throw new SetErrorResponse("User not found", 404);
@@ -20,6 +21,7 @@ exports.getUser = async (req, res) => {
 
     return res.success({ userData: existingUser });
   } catch (err) {
+    console.log(`Error from getUser ${err.message}`);
     return res.fail(err);
   }
 };
