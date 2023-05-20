@@ -122,3 +122,24 @@ exports.userloginController = async (req, res, next) => {
     return res.fail(err);
   }
 };
+
+exports.userlogoutController = async (req, res, next) => {
+  try {
+    const existingUserData = await User.findById({ _id: req.params.id });
+    console.log(existingUserData);
+    if (!existingUserData) {
+      throw new SetErrorResponse("User doesn't exist", 404);
+    }
+
+    await User.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        registrationIdToken: null,
+      },
+      { new: true }
+    );
+    return res.success({}, "Login Successful !");
+  } catch (err) {
+    return res.fail(err);
+  }
+};

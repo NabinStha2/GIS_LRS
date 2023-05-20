@@ -13,7 +13,7 @@ class NotificationProvider extends ChangeNotifier with BaseController {
       String? image,
       String? registrationIdToken}) async {
     Map data = {
-      "to": registrationIdToken ?? "",
+      "to": registrationIdToken,
       "notification": {
         "body": body ?? "Test notification",
         "title": title ?? "Testing",

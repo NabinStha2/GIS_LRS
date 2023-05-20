@@ -11,6 +11,7 @@ const {
   userRegisterController,
   userVerifyOTPAndRegisterController,
   userloginController,
+  userlogoutController,
 } = require("../controllers/userAuth.contoller");
 const { checkAuthValidation } = require("../middlewares/checkAuthentication");
 const { checkDuplicateValue } = require("../middlewares/duplicateValueChecker");
@@ -52,6 +53,8 @@ router.post(
   validator,
   userloginController
 );
+
+router.post("/logout/:id", checkAuthValidation, userlogoutController);
 
 router.get("/:id", validate(["id"]), validator, checkAuthValidation, getUser);
 

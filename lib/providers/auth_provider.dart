@@ -173,7 +173,16 @@ class AuthProvider extends ChangeNotifier with BaseController {
     notifyListeners();
   }
 
-  logout({required BuildContext ctx}) {
+  logout({required BuildContext ctx}) async {
+    var response = await BaseClient()
+        .post(
+          ApiConfig.baseUrl,
+          "${ApiConfig.userUrl}/logout/${AppSharedPreferences.getUserId}",
+          {},
+          hasTokenHeader: true,
+        )
+        .catchError(handleError);
+    if (response == null) return null;
     AppSharedPreferences.clearCrendentials();
     Provider.of<DrawerProvider>(ctx, listen: false)
         .changeDrawerSelectedIndex(0);

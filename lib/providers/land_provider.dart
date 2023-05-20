@@ -753,15 +753,17 @@ class LandProvider extends ChangeNotifier with BaseController {
           .catchError(handleError);
       if (response == null) return false;
 
-      Provider.of<NotificationProvider>(context, listen: false)
-          .sendNotification(
-        context: context,
-        title: "Requested Land",
-        body:
-            "${AppSharedPreferences.getUserName} has requested to buy your Land of Parcel Id ${landRequestModel?.parcelId}",
-        image: landRequestModel?.image ?? "",
-        registrationIdToken: landRequestModel?.registrationIdToken,
-      );
+      landRequestModel?.registrationIdToken != null
+          ? Provider.of<NotificationProvider>(context, listen: false)
+              .sendNotification(
+              context: context,
+              title: "Requested Land",
+              body:
+                  "${AppSharedPreferences.getUserName} has requested to buy your Land of Parcel Id ${landRequestModel?.parcelId}",
+              image: landRequestModel?.image ?? "",
+              registrationIdToken: landRequestModel?.registrationIdToken,
+            )
+          : null;
 
       hideLoading(context);
       isLoading = false;
@@ -812,15 +814,17 @@ class LandProvider extends ChangeNotifier with BaseController {
           .catchError(handleError);
       if (response == null) return false;
 
-      Provider.of<NotificationProvider>(context, listen: false)
-          .sendNotification(
-        context: context,
-        title: "Land Accepted",
-        body:
-            "${AppSharedPreferences.getUserName} has accpeted your request to buy the Land of Parcel Id ${landRequestModel?.parcelId}",
-        image: landRequestModel?.image ?? "",
-        registrationIdToken: landRequestModel?.registrationIdToken,
-      );
+      landRequestModel?.registrationIdToken != null
+          ? Provider.of<NotificationProvider>(context, listen: false)
+              .sendNotification(
+              context: context,
+              title: "Land Accepted",
+              body:
+                  "${AppSharedPreferences.getUserName} has accpeted your request to buy the Land of Parcel Id ${landRequestModel?.parcelId}",
+              image: landRequestModel?.image ?? "",
+              registrationIdToken: landRequestModel?.registrationIdToken,
+            )
+          : null;
 
       hideLoading(context);
       isLoading = false;
