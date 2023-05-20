@@ -267,6 +267,44 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                               ],
                             ),
                             vSizedBox2,
+                            _.individualLandTransferResult?.ownerUserId ==
+                                        AppSharedPreferences.getUserId ||
+                                    _.individualLandTransferResult
+                                            ?.approvedUserId?.user?.id ==
+                                        AppSharedPreferences.getUserId
+                                ? CustomButton.elevatedButton("View Document",
+                                    () {
+                                    showDialog(
+                                        useSafeArea: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            elevation: 0.0,
+                                            backgroundColor: Colors.transparent,
+                                            child: InteractiveViewer(
+                                              clipBehavior: Clip.none,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: CustomNetworkImage(
+                                                  imageUrl: _
+                                                          .individualLandTransferResult
+                                                          ?.landSaleId
+                                                          ?.landId
+                                                          ?.landCertificateFile
+                                                          ?.landCertificateImage ??
+                                                      "",
+                                                  width: appWidth(context),
+                                                  height: 350,
+                                                  boxFit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  })
+                                : Container(),
+                            vSizedBox2,
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

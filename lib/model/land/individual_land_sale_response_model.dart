@@ -150,6 +150,7 @@ class LandId {
     this.updatedAt,
     this.v,
     this.saleData,
+    this.landCertificateFile,
   });
 
   String? id;
@@ -171,12 +172,16 @@ class LandId {
   String? latitude;
   String? longitude;
   String? saleData;
+  LandCertificateFile? landCertificateFile;
 
   factory LandId.fromJson(Map<String, dynamic> json) => LandId(
         id: json["_id"],
         city: json["city"],
         area: json["area"],
         latitude: json["latitude"],
+        landCertificateFile: json["landCertificateFile"] == null
+            ? null
+            : LandCertificateFile.fromJson(json["landCertificateFile"]),
         longitude: json["longitude"],
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],

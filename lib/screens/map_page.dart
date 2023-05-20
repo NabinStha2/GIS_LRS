@@ -544,7 +544,7 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                                   consolelog("map search :: $val");
                                   if (val != "") {
                                     if (!geocodingAddressSearchingSwitch) {
-//   LatLngModel latlngSearchData = latlngList.value
+                                      //   LatLngModel latlngSearchData = latlngList.value
                                       //       .firstWhere(
                                       //           (element) =>
                                       //               element.parcelId ==

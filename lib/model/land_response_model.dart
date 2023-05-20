@@ -103,6 +103,7 @@ class LandResult {
     this.v,
     this.latitude,
     this.longitude,
+    this.landCertificateFile,
   });
 
   String? id;
@@ -112,6 +113,7 @@ class LandResult {
   String? wardNo;
   String? district;
   String? street;
+  LandCertificateFile? landCertificateFile;
   // String? address;
   // String? surveyNo;
   String? mapSheetNo;
@@ -140,6 +142,10 @@ class LandResult {
         province: json["province"],
         street: json["street"],
         isVerified: json["isVerified"],
+        landCertificateFile: json["landCertificateFile"] == null
+            ? null
+            : LandCertificateFile.fromJson(json["landCertificateFile"]),
+
         ownerUserId: json["ownerUserId"] == null
             ? null
             : UserId.fromJson(json["ownerUserId"]),
@@ -298,5 +304,26 @@ class Properties {
         "sheetid": sheetid,
         "parcelno": parcelno,
         "area": area,
+      };
+}
+
+class LandCertificateFile {
+  String? landCertificateImage;
+  String? landCertificatePublicId;
+
+  LandCertificateFile({
+    this.landCertificateImage,
+    this.landCertificatePublicId,
+  });
+
+  factory LandCertificateFile.fromJson(Map<String, dynamic> json) =>
+      LandCertificateFile(
+        landCertificateImage: json["landCertificateImage"],
+        landCertificatePublicId: json["landCertificatePublicId"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "landCertificateImage": landCertificateImage,
+        "landCertificatePublicId": landCertificatePublicId,
       };
 }

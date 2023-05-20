@@ -138,7 +138,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 CustomText.ourText("CitizenShip No"),
                 vSizedBox1,
                 CustomTextFormField(
-                  onlyNumber: true,
                   hintText: "CitizenShip No",
                   controller: _.editCitizenshipNoController,
                   validator: (val) =>
@@ -156,6 +155,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         pickedImage = await ImagePicker()
                             .pickImage(source: ImageSource.gallery);
                         logger(pickedImage);
+                        int size = File(pickedImage?.path ?? '').lengthSync();
+                        if (size > 5000000) {
+                          pickedImage = null;
+                          errorToast(msg: "Image size must be less than 5mb.");
+                        }
                         setState(() {});
                         if (pickedImage != null) {
                           _.updateUserImage(
@@ -193,6 +197,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         pickedFrontImage = await ImagePicker()
                             .pickImage(source: ImageSource.gallery);
                         logger(pickedFrontImage);
+                        int size =
+                            File(pickedFrontImage?.path ?? '').lengthSync();
+                        if (size > 5000000) {
+                          pickedFrontImage = null;
+                          errorToast(msg: "Image size must be less than 5mb.");
+                        }
                         setState(() {});
                         if (pickedFrontImage != null) {
                           _.updateUserImage(
@@ -230,6 +240,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         pickedBackImage = await ImagePicker()
                             .pickImage(source: ImageSource.gallery);
                         logger(pickedBackImage);
+                        int size =
+                            File(pickedBackImage?.path ?? '').lengthSync();
+                        if (size > 5000000) {
+                          pickedBackImage = null;
+                          errorToast(msg: "Image size must be less than 5mb.");
+                        }
                         setState(() {});
                         if (pickedBackImage != null) {
                           _.updateUserImage(

@@ -65,6 +65,7 @@ class IndividualLandData {
     this.saleData,
     this.geoJson,
     this.landSaleId,
+    this.landCertificateFile,
   });
 
   String? id;
@@ -79,6 +80,7 @@ class IndividualLandData {
   String? landPrice;
   String? isVerified;
   UserId? ownerUserId;
+  LandCertificateFile? landCertificateFile;
   List<dynamic>? ownerHistory;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -102,6 +104,9 @@ class IndividualLandData {
         province: json["province"],
         landPrice: json["landPrice"],
         isVerified: json["isVerified"],
+        landCertificateFile: json["landCertificateFile"] == null
+            ? null
+            : LandCertificateFile.fromJson(json["landCertificateFile"]),
         ownerUserId: json["ownerUserId"] == null
             ? null
             : UserId.fromJson(json["ownerUserId"]),

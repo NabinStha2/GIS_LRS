@@ -246,6 +246,14 @@ class _AddLandScreenState extends State<AddLandScreen> {
                                   await ImagePicker()
                                       .pickImage(source: ImageSource.gallery);
                               logger(pickedLandCertificateDocument);
+                              int size = File(
+                                      pickedLandCertificateDocument?.path ?? '')
+                                  .lengthSync();
+                              if (size > 5000000) {
+                                pickedLandCertificateDocument = null;
+                                errorToast(
+                                    msg: "Image size must be less than 5mb.");
+                              }
                               setState(() {});
                               // if (pickedLandCertificateDocument != null) {
                               //   // _.updateUserImage(

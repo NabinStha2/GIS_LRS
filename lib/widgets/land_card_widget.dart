@@ -96,7 +96,7 @@ class LandCardWidget extends StatelessWidget {
                 imageUrl:
                     "https://img.freepik.com/free-vector/image-upload-concept-illustration_23-2148276163.jpg?size=338&ext=jpg",
               ),
-              vSizedBox3,
+              vSizedBox2,
               vSizedBox1,
               CustomButton.elevatedButton(
                 "See on map",

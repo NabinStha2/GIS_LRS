@@ -118,6 +118,14 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
                                             .pickImage(
                                                 source: ImageSource.gallery);
                                         logger(pickedImage?.path);
+                                        int size = File(pickedImage?.path ?? '')
+                                            .lengthSync();
+                                        if (size > 5000000) {
+                                          pickedImage = null;
+                                          errorToast(
+                                              msg:
+                                                  "Image size must be less than 5mb.");
+                                        }
                                         if (pickedImage != null) {
                                           _.addPaymentVoucherFormLandForTransfer(
                                             context: context,
@@ -142,6 +150,14 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
                                             .pickImage(
                                                 source: ImageSource.camera);
                                         logger(pickedImage);
+                                        int size = File(pickedImage?.path ?? '')
+                                            .lengthSync();
+                                        if (size > 5000000) {
+                                          pickedImage = null;
+                                          errorToast(
+                                              msg:
+                                                  "Image size must be less than 5mb.");
+                                        }
                                         if (pickedImage != null) {
                                           consolelog(pickedImage?.path);
                                           _.addPaymentVoucherFormLandForTransfer(
@@ -153,8 +169,8 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
                                                         ?.id),
                                             file: File(pickedImage?.path ?? ""),
                                           );
+                                          setState(() {});
                                         }
-                                        setState(() {});
                                       },
                                     ),
                                     vSizedBox2,

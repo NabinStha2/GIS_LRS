@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:gis_flutter_frontend/providers/user_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -58,8 +59,8 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
         ),
         centerTitle: true,
       ),
-      body: Consumer<LandProvider>(
-        builder: (context, _, child) {
+      body: Consumer2<LandProvider, UserProvider>(
+        builder: (context, _, __, child) {
           var latlngTempList = <LatLng>[];
           _.individualLandResult?.geoJson?.geometry?.coordinates
               ?.forEach((element) {
@@ -249,6 +250,39 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                               ),
                             ],
                           ),
+                          vSizedBox2,
+                          _.individualLandResult?.ownerUserId?.id ==
+                                  AppSharedPreferences.getUserId
+                              ? CustomButton.elevatedButton("View Document",
+                                  () {
+                                  showDialog(
+                                      useSafeArea: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          elevation: 0.0,
+                                          backgroundColor: Colors.transparent,
+                                          child: InteractiveViewer(
+                                            clipBehavior: Clip.none,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: CustomNetworkImage(
+                                                imageUrl: _
+                                                        .individualLandResult
+                                                        ?.landCertificateFile
+                                                        ?.landCertificateImage ??
+                                                    "",
+                                                width: appWidth(context),
+                                                height: 350,
+                                                boxFit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                })
+                              : Container(),
                           vSizedBox2,
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
