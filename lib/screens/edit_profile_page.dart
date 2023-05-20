@@ -139,6 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 vSizedBox1,
                 CustomTextFormField(
                   hintText: "CitizenShip No",
+                  onlyNumber: true,
                   controller: _.editCitizenshipNoController,
                   validator: (val) =>
                       val.toString().isEmptyData() ? "Cannot be empty" : null,

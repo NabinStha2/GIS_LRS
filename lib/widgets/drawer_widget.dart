@@ -124,7 +124,7 @@ class DrawerWidget extends StatelessWidget {
                       _.drawerSelectedIndex == 2 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Owned Land',
+                  'Lands Owned',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -167,12 +167,12 @@ class DrawerWidget extends StatelessWidget {
                     ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
-                  Icons.search,
+                  Icons.sell,
                   color:
                       _.drawerSelectedIndex == 3 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Owned Land Sale',
+                  'My Sell',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -196,7 +196,7 @@ class DrawerWidget extends StatelessWidget {
                       _.drawerSelectedIndex == 4 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Search Land Sale',
+                  'Lands on sale',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:
@@ -216,12 +216,12 @@ class DrawerWidget extends StatelessWidget {
                     ? AppColors.kBrandPrimaryColor
                     : null,
                 leading: Icon(
-                  Icons.search,
+                  Icons.transform,
                   color:
                       _.drawerSelectedIndex == 5 ? Colors.white : Colors.black,
                 ),
                 title: CustomText.ourText(
-                  'Land Transfer',
+                  'Title Transfer',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color:

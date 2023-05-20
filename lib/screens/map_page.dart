@@ -343,13 +343,15 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                             TileLayer(
                               urlTemplate:
                                   'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                              maxZoom: 18,
+                              maxZoom: 22,
+                              maxNativeZoom: 22,
                               subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                             ),
                             TileLayer(
                               urlTemplate:
                                   'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-                              maxZoom: 18,
+                              maxZoom: 22,
+                              maxNativeZoom: 22,
                               subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                             ),
                             // TileLayer(
@@ -361,7 +363,8 @@ class _MapPageState extends State<MapPage> with TickerProviderStateMixin {
                             TileLayer(
                               urlTemplate:
                                   'http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
-                              maxZoom: 18,
+                              maxZoom: 22,
+                              maxNativeZoom: 22,
                               subdomains: const ['mt0', 'mt1', 'mt2', 'mt3'],
                             ),
                             TileLayer(

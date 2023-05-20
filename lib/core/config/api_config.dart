@@ -1,6 +1,6 @@
 class ApiConfig {
   // static const String localhost = "http://192.168.6.227:3000";
-  static const String localhost = "http://192.168.1.66:3000";
+  static const String localhost = "http://192.168.1.84:3000";
   static const String devServerUrl = "https://gis-lrs.vercel.app";
   static const String apiUrl = "/api";
   // static const String baseUrl = devServerUrl + apiUrl;

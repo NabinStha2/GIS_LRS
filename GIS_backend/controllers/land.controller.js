@@ -309,7 +309,7 @@ exports.getAllLands = async (req, res) => {
           limit,
           query,
           populate: {
-            path: "ownerUserId geoJSON",
+            path: "ownerUserId geoJSON ownerHistory",
             // select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
           },
           pagination: true,

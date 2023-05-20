@@ -236,6 +236,7 @@ module.exports.addPaymentFormForLandTransferOwnership = async (req, res) => {
         sellerBankAcc,
         transactionAmt,
         billToken,
+        transactionDate: new Date.now(),
       },
       { new: true }
     ).lean();
@@ -376,7 +377,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
       );
     }
 
-    let ownerHistory = [];
+    let ownerHistory = transferOwnership?.landSaleId?.landId?.ownerHistory;
     let land = [];
     ownerHistory.push(transferOwnership?.ownerUserId);
     land.push(transferOwnership?.landSaleId?.landId?._id);
@@ -397,7 +398,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
         {
           ownerUserId: transferOwnership?.approvedUserId?.user?._id,
           ownerHistory: [...ownerHistory],
-          saleData: null,
+          saleData: "null",
         },
         { new: true }
       ).lean(),
@@ -417,6 +418,7 @@ module.exports.approveLandForTransferOwnership = async (req, res) => {
         {
           transerData: "completed",
           ownerUserId: transferOwnership?.approvedUserId?.user?._id,
+          ownerHistory: [...ownerHistory],
         },
         { new: true }
       ).lean(),
@@ -505,7 +507,7 @@ module.exports.rejectLandForTransferOwnership = async (req, res) => {
         ).lean(),
         Land.findByIdAndUpdate(
           { _id: transferOwnership?.landSaleId?.landId?._id },
-          { saleData: null },
+          { saleData: "null" },
           { new: true }
         ),
         TransferOwnership.findByIdAndUpdate(

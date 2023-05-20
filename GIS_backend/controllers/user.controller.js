@@ -272,6 +272,7 @@ exports.patchUser = async (req, res) => {
 
     return res.success({ userData: user }, "User updated");
   } catch (err) {
+    console.log(`Error from patchUser : ${err.message}`);
     return res.fail(err);
   }
 };

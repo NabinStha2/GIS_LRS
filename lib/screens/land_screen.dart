@@ -160,36 +160,36 @@ class _LandScreenState extends State<LandScreen> {
                                                                   index]
                                                               .id,
                                                         ),
-                                                        Positioned(
-                                                          top: 0,
-                                                          right: 0,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              _.deleteLand(
-                                                                context:
-                                                                    context,
-                                                                landRequestModel:
-                                                                    LandRequestModel(
-                                                                        landId: _
-                                                                            .paginatedOwnedLandResult?[index]
-                                                                            .id),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              decoration: const BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  color: Colors
-                                                                      .red),
-                                                              child: const Icon(
-                                                                Icons.close,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        // Positioned(
+                                                        //   top: 0,
+                                                        //   right: 0,
+                                                        //   child:
+                                                        //       GestureDetector(
+                                                        //     onTap: () {
+                                                        //       _.deleteLand(
+                                                        //         context:
+                                                        //             context,
+                                                        //         landRequestModel:
+                                                        //             LandRequestModel(
+                                                        //                 landId: _
+                                                        //                     .paginatedOwnedLandResult?[index]
+                                                        //                     .id),
+                                                        //       );
+                                                        //     },
+                                                        //     child: Container(
+                                                        //       decoration: const BoxDecoration(
+                                                        //           shape: BoxShape
+                                                        //               .circle,
+                                                        //           color: Colors
+                                                        //               .red),
+                                                        //       child: const Icon(
+                                                        //         Icons.close,
+                                                        //         color: Colors
+                                                        //             .white,
+                                                        //       ),
+                                                        //     ),
+                                                        //   ),
+                                                        // ),
                                                       ],
                                                     );
                                                   },

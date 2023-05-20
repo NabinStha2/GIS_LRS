@@ -99,6 +99,16 @@ class LandProvider extends ChangeNotifier with BaseController {
       GeocodingPolylinesApiResponseModel();
   String? geocodingPolylinesApiMessage;
 
+  clearAddLandValue() {
+    cityController.clear();
+    parcelIdController.clear();
+    mapsheetNoController.clear();
+    streetController.clear();
+    districtController.clear();
+    provinceController.clear();
+    wardNoController.clear();
+  }
+
   addLand({
     required BuildContext context,
     required File file,
@@ -153,6 +163,7 @@ class LandProvider extends ChangeNotifier with BaseController {
       hideLoading(context);
       successToast(msg: "Land added successfully.");
       back(context);
+      Provider.of<LandProvider>(context, listen: false).clearAddLandValue();
       getOwnedLands(
         context: context,
         landRequestModel: LandRequestModel(page: 1),
