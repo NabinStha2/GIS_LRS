@@ -80,6 +80,8 @@ class AuthProvider extends ChangeNotifier with BaseController {
       AppSharedPreferences.setUserId(
           loginResponseModel.data?.userData?.id ?? "");
       AppSharedPreferences.setRememberMe(true);
+      AppSharedPreferences.setUserName(
+          "${loginResponseModel.data?.userData?.firstName} ${loginResponseModel.data?.userData?.lastName}");
       clearLoginBodyTextFieldValue();
       unfocusKeyboard(ctx);
       hideLoading(ctx);

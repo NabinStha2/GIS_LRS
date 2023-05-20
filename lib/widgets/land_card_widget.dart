@@ -159,7 +159,7 @@ class LandCardWidget extends StatelessWidget {
               children: [
                 Text.rich(
                   TextSpan(
-                    text: "Id: ",
+                    text: "Map Sheet No: ",
                     style: TextStyle(
                       color: AppColors.kNeutral800Color,
                       fontSize: 14.0,
@@ -168,8 +168,8 @@ class LandCardWidget extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: isFromLandSale ?? false
-                            ? landData?.id
-                            : landResult?.id,
+                            ? landData?.mapSheetNo
+                            : landResult?.mapSheetNo,
                         style: TextStyle(
                           color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,

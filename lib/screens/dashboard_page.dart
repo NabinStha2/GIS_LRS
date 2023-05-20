@@ -194,7 +194,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       vSizedBox2,
                       CustomButton.textButton(
-                        "Information on Land Requested To Buy   -->",
+                        "Land Requested   -->",
                         () {
                           navigate(
                               context, const DashboardLandRequestedScreen());
@@ -206,7 +206,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       vSizedBox2,
                       CustomButton.textButton(
-                        "Information on Land Accepted To Buy   -->",
+                        "Land Accepted   -->",
                         () {
                           navigate(
                               context, const DashboardLandAcceptedScreen());
@@ -218,7 +218,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       vSizedBox2,
                       CustomButton.textButton(
-                        "Information on Land Rejected To Buy   -->",
+                        "Land Rejected   -->",
                         () {
                           navigate(
                               context, const DashboardLandRejectedScreen());

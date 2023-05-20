@@ -6,9 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:gis_flutter_frontend/model/land/land_request_model.dart';
+import 'package:gis_flutter_frontend/providers/notification_provider.dart';
 import 'package:gis_flutter_frontend/services/base_client_controller.dart';
 import 'package:gis_flutter_frontend/utils/custom_toasts.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 import '../core/app/enums.dart';
 import '../core/app/states.dart';
@@ -44,7 +46,7 @@ class LandProvider extends ChangeNotifier with BaseController {
   TextEditingController parcelIdController = TextEditingController();
   TextEditingController mapsheetNoController = TextEditingController();
   TextEditingController landPriceController = TextEditingController();
-  TextEditingController surveyNoController = TextEditingController();
+  TextEditingController streetController = TextEditingController();
 
   TextEditingController searchLandController = TextEditingController();
   TextEditingController searchLandAddressController = TextEditingController();
@@ -118,7 +120,7 @@ class LandProvider extends ChangeNotifier with BaseController {
         "district": districtController.text.trim(),
         "parcelId": parcelIdController.text.trim(),
         // "landPrice": landPriceController.text.trim(),
-        "surveyNo": surveyNoController.text.trim(),
+        "surveyNo": streetController.text.trim(),
         // "polygon": polygonData,
       });
       var response = await BaseClient()
@@ -135,7 +137,7 @@ class LandProvider extends ChangeNotifier with BaseController {
               "district": districtController.text.trim(),
               "parcelId": parcelIdController.text.trim(),
               // "landPrice": landPriceController.text.trim(),
-              "surveyNo": surveyNoController.text.trim(),
+              "surveyNo": streetController.text.trim(),
               // "polygon": polygonData,
             },
             method: "POST",
@@ -252,9 +254,9 @@ class LandProvider extends ChangeNotifier with BaseController {
                   : null,
               parcelId: e.parcelId,
               polygonData: latlngTempList,
-              address: e.address,
+              street: e.street,
               area: e.area,
-              landPrice: e.landPrice,
+              mapSheetNo: e.mapSheetNo,
               wardNo: e.wardNo,
               email: e.ownerUserId?.email,
               name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
@@ -361,10 +363,10 @@ class LandProvider extends ChangeNotifier with BaseController {
                   : null,
               parcelId: e.parcelId,
               polygonData: latlngTempList,
-              address: e.address,
+              street: e.street,
               area: e.area,
+              mapSheetNo: e.mapSheetNo,
               landSaleId: e.id,
-              landPrice: e.landPrice,
               wardNo: e.wardNo,
               email: e.ownerUserId?.email,
               name: "${e.ownerUserId?.firstName} ${e.ownerUserId?.lastName}",
@@ -554,7 +556,8 @@ class LandProvider extends ChangeNotifier with BaseController {
                   : null,
               parcelId: e.parcelId,
               polygonData: latlngTempList,
-              address: e.landId?.address,
+              mapSheetNo: e.landId?.mapSheetNo,
+              street: e.landId?.street,
               area: e.landId?.area,
               landSaleId: e.id,
               landPrice: e.landPrice,
@@ -739,6 +742,16 @@ class LandProvider extends ChangeNotifier with BaseController {
           .catchError(handleError);
       if (response == null) return false;
 
+      Provider.of<NotificationProvider>(context, listen: false)
+          .sendNotification(
+        context: context,
+        title: "Requested Land",
+        body:
+            "${AppSharedPreferences.getUserName} has requested to buy your Land of Parcel Id ${landRequestModel?.parcelId}",
+        image: landRequestModel?.image ?? "",
+        registrationIdToken: landRequestModel?.registrationIdToken,
+      );
+
       hideLoading(context);
       isLoading = false;
       notifyListeners();
@@ -788,6 +801,16 @@ class LandProvider extends ChangeNotifier with BaseController {
           .catchError(handleError);
       if (response == null) return false;
 
+      Provider.of<NotificationProvider>(context, listen: false)
+          .sendNotification(
+        context: context,
+        title: "Land Accepted",
+        body:
+            "${AppSharedPreferences.getUserName} has accpeted your request to buy the Land of Parcel Id ${landRequestModel?.parcelId}",
+        image: landRequestModel?.image ?? "",
+        registrationIdToken: landRequestModel?.registrationIdToken,
+      );
+
       hideLoading(context);
       isLoading = false;
       notifyListeners();
@@ -835,6 +858,16 @@ class LandProvider extends ChangeNotifier with BaseController {
           )
           .catchError(handleError);
       if (response == null) return false;
+
+      Provider.of<NotificationProvider>(context, listen: false)
+          .sendNotification(
+        context: context,
+        title: "Land Rejected",
+        body:
+            "${AppSharedPreferences.getUserName} has rejected your request to buy the Land of Parcel Id ${landRequestModel?.parcelId}",
+        image: landRequestModel?.image ?? "",
+        registrationIdToken: landRequestModel?.registrationIdToken,
+      );
 
       hideLoading(context);
       isLoading = false;

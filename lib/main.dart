@@ -9,6 +9,7 @@ import 'package:gis_flutter_frontend/providers/drawer_provider.dart';
 import 'package:gis_flutter_frontend/providers/land_provider.dart';
 import 'package:gis_flutter_frontend/providers/map_provider.dart';
 import 'package:gis_flutter_frontend/providers/land_transfer_provider.dart';
+import 'package:gis_flutter_frontend/providers/notification_provider.dart';
 import 'package:gis_flutter_frontend/providers/user_provider.dart';
 import 'package:gis_flutter_frontend/services/geo_location_service.dart';
 import 'package:gis_flutter_frontend/services/local_notification_service.dart';
@@ -148,6 +149,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<DrawerProvider>(create: (_) => DrawerProvider()),
         ChangeNotifierProvider<LandTransferProvider>(
             create: (_) => LandTransferProvider()),
+        ChangeNotifierProvider<NotificationProvider>(
+            create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         navigatorKey: GlobalContextService.globalContext,

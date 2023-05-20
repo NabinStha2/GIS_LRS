@@ -269,6 +269,8 @@ module.exports.patchPaymentVoucherLandTransferOwnership = async (req, res) => {
         req.files?.voucherFormImage[0]?.publicId;
     }
 
+    console.log(editBackQuery);
+
     TransferOwnership.findById({ _id: landTransferId })
       .lean()
       .then(async (res) => {

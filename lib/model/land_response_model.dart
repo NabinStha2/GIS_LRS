@@ -87,10 +87,12 @@ class LandResult {
     this.parcelId,
     this.wardNo,
     this.district,
-    this.address,
-    this.surveyNo,
+    this.mapSheetNo,
+    this.street,
+    // this.address,
+    // this.surveyNo,
     this.province,
-    this.landPrice,
+    // this.landPrice,
     this.isVerified,
     this.ownerUserId,
     this.ownerHistory,
@@ -109,10 +111,12 @@ class LandResult {
   String? parcelId;
   String? wardNo;
   String? district;
-  String? address;
-  String? surveyNo;
+  String? street;
+  // String? address;
+  // String? surveyNo;
+  String? mapSheetNo;
   String? province;
-  String? landPrice;
+  // String? landPrice;
   String? isVerified;
   UserId? ownerUserId;
   List<String>? ownerHistory;
@@ -131,10 +135,10 @@ class LandResult {
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
-        address: json["address"],
-        surveyNo: json["surveyNo"],
+        // address: json["address"],
+        mapSheetNo: json["mapSheetNo"],
         province: json["province"],
-        landPrice: json["landPrice"],
+        street: json["street"],
         isVerified: json["isVerified"],
         ownerUserId: json["ownerUserId"] == null
             ? null
@@ -163,10 +167,10 @@ class LandResult {
         "parcelId": parcelId,
         "wardNo": wardNo,
         "district": district,
-        "address": address,
-        "surveyNo": surveyNo,
+        // "address": address,
+        // "surveyNo": surveyNo,
         "province": province,
-        "landPrice": landPrice,
+        // "landPrice": landPrice,
         "isVerified": isVerified,
         "ownerUserId": ownerUserId?.toJson(),
         "ownerHistory": ownerHistory == null

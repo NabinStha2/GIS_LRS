@@ -52,8 +52,8 @@ class IndividualLandData {
     this.parcelId,
     this.wardNo,
     this.district,
-    this.address,
-    this.surveyNo,
+    this.mapSheetNo,
+    this.street,
     this.province,
     this.landPrice,
     this.isVerified,
@@ -73,8 +73,8 @@ class IndividualLandData {
   String? parcelId;
   String? wardNo;
   String? district;
-  String? address;
-  String? surveyNo;
+  String? mapSheetNo;
+  String? street;
   String? province;
   String? landPrice;
   String? isVerified;
@@ -97,8 +97,8 @@ class IndividualLandData {
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
-        address: json["address"],
-        surveyNo: json["surveyNo"],
+        street: json["street"],
+        mapSheetNo: json["mapSheetNo"],
         province: json["province"],
         landPrice: json["landPrice"],
         isVerified: json["isVerified"],
@@ -126,8 +126,8 @@ class IndividualLandData {
         "parcelId": parcelId,
         "wardNo": wardNo,
         "district": district,
-        "address": address,
-        "surveyNo": surveyNo,
+        // "address": address,
+        // "surveyNo": surveyNo,
         "province": province,
         "landPrice": landPrice,
         "isVerified": isVerified,

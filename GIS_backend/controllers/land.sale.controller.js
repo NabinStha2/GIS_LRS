@@ -566,7 +566,7 @@ module.exports.deleteLandSale = async (req, res) => {
     await Land.findOneAndUpdate(
       { _id: landId },
       {
-        saleData: null,
+        saleData: "null",
       },
       { new: true }
     );

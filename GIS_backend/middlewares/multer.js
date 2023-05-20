@@ -1,10 +1,11 @@
 const multer = require("multer");
 const cloudinaryInit = require("../utils/cloudinary.init");
 const path = require("path");
+const { rename } = require("fs");
 
 exports.uploadImages = ({
   folderName = "GISLandRegistration",
-  fileSize = 122880,
+  // fileSize = 500000,
   allowedFileTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"],
 }) => {
   const uploadImagesMulter = () => {
@@ -66,7 +67,7 @@ exports.uploadImages = ({
 
   const cloudinaryUpload = async (req, res, next) => {
     try {
-      console.log({ file: req.file, files: req.files?.userImage });
+      console.log({ file: req.file, files: req.files?.voucherFormImage });
       if (req.file) {
         const renameImage =
           new Date().toISOString().replace(/:/g, "-").replace(".", "-", " ") +
@@ -146,6 +147,7 @@ exports.uploadImages = ({
             new Date().toISOString().replace(/:/g, "-").replace(".", "-", " ") +
             "-" +
             file.originalname.toLowerCase().replace(/ /g, "-").split(".")[0];
+          console.log(renameImage);
           const [image] = await Promise.all([
             cloudinaryInit.uploader.upload(file.path, {
               folder: `developing/${folderName}`,
@@ -153,7 +155,7 @@ exports.uploadImages = ({
               public_id: renameImage,
             }),
           ]);
-          console.log({ image, renameImage });
+          console.log(image);
           file.location = image.secure_url;
           file.publicId = image.public_id;
         })

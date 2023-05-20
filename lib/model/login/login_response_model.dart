@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-LoginResponseModel loginResponseModelFromJson(String str) => LoginResponseModel.fromJson(json.decode(str));
+LoginResponseModel loginResponseModelFromJson(String str) =>
+    LoginResponseModel.fromJson(json.decode(str));
 
-String loginResponseModelToJson(LoginResponseModel data) => json.encode(data.toJson());
+String loginResponseModelToJson(LoginResponseModel data) =>
+    json.encode(data.toJson());
 
 class LoginResponseModel {
   LoginResponseModel({
@@ -13,7 +15,8 @@ class LoginResponseModel {
   Data? data;
   String? message;
 
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) => LoginResponseModel(
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
+      LoginResponseModel(
         data: json["data"] == null ? null : Data.fromJson(json["data"]),
         message: json["message"],
       );
@@ -35,7 +38,9 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         token: json["token"],
-        userData: json["userData"] == null ? null : UserData.fromJson(json["userData"]),
+        userData: json["userData"] == null
+            ? null
+            : UserData.fromJson(json["userData"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -52,6 +57,7 @@ class UserData {
     this.firstName,
     this.lastName,
     this.address,
+    this.registrationIdToken,
   });
 
   String? id;
@@ -60,6 +66,7 @@ class UserData {
   String? firstName;
   String? lastName;
   String? address;
+  String? registrationIdToken;
 
   factory UserData.fromJson(Map<String, dynamic> json) => UserData(
         id: json["_id"],
@@ -68,7 +75,7 @@ class UserData {
         firstName: json["firstName"],
         lastName: json["lastName"],
         address: json["address"],
-      );
+      registrationIdToken: json["registrationIdToken"],);
 
   Map<String, dynamic> toJson() => {
         "_id": id,

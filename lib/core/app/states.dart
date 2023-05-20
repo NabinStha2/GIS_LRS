@@ -30,6 +30,8 @@ class LatLngModel {
   String? area;
   String? wardNo;
   String? landPrice;
+  String? mapSheetNo;
+  String? street;
   String? name;
   String? ownerUserId;
   String? email;
@@ -46,6 +48,8 @@ class LatLngModel {
     this.ownerUserId,
     this.email,
     this.landSaleId,
+    this.mapSheetNo,
+    this.street,
   });
 }
 

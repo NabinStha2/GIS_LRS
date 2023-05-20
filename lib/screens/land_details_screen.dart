@@ -359,14 +359,14 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                           ),
                           vSizedBox2,
                           CustomText.ourText(
-                            "Address (Survey No.)",
+                            "Street",
                             color: AppColors.kNeutral800Color,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w600,
                           ),
                           vSizedBox0,
                           CustomText.ourText(
-                            "${_.individualLandResult?.address} (${_.individualLandResult?.surveyNo})",
+                            "${_.individualLandResult?.street}",
                             color: AppColors.kNeutral600Color,
                             fontWeight: FontWeight.w400,
                           ),
@@ -382,6 +382,27 @@ class _LandDetailsScreenState extends State<LandDetailsScreen> {
                               children: [
                                 TextSpan(
                                   text: _.individualLandResult?.wardNo ?? "",
+                                  style: TextStyle(
+                                    color: AppColors.kNeutral600Color,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          vSizedBox2,
+                          Text.rich(
+                            TextSpan(
+                              text: "Map Sheet No: ",
+                              style: TextStyle(
+                                color: AppColors.kNeutral800Color,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      _.individualLandResult?.mapSheetNo ?? "",
                                   style: TextStyle(
                                     color: AppColors.kNeutral600Color,
                                     fontWeight: FontWeight.w400,

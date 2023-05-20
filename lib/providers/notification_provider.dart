@@ -11,28 +11,27 @@ class NotificationProvider extends ChangeNotifier with BaseController {
       String? body,
       String? title,
       String? image,
-      List<String>? registrationIdToken}) async {
+      String? registrationIdToken}) async {
     Map data = {
-      "registration_ids": registrationIdToken ??
-          [
-            "ebGKJ5MsQbmL28SQSucE-r:APA91bG1NQb4s8bQ2twXJTrb9YGEedKlqvMkvAhKGbz8ROERNW9XF_TuCZV98_Tgz4mM8asFaprBEKBKT9EwPhPrnGO3jmm8LyDX40r24M6XzQsHvMIl7jln49czVEvXDAOGFRPTZCx1"
-          ],
+      "to": registrationIdToken ?? "",
       "notification": {
-        "body": body ?? "I love you pratima shrestha.",
-        "title": title ?? "My pukulu",
+        "body": body ?? "Test notification",
+        "title": title ?? "Testing",
+        "sound": true,
         "image": image ??
             "https://cdn2.vectorstock.com/i/1000x1000/23/91/small-size-emoticon-vector-9852391.jpg",
-        "sound": true
+        "android_channel_id": "pushnotificationappchannel",
       },
-      "data": {"_id": 1}
     };
+    consolelog(data);
 
     var response = await BaseClient()
         .post(
           ApiConfig.baseUrl,
           "https://fcm.googleapis.com/fcm/send",
           data,
-          hasTokenHeader: true,
+          hasTokenHeader: false,
+          isNotification: true,
           isCustomApi: true,
         )
         .catchError(handleError);

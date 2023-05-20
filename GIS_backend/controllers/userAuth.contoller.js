@@ -102,19 +102,11 @@ exports.userloginController = async (req, res, next) => {
       throw new SetErrorResponse("Unauthorized, Password Incorrect", 401);
     }
     const userData = userDataPipelining(existingUserData);
-    var data = userData.registrationIdToken.find(
-      (registrationId) => registrationId == registrationIdToken
-    );
-    console.log(data);
-    if (!data) {
-      userData.registrationIdToken.push(registrationIdToken);
-    }
 
-    console.log(userData);
     await User.findOneAndUpdate(
       { email },
       {
-        registrationIdToken: userData.registrationIdToken,
+        registrationIdToken: registrationIdToken,
       },
       { new: true }
     );

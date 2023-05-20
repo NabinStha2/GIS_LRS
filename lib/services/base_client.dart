@@ -129,8 +129,14 @@ class BaseClient {
   }
 
 //POST
-  Future<dynamic> post(String baseUrl, String api, dynamic payloadObj,
-      {bool hasTokenHeader = true, bool isCustomApi = false}) async {
+  Future<dynamic> post(
+    String baseUrl,
+    String api,
+    dynamic payloadObj, {
+    bool hasTokenHeader = true,
+    bool isCustomApi = false,
+    bool isNotification = false,
+  }) async {
     Uri uri;
     if (isCustomApi) {
       uri = Uri.parse(api);
@@ -151,11 +157,18 @@ class BaseClient {
                     'Content-type': 'application/json',
                     'Accept': 'application/json'
                   }
-                : _headers,
+                : isNotification
+                    ? {
+                        "Authorization":
+                            "key=AAAAlZCW0M4:APA91bHmRh3Sdjn-izhfwIiuDzJUBDPUFty4I2fOyj6cqzNegDdM889w_SKB8CD9vmGBuiTwKhpaB8eg23TnONmSYbsHIub8HQ4W3N-JObLas1sAWNpAvFbKrIQxjZav3K6yJhrpNjYb",
+                        'Content-type': 'application/json',
+                      }
+                    : _headers,
           )
           .timeout(const Duration(seconds: timeOutDuration));
 
       consolelog(uri);
+      // consolelog(response.headers);
       return _processResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet Connection', uri.toString());

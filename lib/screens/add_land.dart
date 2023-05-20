@@ -122,19 +122,6 @@ class _AddLandScreenState extends State<AddLandScreen> {
                         textInputAction: TextInputAction.next,
                       ),
                       vSizedBox2,
-                      CustomText.ourText("Street"),
-                      vSizedBox1,
-                      CustomTextFormField(
-                        hintText: "Street",
-                        controller: _.addressController,
-                        fullNameString: true,
-                        textInputType: TextInputType.text,
-                        validator: (val) => val.toString().isEmptyData()
-                            ? "Cannot be empty"
-                            : null,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      vSizedBox2,
                       // CustomText.ourText("Area"),
                       // vSizedBox1,
                       // CustomTextFormField(
@@ -191,18 +178,16 @@ class _AddLandScreenState extends State<AddLandScreen> {
                       //   textInputAction: TextInputAction.next,
                       // ),
                       // vSizedBox2,
-                      CustomText.ourText("Survey No"),
+                      CustomText.ourText("Street"),
                       vSizedBox1,
                       CustomTextFormField(
-                        hintText: "Survey No",
-                        controller: _.surveyNoController,
-                        onlyNumber: true,
-                        textInputType: TextInputType.number,
+                        hintText: "Street",
+                        controller: _.streetController,
+                        fullNameString: true,
+                        textInputType: TextInputType.text,
                         validator: (val) => val.toString().isEmptyData()
                             ? "Cannot be empty"
-                            : !RegexConfig.numberRegex.hasMatch(val)
-                                ? "Survey No not valid"
-                                : null,
+                            : null,
                         textInputAction: TextInputAction.next,
                       ),
                       vSizedBox2,

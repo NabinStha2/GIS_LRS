@@ -6,22 +6,33 @@ class AppSharedPreferences {
   static const _rememberMe = "remember_me";
   static const _firstTimeInApp = "first_time_in_app";
   static const _userId = "user_id";
+  static const _userName = "user_name";
 
-  static get firstTimeInApp => _sharedPreference?.getBool(_firstTimeInApp) ?? true;
+  static get firstTimeInApp =>
+      _sharedPreference?.getBool(_firstTimeInApp) ?? true;
   static get getAuthToken => _sharedPreference?.getString(_authToken) ?? "";
   static get getRememberMe => _sharedPreference?.getBool(_rememberMe) ?? false;
   static get getUserId => _sharedPreference?.getString(_userId) ?? "";
+  static get getUserName => _sharedPreference?.getString(_userName) ?? "";
 
   static removeAuthToken() async => _sharedPreference?.remove(_authToken);
   static removeRememberMe() async => _sharedPreference?.remove(_rememberMe);
   static removeUserId() async => _sharedPreference?.remove(_userId);
+  static removeUserName() async => _sharedPreference?.remove(_userName);
 
-  static setAuthToken(String authToken) async => _sharedPreference?.setString(_authToken, authToken);
-  static setFirstTimeInApp(bool firstTime) async => _sharedPreference?.setBool(_firstTimeInApp, firstTime);
-  static setRememberMe(bool rememberMe) async => _sharedPreference?.setBool(_rememberMe, rememberMe);
-  static setUserId(String userId) async => _sharedPreference?.setString(_userId, userId);
+  static setAuthToken(String authToken) async =>
+      _sharedPreference?.setString(_authToken, authToken);
+  static setFirstTimeInApp(bool firstTime) async =>
+      _sharedPreference?.setBool(_firstTimeInApp, firstTime);
+  static setRememberMe(bool rememberMe) async =>
+      _sharedPreference?.setBool(_rememberMe, rememberMe);
+  static setUserId(String userId) async =>
+      _sharedPreference?.setString(_userId, userId);
+  static setUserName(String userName) async =>
+      _sharedPreference?.setString(_userName, userName);
 
   static clearCrendentials() async => _sharedPreference?.clear();
 
-  static Future sharedPrefInit() async => _sharedPreference = await SharedPreferences.getInstance();
+  static Future sharedPrefInit() async =>
+      _sharedPreference = await SharedPreferences.getInstance();
 }

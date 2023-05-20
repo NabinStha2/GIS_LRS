@@ -139,8 +139,8 @@ class LandId {
     this.parcelId,
     this.wardNo,
     this.district,
-    this.address,
-    this.surveyNo,
+    this.mapSheetNo,
+    this.street,
     this.province,
     // this.landPrice,
     this.isVerified,
@@ -158,8 +158,8 @@ class LandId {
   String? parcelId;
   String? wardNo;
   String? district;
-  String? address;
-  String? surveyNo;
+  String? mapSheetNo;
+  String? street;
   String? province;
   // String? landPrice;
   String? isVerified;
@@ -181,8 +181,8 @@ class LandId {
         parcelId: json["parcelId"],
         wardNo: json["wardNo"],
         district: json["district"],
-        address: json["address"],
-        surveyNo: json["surveyNo"],
+        mapSheetNo: json["mapSheetNo"],
+        street: json["street"],
         province: json["province"],
         // landPrice: json["landPrice"],
         isVerified: json["isVerified"],
@@ -209,8 +209,8 @@ class LandId {
         "parcelId": parcelId,
         "wardNo": wardNo,
         "district": district,
-        "address": address,
-        "surveyNo": surveyNo,
+        // "address": address,
+        // "surveyNo": surveyNo,
         "province": province,
         // "landPrice": landPrice,
         "isVerified": isVerified,
@@ -243,6 +243,7 @@ class UserId {
     this.imageFile,
     this.backCitizenshipFile,
     this.citizenshipId,
+    this.registrationIdToken,
   });
 
   String? id;
@@ -253,6 +254,7 @@ class UserId {
   String? phoneNumber;
   String? isVerified;
   List<String>? ownedLand;
+  String? registrationIdToken;
   String? name;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -274,6 +276,7 @@ class UserId {
         ownedLand: json["ownedLand"] == null
             ? []
             : List<String>.from(json["ownedLand"]!.map((x) => x)),
+        registrationIdToken: json["registrationIdToken"],
         name: json["name"],
         createdAt: json["createdAt"] == null
             ? null

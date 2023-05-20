@@ -5,6 +5,7 @@ const LandSale = require("../models/land.sale.model");
 const User = require("../models/user.model");
 const { getSearchPaginatedData } = require("../utils/pagination");
 const { SetErrorResponse } = require("../utils/responseSetter");
+const { deleteFileCloudinary } = require("../utils/fileHandling");
 
 exports.createLand = async (req, res) => {
   try {
@@ -30,7 +31,7 @@ exports.createLand = async (req, res) => {
     console.log(parcelId);
     // console.log(geoJSONData);
     if (!geoJSONData) {
-      await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
+      // await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
       throw new SetErrorResponse("No recorded parcel id found!", 404);
     }
 
@@ -39,7 +40,7 @@ exports.createLand = async (req, res) => {
       isVerified: "approved",
     });
     if (land) {
-      await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
+      // await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
       throw new SetErrorResponse(
         "Land already exists with this parcel Id!",
         500
@@ -66,17 +67,17 @@ exports.createLand = async (req, res) => {
 
     const newLand = new Land({
       city,
-      area,
+      area: geoJSONData.properties.Area,
       parcelId,
-      address,
-      wardNo,
+      // address,
+      wardNo: geoJSONData.properties.wardno,
       province,
       district,
-      mapSheetNo,
+      mapSheetNo: geoJSONData.properties.mapsheetno,
       // polygon,
       // landPrice,
       ownerUserId: userId,
-      surveyNo,
+      street: geoJSONData.properties.Street,
       geoJSON: geoJSONData,
       landCertificateFile: {
         landCertificateImage: landCertificateImageLocation,
@@ -86,11 +87,12 @@ exports.createLand = async (req, res) => {
 
     await newLand.save();
 
-    console.log(newland);
+    console.log(newLand);
 
     const existingUser = await User.findById({ _id: userId }).lean();
 
     if (!existingUser) {
+      // await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
       throw new SetErrorResponse("User not found", 404);
     }
 
@@ -104,7 +106,8 @@ exports.createLand = async (req, res) => {
 
     return res.success({ landData: newLand }, "land created successfully");
   } catch (err) {
-    console.log(`Err add lands : ${err}`);
+    await deleteFileCloudinary(req.files?.landCertificateImage[0]?.publicId);
+    console.log(`Err add lands : ${err.message}`);
     return res.fail(err);
   }
 };

@@ -394,14 +394,14 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                             ),
                             vSizedBox2,
                             CustomText.ourText(
-                              "Address (Survey No.)",
+                              "Street",
                               color: AppColors.kNeutral800Color,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                             ),
                             vSizedBox0,
                             CustomText.ourText(
-                              "${_.individualLandTransferResult?.landSaleId?.landId?.address} (${_.individualLandTransferResult?.landSaleId?.landId?.surveyNo})",
+                              "${_.individualLandTransferResult?.landSaleId?.landId?.street}",
                               color: AppColors.kNeutral600Color,
                               fontWeight: FontWeight.w400,
                             ),
@@ -418,6 +418,28 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                   TextSpan(
                                     text: _.individualLandTransferResult
                                             ?.landSaleId?.landId?.wardNo ??
+                                        "",
+                                    style: TextStyle(
+                                      color: AppColors.kNeutral600Color,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            vSizedBox2,
+                            Text.rich(
+                              TextSpan(
+                                text: "Map Sheet No: ",
+                                style: TextStyle(
+                                  color: AppColors.kNeutral800Color,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: _.individualLandTransferResult
+                                            ?.landSaleId?.landId?.mapSheetNo ??
                                         "",
                                     style: TextStyle(
                                       color: AppColors.kNeutral600Color,
@@ -937,15 +959,22 @@ class _LandSaleDetailsScreenState extends State<LandTransferDetailsScreen> {
                                                 ],
                                               ),
                                               vSizedBox1,
-                                              CustomNetworkImage(
-                                                height: 500,
-                                                width: appWidth(context),
-                                                boxFit: BoxFit.contain,
-                                                imageUrl: _
-                                                    .individualLandTransferResult
-                                                    ?.voucherFormFile
-                                                    ?.voucherFormImage,
-                                              ),
+                                              _
+                                                          .individualLandTransferResult
+                                                          ?.voucherFormFile
+                                                          ?.voucherFormImage !=
+                                                      null
+                                                  ? CustomNetworkImage(
+                                                      height: 500,
+                                                      width: appWidth(context),
+                                                      boxFit: BoxFit.contain,
+                                                      imageUrl: _
+                                                              .individualLandTransferResult
+                                                              ?.voucherFormFile
+                                                              ?.voucherFormImage ??
+                                                          "",
+                                                    )
+                                                  : Container(),
                                             ],
                                           ),
                                         ),

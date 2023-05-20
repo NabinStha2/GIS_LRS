@@ -10,6 +10,9 @@ class LandRequestModel {
   String? landSaleId;
   String? latlng;
   double? radius;
+  String? registrationIdToken;
+  String? parcelId;
+  String? image;
   LandRequestModel({
     this.page,
     this.limit,
@@ -21,6 +24,9 @@ class LandRequestModel {
     this.landSaleId,
     this.latlng,
     this.radius,
+    this.registrationIdToken,
+    this.parcelId,
+    this.image,
   });
 
   Map<String, dynamic> toJson() => {

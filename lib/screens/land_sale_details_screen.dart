@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:gis_flutter_frontend/core/development/console.dart';
 import 'package:gis_flutter_frontend/model/transfer_land/land_transfer_request_model.dart';
+import 'package:gis_flutter_frontend/providers/user_provider.dart';
 import 'package:gis_flutter_frontend/utils/unfocus_keyboard.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -358,14 +359,14 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                         ),
                         vSizedBox2,
                         CustomText.ourText(
-                          "Address (Survey No.)",
+                          "Street",
                           color: AppColors.kNeutral800Color,
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
                         ),
                         vSizedBox0,
                         CustomText.ourText(
-                          "${_.individualSaleLandResult?.landId?.address} (${_.individualSaleLandResult?.landId?.surveyNo})",
+                          "${_.individualSaleLandResult?.landId?.street}",
                           color: AppColors.kNeutral600Color,
                           fontWeight: FontWeight.w400,
                         ),
@@ -382,6 +383,28 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                               TextSpan(
                                 text: _.individualSaleLandResult?.landId
                                         ?.wardNo ??
+                                    "",
+                                style: TextStyle(
+                                  color: AppColors.kNeutral600Color,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        vSizedBox2,
+                        Text.rich(
+                          TextSpan(
+                            text: "Map Sheet No",
+                            style: TextStyle(
+                              color: AppColors.kNeutral800Color,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: _.individualSaleLandResult?.landId
+                                        ?.mapSheetNo ??
                                     "",
                                 style: TextStyle(
                                   color: AppColors.kNeutral600Color,
@@ -416,7 +439,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                         ),
                         vSizedBox2,
                         CustomText.ourText(
-                          "User Information",
+                          "Owner Information",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
                           color: AppColors.kBrandPrimaryColor,
@@ -507,7 +530,7 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                             ],
                           ),
                         ),
-                        vSizedBox2,
+                        vSizedBox1,
                         AppSharedPreferences.getUserId ==
                                     _.individualSaleLandResult?.ownerUserId
                                         ?.id &&
@@ -606,6 +629,20 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                     landSaleId: _
                                                         .individualSaleLandResult
                                                         ?.id,
+                                                    registrationIdToken: _
+                                                        .individualSaleLandResult
+                                                        ?.ownerUserId
+                                                        ?.registrationIdToken,
+                                                    parcelId: _
+                                                        .individualSaleLandResult
+                                                        ?.parcelId,
+                                                    image: Provider.of<
+                                                                UserProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .userData
+                                                        .imageFile
+                                                        ?.imageUrl,
                                                   ),
                                                 );
                                               } else {
@@ -629,9 +666,13 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                     color: Colors.red,
                                     fontWeight: FontWeight.w600,
                                   ),
-                        vSizedBox2,
+                        vSizedBox1,
+                        Divider(
+                          color: AppColors.kGreyColor,
+                          thickness: 1,
+                        ),
                         CustomText.ourText(
-                          "Requested To Buy Land User Information",
+                          "Requested Buyers",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
                           color: AppColors.kBrandPrimaryColor,
@@ -772,6 +813,17 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                             landSaleId: _
                                                                 .individualSaleLandResult
                                                                 ?.id,
+                                                            image: _
+                                                                .individualSaleLandResult
+                                                                ?.ownerUserId
+                                                                ?.imageFile
+                                                                ?.imageUrl,
+                                                            parcelId: _
+                                                                .individualSaleLandResult
+                                                                ?.parcelId,
+                                                            registrationIdToken:
+                                                                data?.user
+                                                                    ?.registrationIdToken,
                                                           ),
                                                         );
                                                       },
@@ -802,6 +854,17 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                                             landSaleId: _
                                                                 .individualSaleLandResult
                                                                 ?.id,
+                                                            image: _
+                                                                .individualSaleLandResult
+                                                                ?.ownerUserId
+                                                                ?.imageFile
+                                                                ?.imageUrl,
+                                                            parcelId: _
+                                                                .individualSaleLandResult
+                                                                ?.parcelId,
+                                                            registrationIdToken:
+                                                                data?.user
+                                                                    ?.registrationIdToken,
                                                           ),
                                                         );
                                                       },
@@ -817,9 +880,13 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                 : Container();
                           },
                         ),
-                        vSizedBox2,
+                        vSizedBox1,
+                        Divider(
+                          color: AppColors.kGreyColor,
+                          thickness: 1,
+                        ),
                         CustomText.ourText(
-                          "Accepted Buyer User Information",
+                          "Accepted Buyer",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
                           color: AppColors.kBrandPrimaryColor,
@@ -1049,9 +1116,13 @@ class _LandSaleDetailsScreenState extends State<LandSaleDetailsScreen> {
                                 ),
                               )
                             : Container(),
-                        vSizedBox2,
+                        vSizedBox1,
+                        Divider(
+                          color: AppColors.kGreyColor,
+                          thickness: 1,
+                        ),
                         CustomText.ourText(
-                          "Rejected Buyer User Information",
+                          "Rejected Buyers",
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
                           color: AppColors.kBrandPrimaryColor,

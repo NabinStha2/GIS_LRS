@@ -90,12 +90,9 @@ const UserSchema = new Schema(
         default: [],
       },
     ],
-    registrationIdToken: [
-      {
-        type: String,
-        default: [],
-      },
-    ],
+    registrationIdToken: {
+      type: String,
+    },
     hashed_password: {
       type: String,
       required: false,

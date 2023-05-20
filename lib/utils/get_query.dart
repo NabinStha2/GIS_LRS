@@ -9,7 +9,7 @@ String? getQuery(
   if (reqData?.limit != null) {
     fullquery += "limit=${reqData?.limit}";
   } else {
-    fullquery += "limit=20";
+    fullquery += "limit=5";
   }
   if (reqData?.page != null) {
     fullquery += "&page=${reqData?.page}";

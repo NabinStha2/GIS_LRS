@@ -11,7 +11,6 @@ const LandSchema = new Schema(
     },
     area: {
       type: String,
-      required: true,
       trim: true,
     },
     // polygon: [
@@ -35,7 +34,6 @@ const LandSchema = new Schema(
       required: true,
       trim: true,
       index: true,
-      unique: true,
     },
     wardNo: {
       type: String,
@@ -53,13 +51,13 @@ const LandSchema = new Schema(
       index: true,
       trim: true,
     },
-    address: {
-      type: String,
-      required: true,
-      index: true,
-      trim: true,
-    },
-    surveyNo: {
+    // address: {
+    //   type: String,
+    //   required: true,
+    //   index: true,
+    //   trim: true,
+    // },
+    street: {
       type: String,
       required: true,
       trim: true,
