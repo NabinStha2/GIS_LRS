@@ -102,9 +102,10 @@ exports.patchUserImage = async (req, res) => {
     }
 
     if (
-      !user ||
-      user.isVerified == "pending" ||
-      user.isVerified == "rejected"
+      !user
+      // ||
+      // user.isVerified == "pending" ||
+      // user.isVerified == "rejected"
     ) {
       throw new SetErrorResponse("User not found"); // default (Not found,404)
     }
@@ -166,9 +167,10 @@ exports.patchUserFrontDocument = async (req, res) => {
     }
 
     if (
-      !user ||
-      user.isVerified == "pending" ||
-      user.isVerified == "rejected"
+      !user
+      //  ||
+      // user.isVerified == "pending" ||
+      // user.isVerified == "rejected"
     ) {
       throw new SetErrorResponse("User not found"); // default (Not found,404)
     }
@@ -231,7 +233,10 @@ exports.patchUserBackDocument = async (req, res) => {
     //   deleteFileLocal({ imagePath: req.files.backCitizenshipImage[0]?.path });
     // }
 
-    if (!user || user.isVerified != "approved") {
+    if (
+      !user
+      // || user.isVerified != "approved"
+    ) {
       throw new SetErrorResponse("User not found"); // default (Not found,404)
     }
 

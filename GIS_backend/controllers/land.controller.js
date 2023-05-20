@@ -310,7 +310,7 @@ exports.getAllLands = async (req, res) => {
           query,
           populate: {
             path: "ownerUserId geoJSON",
-            select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
+            // select: "-frontCitizenshipFile -backCitizenshipFile -ownedLand",
           },
           pagination: true,
           modFunction: (document) => {
@@ -599,6 +599,7 @@ exports.getAllLandsByAdmin = async (req, res) => {
       },
       search: search,
     });
+    console.log(lands);
 
     if (!lands) {
       throw new SetErrorResponse("Land not found", 404);

@@ -12,7 +12,7 @@ const MongoClient = require("mongodb").MongoClient;
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: 1000000 }));
 
 emailInitialSetup();
 
